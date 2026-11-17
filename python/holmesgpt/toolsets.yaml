@@ -1,0 +1,8 @@
+toolsets:
+  orders:
+    description: "Look up customer orders"
+    enabled: true
+    tools:
+      - name: "get_order_status"
+        description: "Look up the shipping status of an order by its id"
+        command: "echo 'Order {{ order_id }}: shipped, arriving Friday.'"

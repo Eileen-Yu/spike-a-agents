@@ -1,0 +1,12 @@
+server:
+  port: ${PORT:8000}
+
+spring:
+  application:
+    name: order-agent
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: ${OPENAI_MODEL:gpt-4o-mini}

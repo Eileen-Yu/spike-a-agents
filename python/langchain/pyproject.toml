@@ -1,0 +1,10 @@
+[project]
+name = "order-agent-langchain"
+version = "0.1.0"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "langchain>=1.5",
+    "langchain-openai>=1.8",
+]

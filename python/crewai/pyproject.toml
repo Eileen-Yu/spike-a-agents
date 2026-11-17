@@ -1,0 +1,9 @@
+[project]
+name = "order-agent-crewai"
+version = "0.1.0"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "crewai>=1.15",
+]

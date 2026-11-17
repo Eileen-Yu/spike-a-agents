@@ -1,0 +1,9 @@
+[project]
+name = "order-agent-holmesgpt"
+version = "0.1.0"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "holmesgpt>=0.46",
+]
