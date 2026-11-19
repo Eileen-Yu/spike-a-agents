@@ -28,9 +28,23 @@ agent = create_deep_agent(
 )
 
 
+def message_text(content) -> str:
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for block in content:
+            if isinstance(block, dict) and block.get("type") == "text":
+                parts.append(block.get("text") or "")
+            else:
+                parts.append(getattr(block, "text", "") or str(block))
+        return "".join(parts)
+    return str(content)
+
+
 async def ask(prompt: str) -> str:
     result = await agent.ainvoke({"messages": [{"role": "user", "content": prompt}]})
-    return result["messages"][-1].content
+    return message_text(result["messages"][-1].content)
 
 
 app = FastAPI()

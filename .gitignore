@@ -1,6 +1,35 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Local / generated
 .venv/
-__pycache__/
+**/__pycache__/
+**/*.pyc
 node_modules/
 target/
 bin/
 obj/
+.DS_Store
+*.log.bak
+
+# Per-run working copies live outside this repo (~/spike-runs).
+# If anyone drops one here by mistake:
+spike-runs/
+
+# Full client transcripts — Codex often dumps .env (API keys). Keep local only.
+results/*-claude.log
+results/*-codex.log
+results/*-copilot.log
+results/*-claude-*.log
+results/*-codex-*.log
+results/*-copilot-*.log
+results/langgraph-app.log
+results/langgraph-tunnel.log
+results/langgraph-health-fix.log
+results/*.runpath
+results/current-cell.txt
+results/loop.pid
+results/done.tsv.bak*
+results/loop.log

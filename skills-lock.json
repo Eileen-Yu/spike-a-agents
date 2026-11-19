@@ -1,0 +1,89 @@
+{
+  "version": 2,
+  "skills": {
+    "diagrid-activity-idempotency": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-activity-idempotency/SKILL.md",
+      "computedHash": "82dc89389b026eb5cfaf5454fec253f44f57dc8cddbcd5c48c75fe6f38f2a7f7"
+    },
+    "diagrid-agent-harness": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-agent-harness/SKILL.md",
+      "computedHash": "b2b62eb41f99fd349c63458e5cbc48661102e5eeb0c9371fb5ab59d7d54ccc5b"
+    },
+    "diagrid-agent-scaffold": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-agent-scaffold/SKILL.md",
+      "computedHash": "fcad281c871fcd9b0bc71bf81ad58b75b7b4319b31369f1f2f664bf45ec6e62d"
+    },
+    "diagrid-app-tunnels": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-app-tunnels/SKILL.md",
+      "computedHash": "724e5ed4d4dc29b3af4a247f86d7aa8c2a5951869c81a1d24164385efca289b9"
+    },
+    "diagrid-debug": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-debug/SKILL.md",
+      "computedHash": "bf807c12929f9a188b4393c49441d5c5253dd9e81e7d6beb8ecb9fe1e72c52ef"
+    },
+    "diagrid-deploy": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-deploy/SKILL.md",
+      "computedHash": "94b71f88a792ea5ff445359d942b94dde5bf8a31124a31997e831162faca6b92"
+    },
+    "diagrid-develop": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-develop/SKILL.md",
+      "computedHash": "54ed299a7e23ef859c1d9b4023ee66939e8355012e34320d45d6497f61fa4f3a"
+    },
+    "diagrid-operate": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-operate/SKILL.md",
+      "computedHash": "7ad99a9da7438d1e6b06b65f1abcd838285c55cba3f6e28b2b3f719ab1fc8a09"
+    },
+    "diagrid-setup": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-setup/SKILL.md",
+      "computedHash": "c97e21a5de9b52cf70c5a9f3b8f6100c836aea3a117a8c9e6d8476e43166bcc8"
+    },
+    "diagrid-workflow-determinism": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-workflow-determinism/SKILL.md",
+      "computedHash": "d42ff2b5aa23e6bf002bcd8e3250ec875ac6c559f188195eaa72208ad37adb04"
+    },
+    "diagrid-workflow-from-diagram": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-workflow-from-diagram/SKILL.md",
+      "computedHash": "102d8518f33ff40cded813355a5dd234291644d89cb8e9d4542d2d1e346ddf56"
+    },
+    "diagrid-workflow-scaffold": {
+      "source": "diagridio/diagrid-ai",
+      "commit": "31252b54d0e4c1895bbfc6b0b454cc80e158225a",
+      "sourceType": "github",
+      "skillPath": "skills/diagrid-workflow-scaffold/SKILL.md",
+      "computedHash": "cab56512bb75b65ea77baa84002431c341985da9800f0d5801810db3de4e1725"
+    }
+  }
+}

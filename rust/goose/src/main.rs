@@ -22,8 +22,23 @@ struct RunRequest {
 
 async fn run(Json(req): Json<RunRequest>) -> Result<Json<Value>, (StatusCode, String)> {
     let goose = std::env::var("GOOSE_BIN").unwrap_or_else(|_| "goose".to_string());
+    let provider = std::env::var("GOOSE_PROVIDER").unwrap_or_else(|_| "anthropic".to_string());
+    let model = std::env::var("GOOSE_MODEL")
+        .or_else(|_| std::env::var("CLAUDE_MODEL"))
+        .unwrap_or_else(|_| "claude-sonnet-4-5".to_string());
     let output = Command::new(goose)
-        .args(["run", "--no-session", "--quiet", "--with-builtin", "developer", "--text"])
+        .args([
+            "run",
+            "--provider",
+            &provider,
+            "--model",
+            &model,
+            "--no-session",
+            "--quiet",
+            "--with-builtin",
+            "developer",
+            "--text",
+        ])
         .arg(format!("{INSTRUCTIONS}\n\n{}", req.prompt))
         .output()
         .await

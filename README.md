@@ -1,62 +1,153 @@
-# Spike A: plain agents, one per framework
+# Spike A (CAP-2783) — plain agents through the Diagrid plugin
 
-Starting points for [CAP-2783](https://linear.app/diagrid/issue/CAP-2783). Each
-sample is an ordinary agent in one framework that knows nothing about Catalyst:
-no Dapr, no `diagrid` package, no workflow wrapper, no identity middleware. The
-spike asks the plugin to bring it to Catalyst and run it.
+Person A week-1 spike: take a **plain** agent (no Catalyst / Dapr / workflow wrapper /
+identity middleware), ask the Diagrid plugin to deploy it to Catalyst, and prove a run
+(`order 42` → answer contains **shipped**).
 
-Every sample is the same agent, so results compare across frameworks:
+Linear: [CAP-2783](https://linear.app/diagrid/issue/CAP-2783) · triage:
+[CAP-2785](https://linear.app/diagrid/issue/CAP-2785)
 
-- one tool, `get_order_status(order_id)`, which returns `Order <id>: shipped, arriving Friday.`
-- served over HTTP on `PORT` (default 8000): `POST /run {"prompt": "..."}` returns `{"answer": "..."}`
-- pass when `What's the status of order 42?` gets an answer that says **shipped**
+**Results overview (start here):** [`results/SUMMARY.md`](results/SUMMARY.md)
+
+---
+
+## Should this be its own repo?
+
+**Yes, as a private archive** (handoff, triage, CAP-2783 comment) — samples + summary +
+scripts. This directory is already a local git repo; push to a **private** GitHub repo
+when ready (personal or `diagridio`).
+
+**No need to mirror live Catalyst projects** into git. The cloud org/project is
+environment state; document names below, do not export tokens or full resource YAML
+with secrets.
+
+---
+
+## What belongs in git
+
+| Include | Why |
+|---|---|
+| `python/`, `dotnet/`, `java/`, `go/`, `typescript/`, `rust/` | Plain framework samples |
+| `results/SUMMARY.md`, `results/spike-prompt.md`, `results/matrix.md` | One-page results + prompt |
+| `results/done.tsv`, `results/queue-status.md`, `results/loop.stdout` | Machine ledger of the matrix |
+| `results/*-metrics.md` | session_metrics rows (when present) |
+| `new-run.sh`, `run-matrix-loop.sh`, `smoke-test.sh`, `session_metrics.py` | How runs were produced |
+| `.env.example`, this README | Onboarding |
+
+| Keep out of git | Why |
+|---|---|
+| `.env` | API keys (`OPENAI_*`, `ANTHROPIC_*`) |
+| `**/.venv`, `node_modules`, `target`, `bin`, `obj` | Build junk (multi‑GB) |
+| `~/spike-runs/**` | Timestamped working copies (~GB); recreate with `./new-run.sh` |
+| Raw `results/*-{claude,codex,copilot}.log` | Full transcripts. **Codex logs embedded live API keys from `.env`** — stay on disk only; scrub before attaching to an issue |
+| Live Catalyst API tokens / connection strings | Never |
+| Diagrid org secrets, service-account keys | Never |
+
+Catalyst **project names** (document only, not exported):
+
+- Org used for the spike: `cattle-ackbar` (API `https://api.r1.diagrid.io`)
+- Primary project reused: `langgraph-spike`
+- Common identities: Agent `order-agent`, caller App `spike-caller` (plus per-run agents when quota allowed)
+
+---
+
+## Layout
+
+```text
+spike-a-agents/
+  python|dotnet|java|go|typescript|rust/   # one sample per framework (+ BYOA)
+  results/
+    SUMMARY.md          # consolidated matrix — read this
+    spike-prompt.md     # prompt used for plugin runs
+    done.tsv            # ok/fail ledger
+    *-claude|codex|copilot.log   # optional full transcripts
+  new-run.sh            # copy a sample → ~/spike-runs/<fw>-<ts>
+  run-matrix-loop.sh    # batch framework × client
+  smoke-test.sh         # local HTTP smoke (no Catalyst)
+  session_metrics.py    # CAP-2789-style metrics from client logs
+  .env.example
+```
+
+Run copies are **outside** the repo:
+
+```text
+~/spike-runs/<framework>-<timestamp>/   # do not commit
+```
+
+---
 
 ## Samples
 
-| Language | Framework | Path | Model key | Checked here |
-|---|---|---|---|---|
-| Python | LangGraph | `python/langgraph` | `OPENAI_API_KEY` | deps install, imports |
-| Python | LangChain | `python/langchain` | `OPENAI_API_KEY` | deps install, imports |
-| Python | CrewAI | `python/crewai` | `OPENAI_API_KEY` | deps install, imports |
-| Python | Google ADK (via LiteLLM) | `python/adk` | `OPENAI_API_KEY` | deps install, imports |
-| Python | Strands | `python/strands` | `OPENAI_API_KEY` | deps install, imports |
-| Python | Pydantic AI | `python/pydantic-ai` | `OPENAI_API_KEY` | deps install, imports |
-| Python | OpenAI Agents | `python/openai-agents` | `OPENAI_API_KEY` | deps install, imports |
-| Python | Claude Agent SDK | `python/claude-agents` | `ANTHROPIC_API_KEY` | deps install, imports |
-| Python | smolagents | `python/smolagents` | `OPENAI_API_KEY` | deps install, imports |
-| Python | Deep Agents | `python/deepagents` | `OPENAI_API_KEY` | deps install, imports |
-| Python | HolmesGPT (CLI + custom toolset) | `python/holmesgpt` | `OPENAI_API_KEY` | deps install, toolset loads |
-| Python | Dapr Agents | `python/dapr-agents` | `OPENAI_API_KEY` | deps install, configs build |
-| Python | none (BYOA, hand-written loop) | `python/byoa` | `OPENAI_API_KEY` | deps install, imports |
-| .NET | Microsoft Agent Framework | `dotnet/microsoft-agent-framework` | `OPENAI_API_KEY` | `dotnet build` |
-| Java | Spring AI | `java/spring-ai` | `OPENAI_API_KEY` | `mvn package`, app boots |
-| Go | LangChainGo | `go/langchaingo` | `OPENAI_API_KEY` | `go build` |
-| Go | Eino | `go/eino` | `OPENAI_API_KEY` | `go build` |
-| TypeScript | Mastra | `typescript/mastra` | `OPENAI_API_KEY` | `tsc --noEmit` |
-| Rust | Goose (CLI) | `rust/goose` | Goose's provider | not built: needs Cargo with edition 2024 |
+Every sample is the same agent shape so frameworks compare fairly:
 
-None of them has been run against a model yet. Run each once locally with a real
-key before its spike session, so a broken sample isn't logged as a plugin
-problem.
+- tool `get_order_status(order_id)` → `Order <id>: shipped, arriving Friday.`
+- HTTP `POST /run {"prompt":"..."}` → `{"answer":"..."}` (plus `GET /healthz` where needed)
+- pass when asking about order **42** returns **shipped**
 
-Three differ from the rest:
-
-- **Dapr Agents** has only `DurableAgent`, so the sample already runs on a local
-  Dapr sidecar (`dapr run ... --resources-path ./resources`) and serves the
-  framework's own `POST /agent/run {"task": "..."}`. What it lacks is Catalyst.
-- **HolmesGPT** has no stable embedding API, so the service shells out to
-  `holmes ask` with `toolsets.yaml`.
-- **Goose** is a CLI agent too: the service runs `goose run --no-session --quiet`
-  with the developer extension, which calls `./order-status.sh` as its tool.
-
-## Running a spike case
+| Language | Framework | Path |
+|---|---|---|
+| Python | LangGraph | `python/langgraph` |
+| Python | LangChain | `python/langchain` |
+| Python | CrewAI | `python/crewai` |
+| Python | Google ADK | `python/adk` |
+| Python | Strands | `python/strands` |
+| Python | Pydantic AI | `python/pydantic-ai` |
+| Python | OpenAI Agents | `python/openai-agents` |
+| Python | Claude Agent SDK | `python/claude-agents` |
+| Python | smolagents | `python/smolagents` |
+| Python | Deep Agents | `python/deepagents` |
+| Python | HolmesGPT | `python/holmesgpt` |
+| Python | Dapr Agents | `python/dapr-agents` |
+| Python | BYOA (no framework) | `python/byoa` |
+| .NET | Microsoft Agent Framework | `dotnet/microsoft-agent-framework` |
+| Java | Spring AI | `java/spring-ai` |
+| Go | LangChainGo | `go/langchaingo` |
+| Go | Eino | `go/eino` |
+| TypeScript | Mastra | `typescript/mastra` |
+| Rust | Goose | `rust/goose` |
 
 ```sh
-./new-run.sh python/langgraph      # prints ~/spike-runs/langgraph-<timestamp>
-cd ~/spike-runs/langgraph-<timestamp>
-claude                             # fresh session, then: "deploy my agent to Diagrid and run it"
-git diff                           # what the plugin changed
+cp .env.example .env   # fill keys
+./smoke-test.sh        # local only — not Spike A
 ```
 
-`new-run.sh` copies the sample without its build output and commits it, so
-every run starts from the same tree.
+---
+
+## Spike A run (plugin → Catalyst)
+
+```sh
+./new-run.sh python/langgraph    # prints ~/spike-runs/langgraph-<ts>
+cd ~/spike-runs/langgraph-<ts>
+# Use Claude Code / Codex / Copilot with Diagrid plugin + prompt in results/spike-prompt.md
+```
+
+Or batch: `./run-matrix-loop.sh` (kicks the client ~20s after `RESULT`).
+
+**Rules for Spike A:** prefer Diagrid `Agent` resource; **no** workflow runner wrapper;
+**no** identity/OAuth middleware. (Durable wrapper / identity = Week 2 skills.)
+
+Clients used in the matrix:
+
+| Client | Product | Model (this spike) |
+|---|---|---|
+| Claude | Claude Code | `claude-fable-5-2` |
+| Codex | Codex CLI | `gpt-5.4` |
+| Copilot | GitHub Copilot CLI | Fusion-selected (varied) |
+
+---
+
+## Person A checklist (Week 1)
+
+- [x] Samples + local smoke
+- [x] Matrix runs → [`results/SUMMARY.md`](results/SUMMARY.md)
+- [ ] Comment SUMMARY on CAP-2783
+- [ ] File distinct frictions as issues (spike milestone) for CAP-2785 triage
+- [ ] Week 2 skill/plugin fixes only **after** triage — not part of this repo’s job
+
+---
+
+## Regenerating the summary
+
+```sh
+python3 results/build-summary-matrix.py   # rewrites results/SUMMARY.md
+```

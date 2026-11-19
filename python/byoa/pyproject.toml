@@ -6,4 +6,5 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "openai",
+    "dapr-ext-workflow==1.18.3",
 ]

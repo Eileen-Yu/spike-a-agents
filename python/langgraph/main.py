@@ -54,6 +54,11 @@ class RunRequest(BaseModel):
     prompt: str
 
 
+@app.get("/healthz")
+async def healthz() -> dict:
+    return {"ok": True}
+
+
 @app.post("/run")
 async def run(req: RunRequest) -> dict:
     return {"answer": await ask(req.prompt)}
