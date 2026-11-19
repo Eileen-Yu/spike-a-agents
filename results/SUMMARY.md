@@ -1,10 +1,32 @@
 # Spike A — consolidated results matrix
 
-Generated: 2026-11-18 16:55
-Org: `cattle-ackbar` · Plugin: `diagrid@diagrid` 0.10.2 · CLI: `diagrid` 1.130.0  
+Generated: 2026-11-19 15:05  
+Week-1 matrix org: `cattle-ackbar` (prod free) · Plus retest org: `eileen-plus-test` (staging, Diagrid Cloud Plus)  
+Plugin: `diagrid@diagrid` 0.10.2 · CLI: `diagrid` 1.130.0  
 Self-contained: status, resource kind, id, and friction are inline. You should not need to open per-cell logs for the overview.
 
-## Scoreboard
+## Plus retest (staging) — quota was the free-plan ceiling
+
+Week-1 free org hit **10/10 App ID / identity** → many cells reused a shared `order-agent` and could not prove dedicated Agent create. Retested on **Cloud Plus** (`eileen-plus-test`, API `api.staging.diagrid.dev`, project `default` exists, region App IDs 30).
+
+| Framework | Result | Agent id | tokens in | tools | wall | log |
+|---|---|---|---:|---:|---|---|
+| LangGraph | ok · Agent (create) | `langgraph-order-agent` | 709,283 | 19 | 1m 41s | `langgraph-claude-plus.log` |
+| BYOA | ok · Agent | `byoa-order-agent` | 229,574 | 7 | 1m 16s | `byoa-claude-plus.log` |
+| Spring AI | ok · Agent | `spring-ai-order-agent` | 326,524 | 9 | 1m 34s | `spring-ai-claude-plus.log` |
+| Eino | ok · Agent | `eino-order-agent` | 412,383 | 14 | 2m 08s | `eino-claude-plus.log` |
+| Mastra | ok · Agent | `mastra-order-agent` | 402,961 | 14 | 1m 58s | `mastra-claude-plus.log` |
+
+**Conclusion:** dedicated Agent create + tunnel + invoke works on Plus. Free-plan identity quota was an **environment ceiling**, not a plugin “cannot create Agent” bug. Prefer Plus (or clear headroom) for Spike / Week-2 speed baselines.
+
+**Still real friction on Plus (not quota):**
+- Diagrid **MCP often on wrong org / unauthenticated** in non-interactive runs while CLI is on staging Plus → skills say “MCP for writes” but create/apply went through CLI.
+- Agent `ready` before managed App ID is ready; missing `/healthz` → first invoke 500.
+- Port 8000 busy; `dev run` still prints production console URL on staging.
+
+Updated Week-2 LangGraph yardstick (Plus, dedicated create): **~709k tokens in / ~19 tool calls / ~1m41s** (free-matrix cold rows ~1.4M–1.9M mixed reuse/credit noise — use Plus row for comparisons).
+
+## Scoreboard (Week-1 free matrix)
 
 | ok | fail | blocked | missing | of which Agent | of which App | kind unclear |
 |---:|---:|---:|---:|---:|---:|---:|
@@ -477,7 +499,8 @@ _Generated 2026-11-18 16:55. Typical client: Claude Code 2.1.327 / claude-fable-
 | Agent vs App | Intended path is Diagrid `Agent`. Early / some Codex runs used plain `App` when “no workflow wrapper” was over-read. |
 | Skills push durability | `diagrid-agent-scaffold` steers toward workflow runners; Spike A kept plain HTTP `/run`. |
 | MCP gaps | No MCP tunnel/invoke — proof needed `diagrid call invoke`. |
-| Quotas | 3-project cap; identity quota forced reusing `order-agent` on later frameworks. |
+| Quotas (free) | Prod free org: 3-project cap + identity 10/10 forced reusing `order-agent`. **Plus retest:** dedicated Agents create fine — treat free quota as env ceiling, not plugin bug. |
+| MCP vs CLI org | On Plus retest, MCP stayed on prod free / unauthenticated while CLI was staging Plus → writes via CLI. |
 | Readiness | Connected ≠ healthy; App ID can lag Agent ready; need `/healthz` + short wait. |
 | Ports | 8000 often busy → alternate port. |
 | Client hang | Clients leave tunnels up; loop kicks ~20s after RESULT. |

@@ -33,14 +33,16 @@ Rules:
 - NO identity/OAuth middleware.
 - The sample's HTTP /run loop stays as-is; tunnel it behind the Agent's App ID.
 
-Org cattle-ackbar. Reuse project langgraph-spike when possible
-(3 project max; do not create a new project unless reuse is impossible).
-Reuse caller App spike-caller when it exists.
+Org eileen-plus-test (staging, Diagrid Cloud Plus). Use project `default`
+(it exists). Create a dedicated Agent per run (e.g. <framework>-order-agent) —
+do NOT reuse a generic shared Agent unless create is refused; if refused, record friction.
+Create caller App spike-caller if missing.
 
-CLI must be ~/.local/bin/diagrid 1.130.0 first on PATH; flags --id and --yes.
+CLI must be ~/.local/bin/diagrid first on PATH; flags --id and --yes.
+API is https://api.staging.diagrid.dev (already selected via `diagrid whoami`).
 Sample has GET /healthz. If port 8000 busy use another free port.
 
-Create/reuse Agent (e.g. <framework>-order-agent). Tunnel on its managed App ID:
+Create Agent (e.g. <framework>-order-agent). Tunnel on its managed App ID:
   diagrid dev run --project <p> --id <agent-app-id> --app-port <port>
   --enable-app-health-check --app-health-check-path /healthz --yes --
   uv run --env-file .env main.py.
