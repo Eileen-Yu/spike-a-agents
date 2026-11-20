@@ -1,16 +1,14 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 19:14:23 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 19:15:23 PST · ledger: `ledger.tsv`
 
 ## Running now
-- byoa-claude-1
+- eino-claude-1
 - langchaingo-claude-1
-- microsoft-agent-framework-claude-1
+- mastra-claude-1
 - spring-ai-claude-1
 
-## Remaining (7)
-- byoa × claude
-- microsoft-agent-framework × claude
+## Remaining (5)
 - spring-ai × claude
 - langchaingo × claude
 - eino × claude
@@ -19,19 +17,21 @@ Updated: 2026-11-19 19:14:23 PST · ledger: `ledger.tsv`
 
 ## Ledger
 ```
-# slug         client  attempt  status  kind   via       code       violation  agent_id                    mcp_calls  tokens_in  tools  log                         finished
-langgraph      claude  1        ok      Agent  catalyst  untouched  -          order-agent-lg-1847         13         1823790    26     langgraph-claude-1.log      2026-11-19T18:50:06-08:00
-langgraph      claude  2        ok      Agent  catalyst  untouched  -          order-agent-lg-1855         16         1957451    30     langgraph-claude-2.log      2026-11-19T18:58:24-08:00
-langgraph      claude  3        ok      Agent  catalyst  untouched  -          order-agent-lg-1858         14         1957335    28     langgraph-claude-3.log      2026-11-19T19:01:18-08:00
-langchain      claude  1        ok      Agent  catalyst  untouched  -          order-agent-langchain-1907  15         2480197    33     langchain-claude-1.log      2026-11-19T19:06:02-08:00
-strands        claude  1        ok      Agent  catalyst  untouched  -          identity                    12         1675414    25     strands-claude-1.log        2026-11-19T19:06:52-08:00
-adk            claude  1        ok      Agent  catalyst  untouched  -          order-agent-adk             10         1570172    25     adk-claude-1.log            2026-11-19T19:07:02-08:00
-crewai         claude  1        ok      App    catalyst  untouched  -          crewai-orders               8          1585944    23     crewai-claude-1.log         2026-11-19T19:07:42-08:00
-pydantic-ai    claude  1        ok      App    catalyst  untouched  -          order-agent-pydantic-ai     16         2108207    28     pydantic-ai-claude-1.log    2026-11-19T19:08:52-08:00
-openai-agents  claude  1        ok      App    catalyst  untouched  -          order-agent-openai          12         1452833    23     openai-agents-claude-1.log  2026-11-19T19:09:17-08:00
-smolagents     claude  1        ok      App    catalyst  untouched  -          order-agent-smolagents      12         1787720    26     smolagents-claude-1.log     2026-11-19T19:10:37-08:00
-deepagents     claude  1        ok      Agent  catalyst  untouched  -          order-agent-deepagents      11         1616268    24     deepagents-claude-1.log     2026-11-19T19:11:32-08:00
-claude-agents  claude  1        ok      Agent  catalyst  untouched  -          app                         15         2543636    33     claude-agents-claude-1.log  2026-11-19T19:11:57-08:00
-holmesgpt      claude  1        ok      App    catalyst  untouched  -          order-agent-holmesgpt       12         2013171    30     holmesgpt-claude-1.log      2026-11-19T19:12:48-08:00
-dapr-agents    claude  1        fail    Agent  catalyst  untouched  -          order-agent-dapr-agents     16         2782215    34     dapr-agents-claude-1.log    2026-11-19T19:14:18-08:00
+# slug                     client  attempt  status  kind   via       code       violation  agent_id                    mcp_calls  tokens_in  tools  log                                     finished
+langgraph                  claude  1        ok      Agent  catalyst  untouched  -          order-agent-lg-1847         13         1823790    26     langgraph-claude-1.log                  2026-11-19T18:50:06-08:00
+langgraph                  claude  2        ok      Agent  catalyst  untouched  -          order-agent-lg-1855         16         1957451    30     langgraph-claude-2.log                  2026-11-19T18:58:24-08:00
+langgraph                  claude  3        ok      Agent  catalyst  untouched  -          order-agent-lg-1858         14         1957335    28     langgraph-claude-3.log                  2026-11-19T19:01:18-08:00
+langchain                  claude  1        ok      Agent  catalyst  untouched  -          order-agent-langchain-1907  15         2480197    33     langchain-claude-1.log                  2026-11-19T19:06:02-08:00
+strands                    claude  1        ok      Agent  catalyst  untouched  -          identity                    12         1675414    25     strands-claude-1.log                    2026-11-19T19:06:52-08:00
+adk                        claude  1        ok      Agent  catalyst  untouched  -          order-agent-adk             10         1570172    25     adk-claude-1.log                        2026-11-19T19:07:02-08:00
+crewai                     claude  1        ok      App    catalyst  untouched  -          crewai-orders               8          1585944    23     crewai-claude-1.log                     2026-11-19T19:07:42-08:00
+pydantic-ai                claude  1        ok      App    catalyst  untouched  -          order-agent-pydantic-ai     16         2108207    28     pydantic-ai-claude-1.log                2026-11-19T19:08:52-08:00
+openai-agents              claude  1        ok      App    catalyst  untouched  -          order-agent-openai          12         1452833    23     openai-agents-claude-1.log              2026-11-19T19:09:17-08:00
+smolagents                 claude  1        ok      App    catalyst  untouched  -          order-agent-smolagents      12         1787720    26     smolagents-claude-1.log                 2026-11-19T19:10:37-08:00
+deepagents                 claude  1        ok      Agent  catalyst  untouched  -          order-agent-deepagents      11         1616268    24     deepagents-claude-1.log                 2026-11-19T19:11:32-08:00
+claude-agents              claude  1        ok      Agent  catalyst  untouched  -          app                         15         2543636    33     claude-agents-claude-1.log              2026-11-19T19:11:57-08:00
+holmesgpt                  claude  1        ok      App    catalyst  untouched  -          order-agent-holmesgpt       12         2013171    30     holmesgpt-claude-1.log                  2026-11-19T19:12:48-08:00
+dapr-agents                claude  1        fail    Agent  catalyst  untouched  -          order-agent-dapr-agents     16         2782215    34     dapr-agents-claude-1.log                2026-11-19T19:14:18-08:00
+byoa                       claude  1        ok      Agent  catalyst  untouched  -          order-agent-byoa-1911       13         1599389    25     byoa-claude-1.log                       2026-11-19T19:14:37-08:00
+microsoft-agent-framework  claude  1        ok      Agent  catalyst  changed    -          order-agent-maf             14         1829496    27     microsoft-agent-framework-claude-1.log  2026-11-19T19:14:42-08:00
 ```
