@@ -82,7 +82,7 @@ FRAMEWORKS=(
 IFS=',' read -r -a CLIENTS <<<"${SPIKE_CLIENTS:-claude,codex,copilot}"
 IFS=',' read -r -a ONLY <<<"${SPIKE_ONLY:-}"
 
-LEDGER_HEADER=$'# slug\tclient\tattempt\tstatus\tkind\tvia\tcode\tviolation\tagent_id\tmcp_calls\ttokens_in\ttools\tlog\tfinished'
+LEDGER_HEADER=$'# slug\tclient\tattempt\tstatus\tkind\tvia\tcode\tviolation\tagent_id\tmcp_calls\ttokens_in\ttools\tlog\tfinished\twall_s\ttokens_out\tcredits'
 [[ -f "$LEDGER" ]] || echo "$LEDGER_HEADER" >"$LEDGER"
 
 # ---------- matrix ----------
@@ -201,6 +201,19 @@ preflight() {
     # (mcp list shows the URL, not the org; the model reports org in RESULT)
   fi
 
+  if [[ -n "${SPIKE_MCP_URL:-}" ]]; then
+    if printf '%s\n' "${CLIENTS[@]}" | grep -qx codex; then
+      line=$("$CODEX" mcp list 2>&1 | grep -i diagrid || true)
+      echo "MCP (codex): ${line:-<none>}" | tee -a "$OUT/loop.log"
+      grep -qF "$SPIKE_MCP_URL" <<<"$line" || { echo "Codex diagrid MCP is not on $SPIKE_MCP_URL (~/.codex/config.toml)" >&2; exit 3; }
+    fi
+    if printf '%s\n' "${CLIENTS[@]}" | grep -qx copilot; then
+      line=$(grep -A6 '"diagrid"' "${COPILOT_HOME:-$HOME/.copilot}/mcp-config.json" 2>/dev/null | grep '"url"' || true)
+      echo "MCP (copilot): ${line:-<none>}" | tee -a "$OUT/loop.log"
+      grep -qF "$SPIKE_MCP_URL" <<<"$line" || { echo "Copilot diagrid MCP is not on $SPIKE_MCP_URL (~/.copilot/mcp-config.json)" >&2; exit 3; }
+    fi
+  fi
+
   # CLI and MCP must be the same env/org: `dev run` tunnels only exist in the CLI.
   local cli
   cli=$(diagrid whoami 2>&1 | head -20)
@@ -226,13 +239,18 @@ field() { # log regex -> first match of the value after the label
 CODE_GLOBS=(':(glob)**/*.py' ':(glob)**/pyproject.toml' ':(glob)**/requirements*.txt'
   ':(glob)**/*.ts' ':(glob)**/*.js' ':(glob)**/package.json'
   ':(glob)**/*.go' ':(glob)**/go.mod' ':(glob)**/*.java' ':(glob)**/pom.xml' ':(glob)**/build.gradle*'
-  ':(glob)**/*.cs' ':(glob)**/*.csproj' ':(glob)**/*.rs' ':(glob)**/Cargo.toml')
+  ':(glob)**/*.cs' ':(glob)**/*.csproj' ':(glob)**/*.rs' ':(glob)**/Cargo.toml'
+  # build output and installed dependencies are not "the agent's code" (Mastra node_modules
+  # matched DurableAgent/identity/oauth and produced a false fail-rules in v3)
+  ':(exclude,glob)**/node_modules/**' ':(exclude,glob)**/target/**' ':(exclude,glob)**/bin/**'
+  ':(exclude,glob)**/obj/**' ':(exclude,glob)**/.venv/**' ':(exclude,glob)**/dist/**'
+  ':(exclude,glob)**/build/**' ':(exclude,glob)**/__pycache__/**' ':(exclude,glob)**/.gradle/**')
 VIOLATION_RE='diagrid|WorkflowRunner|GraphRunner|DurableAgent|dapr[._-]ext[._-]workflow|Dapr\.Workflow|DaprWorkflow|workflow_runtime|WorkflowRuntime|oauth|identity|on_behalf|OnBehalf'
 
 grade_diff() { # run_dir diff_out -> sets CODE_CHANGED, VIOLATION
   local run="$1" out="$2" added
   (cd "$run" && git add -A -N . >/dev/null 2>&1
-   git diff --stat -- . ':!.env' ':!.agents' ':!.claude' ':!.codex'
+   git diff --stat -- . ':!.env' ':!.agents' ':!.claude' ':!.codex' ':(exclude,glob)**/node_modules/**' ':(exclude,glob)**/target/**' ':(exclude,glob)**/bin/**' ':(exclude,glob)**/obj/**' ':(exclude,glob)**/.venv/**'
    echo
    git diff -- "${CODE_GLOBS[@]}") >"$out" 2>/dev/null
   added=$(cd "$run" && git diff -U0 -- "${CODE_GLOBS[@]}" 2>/dev/null | grep '^+' | grep -v '^+++')
@@ -282,6 +300,40 @@ PY
 )
 }
 
+# Codex / Copilot report usage at the end of their own output; Claude's comes from
+# session_metrics.py. Sets TOKENS_IN / TOKENS_OUT / CREDITS where the log has them.
+client_usage() { # client log
+  local client="$1" log="$2" v
+  case "$client" in
+    claude)
+      v=$(python3 - "$OUT" "$slug" "$attempt" <<'PY2' 2>/dev/null
+import json, sys, pathlib
+p = pathlib.Path(sys.argv[1]) / f"{sys.argv[2]}-claude-{sys.argv[3]}-metrics.json"
+d = json.loads(p.read_text()); print(d.get("tokens_out", "-"))
+PY2
+)
+      TOKENS_OUT="${v:--}" ;;
+    codex)
+      # "tokens used\n74,416" (total, in+out)
+      v=$(awk '/^tokens used/{getline; gsub(/,/,""); n=$1} END{if(n!="")print n}' "$log")
+      TOKENS_IN="${v:--}"; TOKENS_OUT="(in total)" ;;
+    copilot)
+      # "Tokens     ↑ 888.8k (829.4k cached, …) • ↓ 6.3k (…)" and "AI Credits 1.77 (2m 24s)"
+      v=$(python3 - "$log" <<'PY2' 2>/dev/null
+import re, sys
+t = open(sys.argv[1], errors="replace").read()
+def num(s):
+    m = re.match(r"([\d.]+)\s*([kKmM]?)", s); n = float(m.group(1))
+    return int(n * {"k": 1e3, "K": 1e3, "m": 1e6, "M": 1e6}.get(m.group(2), 1))
+up = re.findall(r"Tokens\s+↑\s*([\d.]+\s*[kKmM]?)", t); down = re.findall(r"↓\s*([\d.]+\s*[kKmM]?)", t)
+cr = re.findall(r"AI Credits\s+([\d.]+)", t)
+print(num(up[-1]) if up else "-", num(down[-1]) if down else "-", cr[-1] if cr else "-")
+PY2
+)
+      read -r TOKENS_IN TOKENS_OUT CREDITS <<<"${v:-- - -}" ;;
+  esac
+}
+
 # ---------- one cell ----------
 
 run_one() {
@@ -289,6 +341,7 @@ run_one() {
   local attempt ts run logfile prompt rc status kind via agent_id
   attempt="${5:-$(( $(attempts "$slug" "$client") + 1 ))}"
   ts=$(date +%Y%m%d-%H%M%S)
+  local cell_t0; cell_t0=$(date +%s)
   echo "=== START $name × $client #$attempt @ $ts ===" | tee -a "$OUT/loop.log"
   printf 'running: %s × %s #%s\nstarted: %s\n' "$name" "$client" "$attempt" "$(date -Iseconds)" >"$OUT/current-cell.txt"
   mkdir -p "$OUT/running"; : >"$OUT/running/${slug}-${client}-${attempt}"
@@ -296,7 +349,7 @@ run_one() {
   [[ "$PARALLEL" -le 1 ]] && cleanup_runs
   AGENTS_BEFORE=""
   if [[ "${SPIKE_DELETE_AGENTS:-0}" == "1" ]]; then
-    AGENTS_BEFORE=$(diagrid agent list --project "$PROJECT" 2>&1 || true)
+    AGENTS_BEFORE=$( { diagrid agent list --project "$PROJECT"; diagrid app list --project "$PROJECT"; } 2>&1 || true)
   fi
 
   run=$("$HERE/new-run.sh" "$path") || { echo "new-run failed" | tee -a "$OUT/loop.log"; return 1; }
@@ -347,7 +400,11 @@ run_one() {
   grade_diff "$run" "$OUT/${slug}-${client}-${attempt}.diff"
   via=$(grade_via "$logfile")
   kind=$(field "$logfile" 'kind[^A-Za-z]{0,20}(Agent|App)\b' | grep -oE '(Agent|App)$' || true); kind="${kind:--}"
-  agent_id=$(field "$logfile" '(agent/app|agent|app) id[^a-z0-9]{0,20}[a-z0-9][a-z0-9-]{2,}' | grep -oE '[a-z0-9][a-z0-9-]{2,}$' || true); agent_id="${agent_id:--}"
+  # first id-looking token after an "agent/app id" label that isn't a filler word
+  # (v3 Strands/Claude Agent SDK logs read "id: identity …" / "app id: app …")
+  agent_id=$(rg -o -i '(agent/app|agent|app) id[^a-z0-9]{0,20}[^\n]{0,80}' "$logfile" 2>/dev/null | head -3 \
+    | grep -oE '[a-z0-9][a-z0-9-]*-[a-z0-9-]+' | grep -viE '^(app-id|agent-id|no-registry|the-)' | head -1 || true)
+  agent_id="${agent_id:--}"
 
   if [[ "$VIOLATION" != "-" ]]; then
     status=fail-rules
@@ -361,12 +418,15 @@ run_one() {
     status=ok
   fi
 
-  MCP_CALLS=-; TOKENS_IN=-; TOOLS=-
+  MCP_CALLS=-; TOKENS_IN=-; TOOLS=-; TOKENS_OUT=-; CREDITS=-
   [[ "$client" == claude ]] && claude_metrics "$run" "$slug" "$attempt"
+  client_usage "$client" "$logfile"
+  local wall_s=$(( $(date +%s) - cell_t0 ))
 
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
     "$slug" "$client" "$attempt" "$status" "$kind" "$via" "$CODE_CHANGED" "$VIOLATION" \
-    "$agent_id" "$MCP_CALLS" "$TOKENS_IN" "$TOOLS" "$(basename "$logfile")" "$(date -Iseconds)" >>"$LEDGER"
+    "$agent_id" "$MCP_CALLS" "$TOKENS_IN" "$TOOLS" "$(basename "$logfile")" "$(date -Iseconds)" \
+    "$wall_s" "$TOKENS_OUT" "$CREDITS" >>"$LEDGER"
   echo "=== $status $name × $client #$attempt (kind=$kind via=$via code=$CODE_CHANGED violation=$VIOLATION) ===" | tee -a "$OUT/loop.log"
 
   if [[ "${SPIKE_DELETE_AGENTS:-0}" == "1" && "$agent_id" != "-" ]]; then
@@ -375,7 +435,11 @@ run_one() {
     if grep -qw -- "$agent_id" <<<"$AGENTS_BEFORE"; then
       echo "keep $agent_id (existed before this cell — reused)" | tee -a "$OUT/loop.log"
     else
-      yes | diagrid agent delete "$agent_id" --project "$PROJECT" >>"$OUT/loop.log" 2>&1 || true
+      if [[ "$kind" == "App" ]]; then
+        yes | diagrid app delete "$agent_id" --project "$PROJECT" >>"$OUT/loop.log" 2>&1 || true
+      else
+        yes | diagrid agent delete "$agent_id" --project "$PROJECT" >>"$OUT/loop.log" 2>&1 || true
+      fi
     fi
   fi
   printf 'last finished: %s × %s #%s (%s)\n' "$name" "$client" "$attempt" "$status" >"$OUT/current-cell.txt"

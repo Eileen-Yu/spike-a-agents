@@ -33,6 +33,7 @@ Paste only the **canonical v3** prompt from [`results/spike-prompt.md`](results/
 SPIKE_ONLY=langgraph,byoa ./run-matrix-loop.sh
 SPIKE_REPEATS=2 SPIKE_DELETE_AGENTS=1 ./run-matrix-loop.sh   # repeats; free-tier headroom
 SPIKE_DRY=1 ./run-matrix-loop.sh              # show queue + prompt only
+./clean-project.sh                            # reset the spike project (lists, asks, then deletes Agents/Apps/topics)
 SPIKE_PARALLEL=4 ./run-matrix-loop.sh        # 4 cells at once (each cleans only its own run dir; port/tunnel contention is environment noise, not a skill finding)
 ```
 
@@ -81,6 +82,7 @@ Workflows = [Spike B / CAP-2784](https://linear.app/diagrid/issue/CAP-2784).
 | Tunnel return path ~10s timeout → 502 for slow agent turns | [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) | v3 Claude Agent SDK |
 | Dapr Agents crashes on undocumented 10-topic cap (auto-subscribes `agent-pubsub`) | [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) | v3 Dapr Agents **fail** |
 | `list_agents` ignores appId filter / partial on UPSTREAM_ERROR | [CAP-2933](https://linear.app/diagrid/issue/CAP-2933) | v3 BYOA, MAF |
+| Run-proof steps unavailable for plain agents; `dev run` reports managed workflow/pubsub for an agent using none | [CAP-2934](https://linear.app/diagrid/issue/CAP-2934) | v3 8 cells |
 
 Free-plan **10/10 identity** is an environment ceiling, not evidence the plugin cannot create Agents.  
 (`agent-registry` missing from `component list` is intentional — managed/reserved; [CAP-2924](https://linear.app/diagrid/issue/CAP-2924) canceled.)

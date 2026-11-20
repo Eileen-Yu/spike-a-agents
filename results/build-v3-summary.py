@@ -97,6 +97,56 @@ def headline(log):
             return redact(line[:220])
     return ""
 
+def _int(v):
+    try: return int(str(v).replace(",", ""))
+    except Exception: return None
+
+def fmt_s(s):
+    return f"{s//60}m {s%60:02d}s" if s is not None else "-"
+
+def batch_windows():
+    """(start, end) wall-clock windows from loop.log, one per runner invocation."""
+    log = OUT / "loop.log"
+    if not log.exists(): return []
+    import datetime as dt
+    wins, start = [], None
+    for line in log.read_text(errors="replace").splitlines():
+        m = re.search(r"matrix v3 start (\S+)", line)
+        if m: start = m.group(1)
+        m2 = re.search(r"(parallel batch done|queue empty|SPIKE_MAX_CELLS=\d+ reached) ?(\S+)?", line)
+        if m2 and start:
+            end = m2.group(2)
+            wins.append((start, end)); start = None
+    return wins
+
+def cost_section(rows):
+    out = ["## Time and token cost", "",
+           "Per cell: `wall` = harness clock from cell start to grading (all clients); Claude also has session wall from `session_metrics.py`.",
+           "Claude `tokens in` = fresh input + cache reads + cache writes (what the model read). Codex reports one total (in+out). Copilot reports ↑/↓ and AI Credits.", "",
+           "| Client | cells | ok | tokens in (sum) | tokens in (avg) | tokens out (sum) | wall (sum) | wall (avg) | wall (min–max) | AI credits |",
+           "|---|---:|---:|---:|---:|---:|---|---|---|---:|"]
+    tot_in = tot_out = tot_w = 0; tot_n = 0
+    for c in CLIENTS:
+        rs = [r for r in rows if r["client"] == c]
+        if not rs: continue
+        ins = [x for x in (_int(r.get("tokens_in")) for r in rs) if x is not None]
+        outs = [x for x in (_int(r.get("tokens_out")) for r in rs) if x is not None]
+        ws = [x for x in (_int(r.get("wall_s")) for r in rs) if x is not None]
+        cr = [float(r["credits"]) for r in rs if r.get("credits") not in (None, "", "-")]
+        ok = sum(1 for r in rs if r["status"] == "ok")
+        out.append(f"| {c} | {len(rs)} | {ok} | {sum(ins):,} | {(sum(ins)//len(ins)) if ins else 0:,} | {sum(outs):,} | "
+                   f"{fmt_s(sum(ws)) if ws else '-'} | {fmt_s(sum(ws)//len(ws)) if ws else '-'} | "
+                   f"{(fmt_s(min(ws))+' – '+fmt_s(max(ws))) if ws else '-'} | {('%.2f' % sum(cr)) if cr else '-'} |")
+        tot_in += sum(ins); tot_out += sum(outs); tot_w += sum(ws); tot_n += len(rs)
+    out.append(f"| **all** | {tot_n} | | **{tot_in:,}** | | **{tot_out:,}** | **{fmt_s(tot_w)}** (cell-time) | | | |")
+    wins = batch_windows()
+    if wins:
+        done = [(a, b) for a, b in wins if b]
+        if done:
+            out += ["", "Batch wall clock (completed runner invocations): " + "; ".join(f"{a[11:16]} → {b[11:16]} ({a[:10]})" for a, b in done)]
+    out.append("")
+    return out
+
 def status_cell(r):
     s = r.get("status", "")
     return f"**{s}**" if s == "ok" else f"**{s}** ❗" if s.startswith("fail") else s
@@ -147,9 +197,9 @@ def build():
         tab.append("| " + " | ".join([
             NAMES.get(r["slug"], r["slug"]), r["client"], r["attempt"], status_cell(r), r.get("kind", "-"),
             r.get("via", "-"), r.get("code", "-"), r.get("violation", "-"), f"`{r.get('agent_id','-')}`",
-            r.get("mcp_calls", "-"), m.get("tokens in", r.get("tokens_in", "-")), m.get("tokens out", "-"),
+            r.get("mcp_calls", "-"), m.get("tokens in", r.get("tokens_in", "-")), m.get("tokens out", r.get("tokens_out", "-")),
             m.get("model requests", "-"), m.get("tool calls (all / catalyst / failed / repeated)", r.get("tools", "-")),
-            m.get("skills (bytes)", "-"), m.get("wall time", "-"),
+            m.get("skills (bytes)", "-"), m.get("wall time", fmt_s(_int(r.get("wall_s")))),
         ]) + " |")
 
     status_line = (f"**{total_done}/{total_planned} planned cells run** · ok {ok} · fail {len(fails)} · "
@@ -177,6 +227,7 @@ def build():
         "",
         *mat,
         "",
+        *cost_section(rows),
         "## Runs",
         "",
         *tab,
@@ -203,6 +254,7 @@ def build():
         "",
         *mat,
         "",
+        *cost_section(rows),
         "<!-- v3:end -->",
     ]
     text = SUMMARY.read_text() if SUMMARY.exists() else "# Spike A — consolidated results matrix\n"

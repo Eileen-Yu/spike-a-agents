@@ -1,8 +1,4 @@
- target/.rustc_info.json                            |   1 +
- target/CACHEDIR.TAG                                |   3 +
- target/release/.cargo-artifact-lock                |   0
- target/release/.cargo-build-lock                   |   0
- target/release/.cargo-lock                         |   0
+# harness re-grade 2026-11-19: dropped 2 files under build/dependency dirs (node_modules, target, bin, obj, ...)
  .../fingerprint/dep-lib-async_trait                | Bin 0 -> 14 bytes
  .../949fb34f18690a6a/fingerprint/invoked.timestamp |   1 +
  .../949fb34f18690a6a/fingerprint/lib-async_trait   |   1 +
@@ -117,8 +113,6 @@
  .../run-build-script-build-script-build.json       |   1 +
  .../85bf622f6f65f933/run/invoked.timestamp         |   1 +
  .../httparse/85bf622f6f65f933/run/root-output      |   1 +
- .../build/httparse/85bf622f6f65f933/run/stderr     |   0
- .../build/httparse/85bf622f6f65f933/run/stdout     |   2 +
  .../c993aadc5e9db02c/fingerprint/dep-lib-httparse  | Bin 0 -> 14 bytes
  .../c993aadc5e9db02c/fingerprint/invoked.timestamp |   1 +
  .../c993aadc5e9db02c/fingerprint/lib-httparse      |   1 +
@@ -177,12 +171,8 @@
  .../run-build-script-build-script-build            |   1 +
  .../run-build-script-build-script-build.json       |   1 +
  .../libc/78100c63275ac748/run/invoked.timestamp    |   1 +
- .../build/libc/78100c63275ac748/run/root-output    |   1 +
- .../release/build/libc/78100c63275ac748/run/stderr |   0
- .../release/build/libc/78100c63275ac748/run/stdout |  29 +++
  .../log/643a7d9737ffb7c2/fingerprint/dep-lib-log   | Bin 0 -> 14 bytes
  .../643a7d9737ffb7c2/fingerprint/invoked.timestamp |   1 +
- .../build/log/643a7d9737ffb7c2/fingerprint/lib-log |   1 +
  .../log/643a7d9737ffb7c2/fingerprint/lib-log.json  |   1 +
  .../643a7d9737ffb7c2/fingerprint/output-lib-log    |   1 +
  .../out/liblog-643a7d9737ffb7c2.rlib               | Bin 0 -> 220392 bytes
@@ -214,7 +204,6 @@
  .../989801bf708c00dc/out/mime-989801bf708c00dc.d   |   8 +
  .../mio/8d7b0a9729a972bb/fingerprint/dep-lib-mio   | Bin 0 -> 14 bytes
  .../8d7b0a9729a972bb/fingerprint/invoked.timestamp |   1 +
- .../build/mio/8d7b0a9729a972bb/fingerprint/lib-mio |   1 +
  .../mio/8d7b0a9729a972bb/fingerprint/lib-mio.json  |   1 +
  .../8d7b0a9729a972bb/fingerprint/output-lib-mio    |   1 +
  .../out/libmio-8d7b0a9729a972bb.rlib               | Bin 0 -> 599752 bytes
@@ -270,8 +259,6 @@
  .../run-build-script-build-script-build.json       |   1 +
  .../f9eb95922d1cd634/run/invoked.timestamp         |   1 +
  .../proc-macro2/f9eb95922d1cd634/run/root-output   |   1 +
- .../build/proc-macro2/f9eb95922d1cd634/run/stderr  |   0
- .../build/proc-macro2/f9eb95922d1cd634/run/stdout  |  23 +++
  .../fingerprint/build-script-build-script-build    |   1 +
  .../build-script-build-script-build.json           |   1 +
  .../dep-build-script-build-script-build            | Bin 0 -> 14 bytes
@@ -282,9 +269,6 @@
  .../run-build-script-build-script-build            |   1 +
  .../run-build-script-build-script-build.json       |   1 +
  .../quote/7ced08121f0bb38c/run/invoked.timestamp   |   1 +
- .../build/quote/7ced08121f0bb38c/run/root-output   |   1 +
- .../build/quote/7ced08121f0bb38c/run/stderr        |   0
- .../build/quote/7ced08121f0bb38c/run/stdout        |   2 +
  .../b347148ba6df7e8c/fingerprint/dep-lib-quote     | Bin 0 -> 14 bytes
  .../b347148ba6df7e8c/fingerprint/invoked.timestamp |   1 +
  .../quote/b347148ba6df7e8c/fingerprint/lib-quote   |   1 +
@@ -312,11 +296,8 @@
  .../rustversion/ab0f42a53201883e/out/version.expr  |   5 +
  .../ab0f42a53201883e/run/invoked.timestamp         |   1 +
  .../rustversion/ab0f42a53201883e/run/root-output   |   1 +
- .../build/rustversion/ab0f42a53201883e/run/stderr  |   0
- .../build/rustversion/ab0f42a53201883e/run/stdout  |   3 +
  .../ryu/f22debd85735f94d/fingerprint/dep-lib-ryu   | Bin 0 -> 14 bytes
  .../f22debd85735f94d/fingerprint/invoked.timestamp |   1 +
- .../build/ryu/f22debd85735f94d/fingerprint/lib-ryu |   1 +
  .../ryu/f22debd85735f94d/fingerprint/lib-ryu.json  |   1 +
  .../f22debd85735f94d/fingerprint/output-lib-ryu    |   1 +
  .../out/libryu-f22debd85735f94d.rlib               | Bin 0 -> 78496 bytes
@@ -339,11 +320,7 @@
  .../4f2a07e867a1600b/out/serde-4f2a07e867a1600b.d  |  14 ++
  .../run-build-script-build-script-build            |   1 +
  .../run-build-script-build-script-build.json       |   1 +
- .../build/serde/c2e0bc0866e9883a/out/private.rs    |   6 +
  .../serde/c2e0bc0866e9883a/run/invoked.timestamp   |   1 +
- .../build/serde/c2e0bc0866e9883a/run/root-output   |   1 +
- .../build/serde/c2e0bc0866e9883a/run/stderr        |   0
- .../build/serde/c2e0bc0866e9883a/run/stdout        |  13 ++
  .../fingerprint/dep-lib-serde_core                 | Bin 0 -> 76 bytes
  .../140e0a5e15f6cbb1/fingerprint/invoked.timestamp |   1 +
  .../140e0a5e15f6cbb1/fingerprint/lib-serde_core    |   1 +
@@ -364,8 +341,6 @@
  .../serde_core/8f2c59d5293031aa/out/private.rs     |   5 +
  .../8f2c59d5293031aa/run/invoked.timestamp         |   1 +
  .../serde_core/8f2c59d5293031aa/run/root-output    |   1 +
- .../build/serde_core/8f2c59d5293031aa/run/stderr   |   0
- .../build/serde_core/8f2c59d5293031aa/run/stdout   |  11 +
  .../fingerprint/dep-lib-serde_derive               | Bin 0 -> 14 bytes
  .../22cb09889c17255d/fingerprint/invoked.timestamp |   1 +
  .../22cb09889c17255d/fingerprint/lib-serde_derive  |   1 +
@@ -377,8 +352,6 @@
  .../run-build-script-build-script-build.json       |   1 +
  .../1824918809a71f08/run/invoked.timestamp         |   1 +
  .../serde_json/1824918809a71f08/run/root-output    |   1 +
- .../build/serde_json/1824918809a71f08/run/stderr   |   0
- .../build/serde_json/1824918809a71f08/run/stdout   |   3 +
  .../fingerprint/build-script-build-script-build    |   1 +
  .../build-script-build-script-build.json           |   1 +
  .../dep-build-script-build-script-build            | Bin 0 -> 14 bytes
@@ -444,7 +417,6 @@
  .../out/socket2-1c503a805e5e04ee.d                 |  11 +
  .../syn/edb0bfc93461b81d/fingerprint/dep-lib-syn   | Bin 0 -> 14 bytes
  .../edb0bfc93461b81d/fingerprint/invoked.timestamp |   1 +
- .../build/syn/edb0bfc93461b81d/fingerprint/lib-syn |   1 +
  .../syn/edb0bfc93461b81d/fingerprint/lib-syn.json  |   1 +
  .../edb0bfc93461b81d/fingerprint/output-lib-syn    |   1 +
  .../out/libsyn-edb0bfc93461b81d.rlib               | Bin 0 -> 7723864 bytes
@@ -539,33 +511,5 @@
  .../run-build-script-build-script-build            |   1 +
  .../run-build-script-build-script-build.json       |   1 +
  .../zmij/ce90e80631f88980/run/invoked.timestamp    |   1 +
- .../build/zmij/ce90e80631f88980/run/root-output    |   1 +
- .../release/build/zmij/ce90e80631f88980/run/stderr |   0
- .../release/build/zmij/ce90e80631f88980/run/stdout |   4 +
- target/release/order-agent-goose                   | Bin 0 -> 1959584 bytes
- target/release/order-agent-goose.d                 |   1 +
  546 files changed, 1700 insertions(+)
 
-diff --git a/target/release/build/serde/c2e0bc0866e9883a/out/private.rs b/target/release/build/serde/c2e0bc0866e9883a/out/private.rs
-new file mode 100644
-index 0000000..9200846
---- /dev/null
-+++ b/target/release/build/serde/c2e0bc0866e9883a/out/private.rs
-@@ -0,0 +1,6 @@
-+#[doc(hidden)]
-+pub mod __private229 {
-+    #[doc(hidden)]
-+    pub use crate::private::*;
-+}
-+use serde_core::__private229 as serde_core_private;
-diff --git a/target/release/build/serde_core/8f2c59d5293031aa/out/private.rs b/target/release/build/serde_core/8f2c59d5293031aa/out/private.rs
-new file mode 100644
-index 0000000..2da7a58
---- /dev/null
-+++ b/target/release/build/serde_core/8f2c59d5293031aa/out/private.rs
-@@ -0,0 +1,5 @@
-+#[doc(hidden)]
-+pub mod __private229 {
-+    #[doc(hidden)]
-+    pub use crate::private::*;
-+}
