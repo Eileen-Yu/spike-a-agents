@@ -1,0 +1,8 @@
+# slug	client	status	note
+langgraph	claude	ok	1/3 Agent order-agent
+langgraph	codex	ok	App drift
+langgraph	copilot	ok	App drift
+langchain	claude	ok	
+crewai	claude	ok	
+adk	claude	ok	
+byoa	claude	ok	App drift

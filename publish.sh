@@ -10,15 +10,10 @@ cd "$HERE" || exit 1
 OUT="${SPIKE_OUT:-$HERE/results/plugin-quality-v3}"
 python3 results/build-v3-summary.py "$OUT" || echo "summary build failed (continuing)"
 
-git add -- README.md .gitignore run-matrix-loop.sh publish.sh new-run.sh session_metrics.py \
-  results/spike-prompt.md results/SUMMARY.md results/build-v3-summary.py 2>/dev/null
-git add -u -- python dotnet java go typescript rust 2>/dev/null
-for d in "$OUT" "$HERE/results/plugin-quality-v3-envmismatch"; do
-  [[ -d "$d" ]] || continue
-  git add -- "$d"/*.md "$d"/*.tsv "$d"/*.diff "$d"/*-metrics.json 2>/dev/null
-done
+# Everything that isn't ignored. .gitignore keeps logs, .env and run state out.
+git add -A -- . 2>/dev/null
 # belt and braces: never commit a log or env file
-git reset -q -- '*.log' '*.env' '.env' 2>/dev/null
+git reset -q -- '*.log' '*.env' '.env' '**/.env' 2>/dev/null
 
 if git diff --cached --quiet; then
   echo "publish: nothing to commit"; exit 0

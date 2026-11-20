@@ -1,0 +1,26 @@
+{
+  "session": "db64dd65-a432-40a0-96df-e8b37c6b605f",
+  "subagent_files": 0,
+  "client": "claude-code 2.1.329",
+  "model": "claude-opus-5-5",
+  "plugin": "0.10.2",
+  "tokens_in": 476674,
+  "tokens_out": 4961,
+  "model_requests": 12,
+  "tool_calls": 12,
+  "catalyst_calls": 0,
+  "failed_calls": 0,
+  "repeated_calls": 0,
+  "user_turns": 0,
+  "skill_bytes": 15177,
+  "wall_seconds": 169,
+  "tools": {
+    "Bash": 9,
+    "ToolSearch": 2,
+    "Skill": 1
+  },
+  "catalyst_tools": {},
+  "skills": {
+    "diagrid-agent-scaffold": 15177
+  }
+}

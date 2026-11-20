@@ -1,77 +1,57 @@
-# Spike A — plugin / skills quality test
+# Spike A — can the Diagrid plugin connect an existing agent?
 
-[CAP-2783](https://linear.app/diagrid/issue/CAP-2783): can the Diagrid plugin take a **plain** agent (no workflow wrapper, no identity middleware) and run it on Catalyst?
+[CAP-2783](https://linear.app/diagrid/issue/CAP-2783). Give a coding agent a plain agent that knows nothing about Catalyst, in each supported framework, and say "deploy it to Diagrid Catalyst and run it there, as-is". Using **only the plugin's skills and MCP**, can it get one request **through Catalyst** to answer "order 42 → shipped"? No workflow runner and no identity middleware: those are week 2 (CAP-2550, CAP-2788).
 
-**Spike A = quality test** of the Diagrid plugin + skills. **Pass** = ask about order **42**, answer contains **shipped**.
+## Result (v3, 2026-11-19)
 
-Do **not** put how-to into the agent prompt (CLI recipes, MCP vs CLI, PATH, whoami, ports, healthz). Those are what the plugin must supply; crib notes invalidate the score.
+**Claude 22/22 · Codex 2/2 · Copilot 2/2.** Every agent got there, but by improvising: **11/27 runs created an App instead of an Agent**, and a connect costs **~2M tokens / ~3 min** (Claude).
 
-| Layer | Role |
+| | |
 |---|---|
-| Spike A plain samples (this repo) | **Quality score** — same `get_order_status` agent × client |
-| [`catalyst-quickstarts`](https://github.com/diagridio/catalyst-quickstarts) `agents/*` | Coverage only (durable demos) |
-| `*-ai` repo `examples/` | Coverage only (often local `dapr run`) |
+| One-page results (matrix, cost, findings) | [`results/SUMMARY.md`](results/SUMMARY.md) |
+| Findings with evidence counts → 7 tickets | [`results/plugin-quality-v3/FINDINGS.md`](results/plugin-quality-v3/FINDINGS.md) |
+| Every run (tokens, time, MCP calls, diff, RESULT) | [`results/plugin-quality-v3/SCORECARD.md`](results/plugin-quality-v3/SCORECARD.md) |
+| The prompt and grading rules | [`results/spike-prompt.md`](results/spike-prompt.md) |
+| Coverage (official quickstarts 15/15, crash recovery 3/3, `*-ai` examples) | [`results/coverage/`](results/coverage/) |
+| Earlier, superseded runs (week-1 57/57, v1, v2) | [`results/archive/`](results/archive/) |
 
-Full tables: [`results/SUMMARY.md`](results/SUMMARY.md). Triage: [CAP-2785](https://linear.app/diagrid/issue/CAP-2785).
+## What's here
 
-## How to test
-
-**Experimenter setup** (you, not the prompt): use a plan with App ID headroom (e.g. Cloud Plus). Free **10/10** forces Agent reuse and muddies “create works”.
-
-```sh
-cp .env.example .env
-./new-run.sh python/langgraph   # → ~/spike-runs/langgraph-<ts>
-cd ~/spike-runs/langgraph-<ts>
+```
+python/ dotnet/ java/ go/ typescript/ rust/   19 plain sample agents + python/byoa (same order-status tool, POST /run)
+run-matrix-loop.sh    runs framework × client cells, grades them, writes the ledger
+clean-project.sh      resets the Catalyst project (Agents, Apps, topics) — lists and asks first
+new-run.sh            copies one sample into a fresh git repo under ~/spike-runs
+publish.sh            regenerates SUMMARY/SCORECARD and commits + pushes (logs never)
+session_metrics.py    tokens / tool calls / skills from a Claude Code session log
+results/build-v3-summary.py   builds SUMMARY.md and SCORECARD.md from the ledger
+.agents/skills/ + skills-lock.json   pinned skill copy given to Codex/Copilot run dirs
 ```
 
-Paste only the **canonical v3** prompt from [`results/spike-prompt.md`](results/spike-prompt.md). Do not pre-patch the sample. Do not coach CLI/MCP/auth or Agent-vs-App (skills must supply that).
+## How to run
 
-**Batch (v3):** sign in to the Diagrid MCP server once (`claude` → `/mcp` → diagrid → authenticate; the runner refuses to start otherwise), then:
+1. **One environment for everything.** Claude's plugin MCP, Codex, Copilot and the `diagrid` CLI must all point at the same org.
+   ```sh
+   cp .env.example .env    # OPENAI_API_KEY etc. — read by the sample, never passed to the coding client
+   export SPIKE_MCP_URL=https://mcp.cloud.staging.diagrid.dev/mcp DIAGRID_MCP_URL=$SPIKE_MCP_URL \
+          SPIKE_ORG=eileen-plus-test SPIKE_DELETE_AGENTS=1
+   diagrid login                       # CLI on the same org
+   claude                              # /mcp → plugin:diagrid:diagrid → authenticate
+   # Codex: url in ~/.codex/config.toml (client_id "codex"), then: codex mcp login diagrid
+   # Copilot: url in ~/.copilot/mcp-config.json (oauthClientId "copilot-cli"), then /mcp inside copilot
+   ```
+2. **Run.** The preflight refuses to start if any client or the CLI is on another environment or org.
+   ```sh
+   ./clean-project.sh
+   SPIKE_DRY=1 ./run-matrix-loop.sh                       # show the queue and the prompt
+   SPIKE_PARALLEL=6 ./run-matrix-loop.sh                   # spec matrix (25 cells)
+   SPIKE_FULL_MATRIX=1 SPIKE_PARALLEL=6 ./run-matrix-loop.sh   # all 19 frameworks × 3 clients
+   ```
+   * Only one runner can run at a time; a second one exits.
+   * Ctrl-C stops every client and tunnel.
+   * A rerun picks up from `results/plugin-quality-v3/ledger.tsv`.
+   * `SPIKE_EXTRA=slug:client:N` adds attempts to a cell.
 
-```sh
-./run-matrix-loop.sh                          # spec matrix → results/plugin-quality-v3/ledger.tsv
-SPIKE_ONLY=langgraph,byoa ./run-matrix-loop.sh
-SPIKE_REPEATS=2 SPIKE_DELETE_AGENTS=1 ./run-matrix-loop.sh   # repeats; free-tier headroom
-SPIKE_DRY=1 ./run-matrix-loop.sh              # show queue + prompt only
-./clean-project.sh                            # reset the spike project (lists, asks, then deletes Agents/Apps/topics)
-SPIKE_PARALLEL=4 ./run-matrix-loop.sh        # 4 cells at once (each cleans only its own run dir; port/tunnel contention is environment noise, not a skill finding)
-```
+How a run is graded is in [`results/spike-prompt.md`](results/spike-prompt.md#graded-by-the-harness-not-by-the-model). In short: the git diff, whether the proof went through Catalyst, the resource kind, and the cost.
 
-The runner grades from outside the model: `git diff` of code/dependency files (any `diagrid` SDK, runner, durable or identity import = `fail-rules`), whether the proof went through Catalyst (`via`), resource kind, and Claude session metrics incl. MCP calls. `.env` is **not** exported into the coding client (it switched Claude to API-key auth in v2); the agent reads `.env` itself. Resumable: re-run and it continues from the ledger.
-
-Samples: `python/`, `dotnet/`, `java/`, `go/`, `typescript/`, `rust/` (+ `python/byoa`). Batch: `./run-matrix-loop.sh`.
-
-Quickstarts / `*-ai` examples: clone those repos and follow their READMEs (separate from this plain matrix).
-
-## Results / conclusion
-
-**Plugin quality v3 (current, staging Plus, MCP on):** live matrix in [`results/SUMMARY.md`](results/SUMMARY.md) § v3 · per-run table + redacted RESULTs in [`results/plugin-quality-v3/SCORECARD.md`](results/plugin-quality-v3/SCORECARD.md) · findings → tickets in [`results/plugin-quality-v3/FINDINGS.md`](results/plugin-quality-v3/FINDINGS.md). Both regenerate and push after every cell (`publish.sh`). Everything below is earlier, superseded evidence.
-
-**Quality bar ≠ shipped.** Cookbook-free Plus runs can still get order-42 **shipped**, but via raw CLI (`tools_mcp=0`). Without Prefer-Agent in the prompt, cells drift to plain **`App`** (v2: LangGraph+CrewAI App, BYOA Agent so far).
-
-Full tables + verdict: [`results/SUMMARY.md`](results/SUMMARY.md).
-
-| Pass | What it means |
-|---|---|
-| Quality v2 (canonical prompt, no Prefer-Agent) | **5/5 shipped** · Agent 3 · App 2 — `plugin-quality-plus-v2-no-prefer-agent/` |
-| Quality v1 (Prefer-Agent still in prompt) | 5/5 shipped · all Agent — App drift hidden · `plugin-quality-plus/` |
-| Week-1 matrix 57/57 | Old crib prompts + free 10/10 reuse — **not** quality score |
-| Quickstarts 15/15 · crash 3/3 · `*-ai` sample | Coverage only (durable / local dapr) |
-
-Workflows = [Spike B / CAP-2784](https://linear.app/diagrid/issue/CAP-2784).
-
-## What to improve next
-
-Spike A findings, consolidated into 7 tickets:
-
-| Ticket | What | Priority |
-|---|---|---|
-| [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) | Skills have no first-class "connect an existing agent" path (App vs Agent, where code runs, proving a run, naming, project) | Urgent |
-| [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) | Tunnel return path ~10s timeout → 502 on slow agent turns | High |
-| [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) | Credentials end up in agent transcripts | High |
-| [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) | Invisible quotas (pub/sub 10-topic cap, identity cap) | High |
-| [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) | MCP vs CLI env/org mismatch, no CLI fallback, `DIAGRID_MCP_URL` undocumented | High |
-| [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) | MCP/CLI behaviour misleads agents (readiness, side effects, filters, dry run, console URL) | Medium |
-| [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) | Quickstart / example READMEs miss prerequisites | Medium |
-
-Merged on 2026-11-19 (marked duplicate): 2877, 2878, 2927, 2930, 2934 → 2876 · 2933, 2922 → 2929 · 2928 → 2932 · 2925 → 2921 · 2919, 2923 → 2920. CAP-2924 canceled.
+**Logs never leave this machine.** They can contain credentials, so `*.log` is gitignored everywhere.

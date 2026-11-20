@@ -1,6 +1,6 @@
 # Spike A — results ([CAP-2783](https://linear.app/diagrid/issue/CAP-2783))
 
-_Updated 2026-11-19 20:10 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
+_Updated 2026-11-19 20:14 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
 
 **Current run = v3:** user-voice prompt ([`spike-prompt.md`](spike-prompt.md)), plugin MCP signed in, staging Plus `eileen-plus-test`/`default`, graded outside the model (git diff, proof path). Plugin 0.10.2, Claude = claude-opus-5-5.
 
@@ -40,7 +40,7 @@ Tokens in = everything the model read (incl. cache). Time = harness clock per ce
 | codex | 2 | 2 | 99k | 4m 46s | 198k | 9m 33s |
 | copilot | 2 | 2 | 1.6M | 6m 06s | 3.1M | 12m 13s |
 
-## Top findings
+## Findings (7 tickets)
 
 1. **Skills have no first-class "connect an existing agent" path**: App vs Agent contradicts (landed on App: Claude 8/21, Codex 2/2, Copilot 1/2), skills never say Catalyst doesn't host your code, no documented way to prove a run, name checks mislead — [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) (Urgent)
 2. **Tunnel return path times out at ~10s → HTTP 502** on slow agent turns; Agent kind has no timeout setting — [CAP-2931](https://linear.app/diagrid/issue/CAP-2931)
@@ -50,7 +50,7 @@ Tokens in = everything the model read (incl. cache). Time = harness clock per ce
 6. **MCP/CLI behaviour misleads**: readiness, silent side effects, list filters, dry run, console URL — [CAP-2929](https://linear.app/diagrid/issue/CAP-2929)
 7. **Cost**: ~1.9M tokens / ~3 min per connect (≈ week-1 baseline); Copilot 4–8 min — [CAP-2541](https://linear.app/diagrid/issue/CAP-2541)
 
-All findings → tickets: [`plugin-quality-v3/FINDINGS.md`](plugin-quality-v3/FINDINGS.md).
+Evidence counts per finding: [`plugin-quality-v3/FINDINGS.md`](plugin-quality-v3/FINDINGS.md).
 
 ## Coverage (separate from the quality score)
 
@@ -58,7 +58,7 @@ All findings → tickets: [`plugin-quality-v3/FINDINGS.md`](plugin-quality-v3/FI
 - Crash recovery (LangGraph, CrewAI, Mastra): **3/3** crash + resume
 - `*-ai/examples` sample: Mastra, Eino, Goose ok; python-ai LangGraph needs Dapr ≥ 1.18 ([CAP-2920](https://linear.app/diagrid/issue/CAP-2920))
 
-Details: [`archive/SUMMARY-pre-v3.md`](archive/SUMMARY-pre-v3.md#official-quickstarts-coverage-plus).
+Ledgers: [`coverage/`](coverage/) · details in [`archive/SUMMARY-pre-v3.md`](archive/SUMMARY-pre-v3.md#official-quickstarts-coverage-plus).
 
 ## Earlier runs (superseded, not a quality score)
 

@@ -1,0 +1,6 @@
+slug	result	kind	skills_mcp_notes	log
+langgraph	ok	-	RESULT deploy:        ok run:           ok   (answer contains "shipped") project:       default  (staging org eileen-plus-test) resource kind: Agent agent/app id:  order-agent-spike-a  (no registry ag	langgraph.log
+byoa	ok	-	RESULT deploy:         ok run:            ok   — POST /v1.0/invoke/order-agent-byoa/method/run → 200                        {"answer":"The status of order 42 is that it has been shipped and is sch	byoa.log
+crewai	ok	-	RESULT deploy:         ok run:            ok. POST /run "What is the status of order 42?" sent through Catalyst                 service invocation (spike-caller -> order-agent-crewai) returned HTTP 20	crewai.log
+mastra	ok	-	RESULT deploy: ok run:    ok project:        default (org eileen-plus-test, staging API) resource kind:  Agent agent id:       order-agent-mastra (App ID order-agent-mastra; the Agent status was "read	mastra.log
+eino	ok	-	RESULT deploy: ok run: ok project: default (org eileen-plus-test, staging) resource kind: Agent agent/app id: order-agent-eino ```  The sample is running on Diagrid behind an `Agent` resource, and a r	eino.log

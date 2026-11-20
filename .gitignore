@@ -3,6 +3,17 @@
 .env.*
 !.env.example
 
+# Client transcripts can contain credentials (an agent printed CLI tokens once,
+# Codex sometimes dumps .env). Keep every log local.
+*.log
+*.abort
+*.stdout
+*.runpath
+**/current-cell.txt
+**/running/
+**/.publish.lock
+loop.pid
+
 # Local / generated
 .venv/
 **/__pycache__/
@@ -12,29 +23,7 @@ target/
 bin/
 obj/
 .DS_Store
-*.log.bak
+*.tmp
 
-# Per-run working copies live outside this repo (~/spike-runs).
-# If anyone drops one here by mistake:
+# Per-run working copies live outside this repo (~/spike-runs)
 spike-runs/
-
-# Full client transcripts — Codex often dumps .env (API keys). Keep local only.
-results/*-claude.log
-results/*-codex.log
-results/*-copilot.log
-results/*-claude-*.log
-results/*-codex-*.log
-results/*-copilot-*.log
-results/langgraph-app.log
-results/langgraph-tunnel.log
-results/langgraph-health-fix.log
-results/*.runpath
-results/current-cell.txt
-results/loop.pid
-results/done.tsv.bak*
-results/loop.log
-
-# v3 batch transcripts can contain credentials the coding agent printed
-results/plugin-quality-*/*.log
-results/plugin-quality-*/*.runpath
-results/plugin-quality-*/current-cell.txt

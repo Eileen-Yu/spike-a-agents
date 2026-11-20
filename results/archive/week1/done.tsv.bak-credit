@@ -1,0 +1,132 @@
+# slug	client	status	note
+langgraph	claude	ok	1/3 Agent order-agent
+langgraph	codex	ok	App drift
+langgraph	copilot	ok	App drift
+langchain	claude	ok	
+crewai	claude	ok	
+adk	claude	ok	
+byoa	claude	ok	App drift
+strands	claude	ok	Agent strands-order-agent · see strands-claude.log
+strands	claude	ok	Agent · see strands-claude.log
+pydantic-ai	claude	ok	see pydantic-ai-claude.log
+openai-agents	claude	ok	see openai-agents-claude.log
+claude-agents	claude	ok	Agent · see claude-agents-claude.log
+smolagents	claude	ok	Agent · see smolagents-claude.log
+deepagents	claude	fail	rc=0 see deepagents-claude.log
+deepagents	claude	ok	Agent · see deepagents-claude.log
+holmesgpt	claude	ok	Agent · see holmesgpt-claude.log
+dapr-agents	claude	ok	Agent · see dapr-agents-claude.log
+microsoft-agent-framework	claude	ok	Agent · see microsoft-agent-framework-claude.log
+spring-ai	claude	ok	Agent · see spring-ai-claude.log
+langchaingo	claude	ok	see langchaingo-claude.log
+eino	claude	ok	Agent · see eino-claude.log
+mastra	claude	fail	rc=0 see mastra-claude.log
+mastra	claude	ok	Agent · see mastra-claude.log
+goose	claude	fail	rc=0 see goose-claude.log
+goose	claude	ok	Agent · see goose-claude.log
+langchain	codex	ok	Agent · see langchain-codex.log
+langchain	copilot	ok	see langchain-copilot.log
+crewai	codex	ok	Agent · see crewai-codex.log
+crewai	copilot	ok	Agent · see crewai-copilot.log
+adk	codex	ok	Agent · see adk-codex.log
+adk	copilot	ok	Agent · see adk-copilot.log
+strands	codex	ok	Agent · see strands-codex.log
+strands	copilot	ok	see strands-copilot.log
+pydantic-ai	codex	ok	Agent · see pydantic-ai-codex.log
+pydantic-ai	copilot	ok	Agent · see pydantic-ai-copilot.log
+openai-agents	codex	ok	Agent · see openai-agents-codex.log
+openai-agents	copilot	ok	Agent · see openai-agents-copilot.log
+claude-agents	codex	ok	Agent · see claude-agents-codex.log
+claude-agents	copilot	ok	see claude-agents-copilot.log
+smolagents	codex	ok	Agent · see smolagents-codex.log
+smolagents	copilot	ok	see smolagents-copilot.log
+deepagents	codex	ok	Agent · see deepagents-codex.log
+deepagents	copilot	ok	see deepagents-copilot.log
+holmesgpt	codex	ok	Agent · see holmesgpt-codex.log
+holmesgpt	copilot	ok	see holmesgpt-copilot.log
+dapr-agents	codex	ok	Agent · see dapr-agents-codex.log
+dapr-agents	copilot	ok	App drift · see dapr-agents-copilot.log
+byoa	codex	ok	Agent · see byoa-codex.log
+byoa	copilot	ok	Agent · see byoa-copilot.log
+microsoft-agent-framework	codex	ok	Agent · see microsoft-agent-framework-codex.log
+microsoft-agent-framework	copilot	ok	see microsoft-agent-framework-copilot.log
+spring-ai	codex	ok	Agent · see spring-ai-codex.log
+spring-ai	copilot	ok	see spring-ai-copilot.log
+langchaingo	codex	ok	Agent · see langchaingo-codex.log
+langchaingo	copilot	ok	see langchaingo-copilot.log
+eino	codex	ok	Agent · see eino-codex.log
+eino	copilot	ok	see eino-copilot.log
+mastra	codex	ok	Agent · see mastra-codex.log
+mastra	copilot	ok	Agent · see mastra-copilot.log
+goose	codex	ok	Agent · see goose-codex.log
+goose	copilot	ok	see goose-copilot.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=1 see langgraph-claude.log
+langgraph	claude	fail	rc=143 see langgraph-claude.log
+langgraph	claude	blocked	Credit balance too low — need 2 more variance runs (have 1/3)
