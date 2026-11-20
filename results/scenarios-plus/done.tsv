@@ -1,0 +1,4 @@
+slug	crash	resume	notes	log
+langgraph-crash	ok	ok	gala-42 self-kill mid STEP2; restart resumed; re-issue 200 booking confirmed	langgraph-crash.log
+crewai-crash	ok	ok	**RESULT**  - **crash_path:** ok — the app killed itself 8s into `step_two_compare` (exit code 1, curl got `Empty reply from server`). - **resume:** ok — af	crewai-crash.log
+mastra-crash	ok	ok	## RESULT  | | | |---|---| | **crash_path** | **ok** | | **resume** | **ok** | | **project** | `default` (org `eileen-plus-test`, staging, Diagrid Cloud Plus; n	mastra-crash.log

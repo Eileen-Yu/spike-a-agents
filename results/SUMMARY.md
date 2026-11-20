@@ -1,6 +1,6 @@
 # Spike A — consolidated results matrix
 
-Generated: 2026-11-19 16:08
+Generated: 2026-11-19 16:26
 Week-1 matrix org: `cattle-ackbar` (prod free) · Plus retest org: `eileen-plus-test` (staging, Diagrid Cloud Plus)  
 Plugin: `diagrid@diagrid` 0.10.2 · CLI: `diagrid` 1.130.0  
 Self-contained: status, resource kind, id, and friction are inline. You should not need to open per-cell logs for the overview.
@@ -57,6 +57,23 @@ Ledger: `results/quickstarts-plus/done.tsv` · inventory (incl. unrun `*-ai/exam
 **Still open vs Casper's bar:** crash-recovery / extra scenarios; `*-ai/examples` not run yet; workflows = Spike B; Linear issues for per-quickstart friction not batch-filed in this pass.
 
 _Updated 2026-11-19 16:08._
+
+
+## Scenarios (Plus) — crash recovery
+
+Beyond README happy-path. Org `eileen-plus-test` / project `default`. Sample of frameworks that ship `dev-crash-test.yaml` (not all 15).
+
+| Case | crash | resume | Notes | log |
+|---|---|---|---|---|
+| LangGraph | **ok** | **ok** | Self-kill mid STEP2; restart resumed `gala-42`; re-issue 200. First `/crash/run` right after Uvicorn can 500. | `scenarios-plus/langgraph-crash.log` |
+| CrewAI | **ok** | **ok** | Self-kill mid `step_two_compare`; restart finished `gala-162206`; re-issue 200. | `scenarios-plus/crewai-crash.log` |
+| Mastra | **ok** | **ok** | Self-kill mid STEP2; restart completed incident run; used live gpt-4o-mini (not canned). | `scenarios-plus/mastra-crash.log` |
+
+**3/3 crash+resume ok.** Shared friction: readiness after Uvicorn ≠ ready to create workflow; crash tears down whole `dev run`; need `diagrid dev stop` after Ctrl-C.
+
+Ledger: `results/scenarios-plus/done.tsv`
+
+_Updated 2026-11-19 16:26._
 
 
 ## Scoreboard (Week-1 free matrix)
