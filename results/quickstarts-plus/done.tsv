@@ -1,0 +1,16 @@
+slug	status	agent	notes	log
+langgraph	ok	schedule-planner	README curl 200 workflow_completed Grand Ballroom	langgraph.log
+crewai	ok	venue-scout	RESULT deploy:        ok run:           ok project:       default (region diagrid-staging, org eileen-plus-test, Diagrid Cloud Plus) agent/app id:  venue-scout (new dedicated Agent	crewai.log
+adk	ok	entertainment-planner	RESULT deploy:       ok run:          ok project:      default (existing, diagrid-staging; no project created) agent/app id: entertainment-planner (new dedicated Agent, created wit	adk.log
+strands	ok	budget-analyst	RESULT deploy:        ok run:           ok project:       default (eileen-plus-test, staging, Diagrid Cloud Plus) — no new project created agent/app id:  budget-planner (new dedi	strands.log
+pydantic-ai	ok	decorations-planner	RESULT deploy:        ok run:           ok project:       default (existing, region diagrid-staging; no project created) agent/app id:  decoration-planner (new Agent, status ready)	pydantic-ai.log
+openai-agents	ok	catering-coordinator	RESULT deploy:        ok run:           ok project:       default (existing, region diagrid-staging; no new project created) agent/app id:  catering-coordinator (new dedicated Agen	openai-agents.log
+claude-agents	ok	photography-planner	RESULT deploy:        ok run:           ok (2nd attempt; 1st request returned HTTP 500) project:       default (existing; no project created) agent/app id:  photography-planner (ne	claude-agents.log
+deepagents	ok	transportation-planner	RESULT deploy:        ok run:           ok project:       default (existing, region diagrid-staging; no new project created) agent/app id:  transportation-planner (dedicated agent,	deepagents.log
+mastra	ok	sre-agent	RESULT deploy:        ok   (diagrid agent create sre-agent --project default --wait → "created successfully") run:           ok   (diagrid dev run -f dev-mastra.yaml --project de	mastra.log
+goose	ok	release-manager	RESULT deploy:        ok run:           ok project:       default (org eileen-plus-test, staging, Cloud Plus) — no new project created agent/app id:  release-manager (new dedicat	goose.log
+microsoft-dotnet	ok	event-planner	RESULT deploy:        ok run:           ok project:       default (existing, org eileen-plus-test, staging, Cloud Plus; no project created) agent/app id:  event-planner (new dedica	microsoft-dotnet.log
+langchaingo	ok	langchaingo-agent	RESULT deploy:   ok run:      ok project:  default (org eileen-plus-test, staging, Diagrid Cloud Plus) — no new project created app id:   identity-agent (new, dedicated); MCP ser	langchaingo.log
+langgraphjs	ok	schedule-planner-js	RESULT deploy:        ok run:           ok project:       default (org eileen-plus-test, staging, Diagrid Cloud Plus) agent/app id:  identity-agent (agent, :8006) + crm-mcp (MCP se	langgraphjs.log
+spring-ai-event-planner	ok	event-planner	RESULT deploy:        ok run:           ok project:       default (eileen-plus-test, staging, Diagrid Cloud Plus) — no new project created agent/app id:  spring-ai-event-planner 	spring-ai-event-planner.log
+dapr-agents-durable	ok	durable-agent	RESULT deploy:        ok run:           ok project:       default (org eileen-plus-test, staging, Diagrid Cloud Plus) agent/app id:  invitations-manager (new dedicated Agent) proof	dapr-agents-durable.log

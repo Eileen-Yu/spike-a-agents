@@ -1,6 +1,6 @@
 # Spike A — consolidated results matrix
 
-Generated: 2026-11-19 15:05  
+Generated: 2026-11-19 16:08
 Week-1 matrix org: `cattle-ackbar` (prod free) · Plus retest org: `eileen-plus-test` (staging, Diagrid Cloud Plus)  
 Plugin: `diagrid@diagrid` 0.10.2 · CLI: `diagrid` 1.130.0  
 Self-contained: status, resource kind, id, and friction are inline. You should not need to open per-cell logs for the overview.
@@ -25,6 +25,39 @@ Week-1 free org hit **10/10 App ID / identity** → many cells reused a shared `
 - Port 8000 busy; `dev run` still prints production console URL on staging.
 
 Updated Week-2 LangGraph yardstick (Plus, dedicated create): **~709k tokens in / ~19 tool calls / ~1m41s** (free-matrix cold rows ~1.4M–1.9M mixed reuse/credit noise — use Plus row for comparisons).
+
+## Official quickstarts coverage (Plus)
+
+Sources: [`diagridio/catalyst-quickstarts`](https://github.com/diagridio/catalyst-quickstarts) `agents/*` (pulled locally).  
+Org: `eileen-plus-test` · staging · Diagrid Cloud Plus · project `default`.  
+**Separate from Spike A plain samples** — these quickstarts already use durable runners; we followed each README far enough for one successful request (not crash-recovery / multi-scenario).
+
+**Scoreboard: 15/15 ok**
+
+| Quickstart | Result | Agent / app id | log |
+|---|---|---|---|
+| `langgraph` | **ok** | `schedule-planner` | `langgraph.log` |
+| `crewai` | **ok** | `venue-scout` | `crewai.log` |
+| `adk` | **ok** | `entertainment-planner` | `adk.log` |
+| `strands` | **ok** | `budget-analyst` | `strands.log` |
+| `pydantic-ai` | **ok** | `decorations-planner` | `pydantic-ai.log` |
+| `openai-agents` | **ok** | `catering-coordinator` | `openai-agents.log` |
+| `claude-agents` | **ok** | `photography-planner` | `claude-agents.log` |
+| `deepagents` | **ok** | `transportation-planner` | `deepagents.log` |
+| `mastra` | **ok** | `sre-agent` | `mastra.log` |
+| `goose` | **ok** | `release-manager` | `goose.log` |
+| `microsoft-dotnet` | **ok** | `event-planner` | `microsoft-dotnet.log` |
+| `langchaingo` | **ok** | `langchaingo-agent` | `langchaingo.log` |
+| `langgraphjs` | **ok** | `schedule-planner-js` | `langgraphjs.log` |
+| `spring-ai-event-planner` | **ok** | `event-planner` | `spring-ai-event-planner.log` |
+| `dapr-agents-durable` | **ok** | `durable-agent` | `dapr-agents-durable.log` |
+
+Ledger: `results/quickstarts-plus/done.tsv` · inventory (incl. unrun `*-ai/examples`): `results/quickstarts-plus/INVENTORY.md`.
+
+**Still open vs Casper's bar:** crash-recovery / extra scenarios; `*-ai/examples` not run yet; workflows = Spike B; Linear issues for per-quickstart friction not batch-filed in this pass.
+
+_Updated 2026-11-19 16:08._
+
 
 ## Scoreboard (Week-1 free matrix)
 
