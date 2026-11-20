@@ -78,6 +78,9 @@ Workflows = [Spike B / CAP-2784](https://linear.app/diagrid/issue/CAP-2784).
 | No path at the identity cap (free 10/10) — agent reuses an unrelated Agent or stops | [CAP-2928](https://linear.app/diagrid/issue/CAP-2928) | v3 env run |
 | `diagrid_get_agent` ready before identity ready; undocumented agent appConfig | [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) | v3 5/5 cells |
 | `list_apps` hides Agent-owned App IDs; dry run says `would_replace` (clobber risk) | [CAP-2930](https://linear.app/diagrid/issue/CAP-2930) | v3 LangGraph #2, #3 |
+| Tunnel return path ~10s timeout → 502 for slow agent turns | [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) | v3 Claude Agent SDK |
+| Dapr Agents crashes on undocumented 10-topic cap (auto-subscribes `agent-pubsub`) | [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) | v3 Dapr Agents **fail** |
+| `list_agents` ignores appId filter / partial on UPSTREAM_ERROR | [CAP-2933](https://linear.app/diagrid/issue/CAP-2933) | v3 BYOA, MAF |
 
 Free-plan **10/10 identity** is an environment ceiling, not evidence the plugin cannot create Agents.  
 (`agent-registry` missing from `component list` is intentional — managed/reserved; [CAP-2924](https://linear.app/diagrid/issue/CAP-2924) canceled.)

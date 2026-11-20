@@ -1,0 +1,45 @@
+{
+  "session": "5b9f1210-dfb8-45c2-91a8-99f15e76b91f",
+  "subagent_files": 0,
+  "client": "claude-code 2.1.329",
+  "model": "claude-opus-5-5",
+  "plugin": "0.10.2",
+  "tokens_in": 1657310,
+  "tokens_out": 8429,
+  "model_requests": 20,
+  "tool_calls": 26,
+  "catalyst_calls": 12,
+  "failed_calls": 3,
+  "repeated_calls": 2,
+  "user_turns": 0,
+  "skill_bytes": 20845,
+  "wall_seconds": 178,
+  "tools": {
+    "Bash": 12,
+    "mcp__plugin_diagrid_diagrid__diagrid_get_connection": 3,
+    "mcp__plugin_diagrid_diagrid__diagrid_apply": 2,
+    "Skill": 1,
+    "ToolSearch": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_whoami": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_get_usage": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_get_resource_schema": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_list_apps": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_list_agents": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_get_app": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_list_app_tunnels": 1
+  },
+  "catalyst_tools": {
+    "mcp__plugin_diagrid_diagrid__diagrid_whoami": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_get_usage": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_get_resource_schema": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_list_apps": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_list_agents": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_apply": 2,
+    "mcp__plugin_diagrid_diagrid__diagrid_get_app": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_get_connection": 3,
+    "mcp__plugin_diagrid_diagrid__diagrid_list_app_tunnels": 1
+  },
+  "skills": {
+    "diagrid-deploy": 20845
+  }
+}

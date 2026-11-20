@@ -1,15 +1,14 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 19:15:23 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 19:15:53 PST · ledger: `ledger.tsv`
 
 ## Running now
 - eino-claude-1
+- goose-claude-1
 - langchaingo-claude-1
 - mastra-claude-1
-- spring-ai-claude-1
 
-## Remaining (5)
-- spring-ai × claude
+## Remaining (4)
 - langchaingo × claude
 - eino × claude
 - mastra × claude
@@ -34,4 +33,5 @@ holmesgpt                  claude  1        ok      App    catalyst  untouched  
 dapr-agents                claude  1        fail    Agent  catalyst  untouched  -          order-agent-dapr-agents     16         2782215    34     dapr-agents-claude-1.log                2026-11-19T19:14:18-08:00
 byoa                       claude  1        ok      Agent  catalyst  untouched  -          order-agent-byoa-1911       13         1599389    25     byoa-claude-1.log                       2026-11-19T19:14:37-08:00
 microsoft-agent-framework  claude  1        ok      Agent  catalyst  changed    -          order-agent-maf             14         1829496    27     microsoft-agent-framework-claude-1.log  2026-11-19T19:14:42-08:00
+spring-ai                  claude  1        ok      Agent  catalyst  untouched  -          order-agent-spring-ai       13         2026608    28     spring-ai-claude-1.log                  2026-11-19T19:15:43-08:00
 ```
