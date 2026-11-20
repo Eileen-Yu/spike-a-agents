@@ -23,3 +23,4 @@ mastra	claude	1	ok	App	catalyst	untouched	-	order-agent-mastra-1915	13	1589066	2
 langgraph	codex	1	fail-noresult(rc=143)	-	unknown	untouched	-	-	-	-	-	langgraph-codex-1.log	2026-11-19T19:30:01-08:00	8	(in total)	-
 dapr-agents	claude	2	fail-noresult(rc=143)	-	unknown	untouched	-	-	3	144016	7	dapr-agents-claude-2.log	2026-11-19T19:30:20-08:00	26	1251	-
 byoa	codex	1	ok	Agent	catalyst	untouched	-	-	-	-	-	byoa-codex-1.log	2026-11-19T19:30:46-08:00	29	(in total)	-
+byoa	codex	1	ok	Agent	catalyst	untouched	-	-	-	-	-	byoa-codex-1.log	2026-11-19T19:30:51-08:00	28	(in total)	-

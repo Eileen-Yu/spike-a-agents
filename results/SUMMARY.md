@@ -4,7 +4,7 @@ _Updated 2026-11-19 19:30 PST. Regenerated after every cell by `results/build-v3
 
 **Current run = v3:** user-voice prompt ([`spike-prompt.md`](spike-prompt.md)), plugin MCP signed in, staging Plus `eileen-plus-test`/`default`, graded outside the model (git diff, proof path). Plugin 0.10.2, Claude = claude-opus-5-5.
 
-**Score: claude 20/21 · codex 1/2 · copilot 0/2 (2 pending)** · App instead of Agent: 8 · rule violations: 0 · localhost proofs: 0
+**Score: claude 20/21 · codex 2/2 · copilot 0/2 (2 pending)** · App instead of Agent: 8 · rule violations: 0 · localhost proofs: 0
 
 ## Each cell — result · resource kind · tokens in · time
 
@@ -22,7 +22,7 @@ _Updated 2026-11-19 19:30 PST. Regenerated after every cell by `results/build-v3
 | Deep Agents | ok · Agent · 1.6M · 2m23s |  |  |
 | HolmesGPT | ok · **App** · 2.0M · 3m08s |  |  |
 | Dapr Agents | #1 **FAIL** [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) · Agent · 2.8M · 3m23s<br>#2 **FAIL** [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) · - · 144k · 0m26s |  |  |
-| BYOA | ok · Agent · 1.6M · 2m51s | ok · Agent · - · 0m29s | _pending 1_ |
+| BYOA | ok · Agent · 1.6M · 2m51s | #1 ok · Agent · - · 0m29s<br>#1 ok · Agent · - · 0m28s | _pending 1_ |
 | .NET MAF | ok · Agent · 1.8M · 2m27s |  |  |
 | Spring AI | ok · Agent · 2.0M · 2m40s |  |  |
 | LangChainGo | ok · **App** · 1.7M · 2m58s |  |  |
@@ -37,7 +37,7 @@ Tokens in = everything the model read (incl. cache). Time = harness clock per ce
 | Client | cells | ok | avg tokens in | avg time | total tokens in | total time |
 |---|---:|---:|---:|---:|---:|---:|
 | claude | 22 | 20 | 1.8M | 2m 46s | 39.7M | 61m 11s |
-| codex | 2 | 1 | - | 0m 18s | - | 0m 37s |
+| codex | 3 | 2 | - | 0m 21s | - | 1m 05s |
 
 ## Top findings
 
