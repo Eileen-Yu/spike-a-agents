@@ -17,7 +17,7 @@ The "seen in" counts are runs whose own RESULT/friction list mentions the proble
 | 4 | [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) | **Invisible quotas.** Managed pub/sub 10-topic cap (Dapr Agents crashed on 10 leftover topics, **ok after cleanup**); identity cap 10/10 on free with no path | Dapr Agents #1 fail → #2 ok; free org 10/10 | High |
 | 5 | [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) | **MCP and CLI on different env/org** (prod MCP + staging CLI → nothing deployed); no CLI fallback; `DIAGRID_MCP_URL` undocumented | 3 setup runs; v1/v2: 0 MCP calls in every run | High |
 | 6 | [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) | **MCP/CLI behaviour misleads**: prod console URL on a staging org; silent appConfig + endpoint rewrite; `list_agents` ignores filters; `dev run` exits 0 on app crash and prints "managed workflow enabled" for a plain agent | console URL 27/27 · filters 4/27 · "enabled" 4/27 | Medium |
-| 7 | [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) | **Example READMEs miss prerequisites** (coverage runs): python-ai needs Dapr ≥ 1.18 and a venv; Goose needs `GOOSE_PROVIDER`; "Uvicorn running" ≠ ready in the crash quickstarts | 3 READMEs | Medium |
+| 7 | [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) | **Quickstart/example READMEs miss prerequisites**: python-ai needs Dapr ≥ 1.18 + venv; Goose needs `GOOSE_PROVIDER`; READMEs create a new project with no fallback at the 5-project cap; .NET needs the .NET 10 SDK (15 min, 2.28M tokens); triggers only call localhost | quickstart rerun 15/15 ok; 2 hit the project cap | Medium |
 
 ## Who fixes what
 
@@ -40,9 +40,10 @@ In short, the main fix ([CAP-2876](https://linear.app/diagrid/issue/CAP-2876)) i
 | Claude, 23 runs | avg **1.96M** (1.45–3.80M) | avg 28 (23–44) | avg **2m58s** (2m11s–5m11s) |
 | LangGraph × Claude, 4 runs | 1.82–1.96M | 26–30 | 2m13s–3m06s |
 | Codex, 2 runs | 90k–108k (Codex reports one total) | — | 4m21s–5m12s |
+| Quickstarts, same standard, 15 runs (Claude) | avg **1.37M** (0.90–2.28M), ~4 MCP calls | avg 18 | median 3m14s (2m49s–15m02s) |
 | Copilot, 2 runs | 1.2–1.9M + 2.7–4.8 AI credits | — | 4m11s–8m02s |
 
-≈ the week-1 LangGraph cold baseline (1.44–1.87M, ~30 calls). Token counts aren't comparable across clients.
+With a README to follow, agents used ~30% fewer tokens and a third of the MCP calls, and picked Agent every time (13/13 agent quickstarts). Plain v3 ≈ the week-1 LangGraph cold baseline (1.44–1.87M, ~30 calls). Token counts aren't comparable across clients.
 
 ## Not product findings
 

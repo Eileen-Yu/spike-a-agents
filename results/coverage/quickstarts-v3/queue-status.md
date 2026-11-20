@@ -1,12 +1,11 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 21:24:47 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 21:29:11 PST · ledger: `ledger.tsv`
 
 ## Running now
-- qs-dapr-agents-durable-claude-1
+(none)
 
-## Remaining (1)
-- qs-dapr-agents-durable × claude
+## Remaining (0)
 
 ## Ledger
 ```
@@ -25,4 +24,5 @@ qs-microsoft-dotnet         claude  1        ok      Agent  catalyst  untouched 
 qs-langchaingo              claude  1        ok      App    catalyst  untouched  -          crm-mcp                  0          902713     16     qs-langchaingo-claude-1.log              2026-11-19T21:17:20-08:00  184     6526        -
 qs-langgraphjs              claude  1        ok      App    catalyst  untouched  -          identity-agent           2          1016033    18     qs-langgraphjs-claude-1.log              2026-11-19T21:20:26-08:00  180     5808        -
 qs-spring-ai-event-planner  claude  1        ok      Agent  catalyst  untouched  -          spring-ai-event-planner  4          1646614    26     qs-spring-ai-event-planner-claude-1.log  2026-11-19T21:24:41-08:00  248     9710        -
+qs-dapr-agents-durable      claude  1        ok      Agent  catalyst  untouched  -          invitations-manager      7          1970154    27     qs-dapr-agents-durable-claude-1.log      2026-11-19T21:29:01-08:00  254     8863        -
 ```

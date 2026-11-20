@@ -1,6 +1,6 @@
 # Quickstart coverage — v3 standard
 
-_Updated 2026-11-19 21:29 PST._ Prompt: `text-quickstart` block in [`../../spike-prompt.md`](../../spike-prompt.md). Claude, MCP signed in, graded by the harness (proof through Catalyst), one cell at a time with per-cell cleanup.
+_Updated 2026-11-19 21:53 PST._ Prompt: `text-quickstart` block in [`../../spike-prompt.md`](../../spike-prompt.md). Claude, MCP signed in, graded by the harness (proof through Catalyst), one cell at a time with per-cell cleanup.
 
 **15/15 ok** (pre-v3 README-follow run, self-graded: 15/15)
 

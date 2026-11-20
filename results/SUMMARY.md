@@ -1,6 +1,6 @@
 # Spike A — results ([CAP-2783](https://linear.app/diagrid/issue/CAP-2783))
 
-_Updated 2026-11-19 21:29 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
+_Updated 2026-11-19 21:53 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
 
 **Current run = v3:** user-voice prompt ([`spike-prompt.md`](spike-prompt.md)), plugin MCP signed in, staging Plus `eileen-plus-test`/`default`, graded outside the model (git diff, proof path). Plugin 0.10.2, Claude = claude-opus-5-5.
 
