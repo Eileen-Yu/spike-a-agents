@@ -1,34 +1,34 @@
-# Spike A — prompt record
+# Spike A — plugin / skills quality test
 
-Different coverage layers used **different prompts**. Do not reuse the plain Spike A prompt on quickstarts or `*-ai/examples` (and vice versa).
+[CAP-2783](https://linear.app/diagrid/issue/CAP-2783): can the Diagrid plugin take a **plain** agent and run it on Catalyst?
 
-| Layer | Source tree | Prompt below | Durable runners? | Success criteria |
-|---|---|---|---|---|
-| A. Plain samples | this repo `python/…` via `new-run.sh` | §1–2 | **No** — forbid wrapper | order **42** → **shipped** |
-| B. Official quickstarts | `catalyst-quickstarts/agents/*` | §3 | **Yes** — keep them | README’s curl / one successful request |
-| C. Crash recovery | same quickstarts + `dev-crash-test.yaml` | §4 | **Yes** | crash + resume same id |
-| D. `*-ai` examples | `python-ai` / `go-ai` / … `examples/` | §5 | usually yes (adapter) | README primary example |
+**Spike A is a quality test.** The prompt below is what a user would say.  
+Do **not** put *how* to use Diagrid in the prompt (CLI flags, MCP vs CLI, PATH, whoami, ports, healthz, invoke recipes, Prefer Agent). Those belong in the plugin/skills — otherwise you grade a crib sheet.
 
-Org used for Plus passes: `eileen-plus-test` (staging) · project `default`. Week-1 plain matrix also ran on prod free `cattle-ackbar` with an older prompt (§2).
+| Layer | Role | Prompt |
+|---|---|---|
+| Plain samples (this repo) | **Quality score** | Canonical block below |
+| Official quickstarts | Coverage only | Appendix B–C — follow that tree’s README |
+| `*-ai/examples` | Coverage only | Appendix D — follow that tree’s README |
+
+Experimenter setup (not for the agent prompt): Plus org `eileen-plus-test` / project `default`.  
+Quality batch ledgers: `results/plugin-quality-plus/` (v1), `results/plugin-quality-plus-v2-no-prefer-agent/` (v2).
 
 ---
 
-## Agent vs App (plain path only)
+## How to score Agent vs App
 
-| Kind | Use on plain Spike A? |
+Do **not** put Prefer-Agent in the prompt. Skills must steer. Record RESULT `resource kind`.
+
+| Kind | Score |
 |---|---|
-| Diagrid **`Agent`** | **Yes** |
-| Plain **`App`** | Only if Agent apply blocked — record friction |
-| Workflow runner / identity middleware | **No** |
-
-"No workflow wrapper" ≠ "no Agent resource".
+| Diagrid **`Agent`** | Expected if skills work |
+| Plain **`App`** | Finding / skill gap — not an automatic fail if shipped |
+| Added workflow runner or identity middleware | **Fail** the cell |
 
 ---
 
-## 1. Plain samples — plugin/skills quality (canonical)
-
-**This is the prompt to re-run.** Goal + constraints + success only.  
-**Do not** paste CLI recipes (`dev run`, `call invoke`, flags, ports, healthz paths) — those are what skills/MCP should supply. If the agent invents a working path, note which skills fired; if it fails or needs hand-holding, that is the finding.
+## Canonical prompt (only paste this for Spike A)
 
 Swap `<FRAMEWORK>`.
 
@@ -38,135 +38,100 @@ Spike A (CAP-2783) — plugin and skills quality test.
 This directory is a plain <FRAMEWORK> agent with get_order_status.
 It knows nothing about Catalyst.
 
-Use the Diagrid plugin (skills + MCP) to get it running on Catalyst and prove a run.
-Prefer skills/MCP over inventing your own CLI procedure; if you fall back to raw CLI
-because skills/MCP are missing or wrong, record that as friction.
+Use the Diagrid plugin to get it running on Catalyst and prove a run.
 
 Rules:
-- Prefer a Diagrid Agent resource (kind: Agent), not a plain App.
 - Do NOT add a workflow runner wrapper (no DaprWorkflow*Runner / harness rewrite).
 - Do NOT add identity/OAuth middleware.
 - Keep the sample's existing HTTP /run loop; do not rewrite the agent into a durable harness.
-
-Use the org/project already selected for this machine (`diagrid whoami` / MCP whoami).
-Prefer a dedicated Agent for this framework; if you reuse another framework's Agent, say so as friction.
 
 Success: asking about order 42 returns an answer that contains "shipped".
 
 When done, print RESULT with:
 deploy ok|fail, run ok|fail, project, resource kind (Agent|App), agent/app id,
-which Diagrid skills you used, whether MCP or raw CLI did the writes,
-and friction / skill or MCP gaps.
-Stop anything you started for the tunnel/run, then exit.
+what you used from the Diagrid plugin, and any friction or gaps you hit.
+Stop anything you started, then exit.
 ```
 
-### 1b. Deprecated hand-holding prompt (do not use for quality scoring)
+### Keep out of the prompt
 
-Earlier Plus/matrix runs included explicit `diagrid agent create` / `dev run` / `call invoke` / healthz / port instructions. That **feeds the answer** and under-tests the plugin. Kept only for history — see git history before 2026-11-19 evening.
+| Banned in prompt | Why |
+|---|---|
+| Prefer Agent vs App | Skills must supply product guidance |
+| `agent create` / `dev run` / `call invoke` / flags / ports | CLI cookbook |
+| `/healthz`, readiness waits, tunnel steps | Platform recipe |
+| Prefer CLI vs MCP, PATH, `whoami`, org-mismatch tips | Auth/tool coaching |
+| Pre-patching the sample (e.g. add `/healthz` before the run) | Answers for the plugin |
+| “Reuse Agent X / project Y” | Feeds the environment answer |
 
-Week-1 free-org runs also used a shorter variant (cattle-ackbar / reuse project) still with growing amounts of CLI detail over time.
+`run-matrix-loop.sh` / quality batches extract **this** ```text``` block only and must **not** pre-patch samples.
 
 ---
 
-## 2. Plain samples — minimal first version (early LangGraph)
+## Appendix — coverage prompts (not Spike A quality score)
+
+Still no CLI/MCP/auth cribs. Point at the tree’s README.
+
+### A. Early minimal plain (historical)
 
 ```text
 Spike A (CAP-2783): This directory is a plain LangGraph agent with one tool
 get_order_status. Deploy it to Diagrid/Catalyst through the Diagrid plugin
-skills and run it successfully.
+and run it successfully.
 
 Rules: do NOT add a workflow runner wrapper; do NOT add identity/OAuth middleware.
-Prefer Diagrid Agent resource over plain App.
-Use the default project if one exists.
 Success = asking about order 42 gets an answer that says shipped.
-When done, print a short RESULT block with: deploy ok/fail, run ok/fail,
-project name, resource kind, any friction or skill gaps, and list files you changed.
+When done, print RESULT: deploy ok/fail, run ok/fail, project, resource kind (Agent|App),
+friction or skill gaps, files changed.
 ```
 
----
+### B. Official quickstarts — happy path
 
-## 3. Official quickstarts — happy path (NOT plain Spike A)
-
-`${rel}` = e.g. `agents/langgraph`. `${agent_hint}` = README agent name (e.g. `schedule-planner`).
+`${rel}` = e.g. `agents/langgraph`. Durable runners in the quickstart are expected.
 
 ```text
-You are testing a Diagrid Catalyst official quickstart on Cloud Plus.
+You are testing a Diagrid Catalyst official quickstart.
 
-Directory: this folder is the quickstart from diagridio/catalyst-quickstarts/${rel}
-Org: eileen-plus-test (staging API https://api.staging.diagrid.dev, plan Diagrid Cloud Plus).
-Project: use existing project `default` — do NOT create a new project (region project limit).
-CLI: ~/.local/bin/diagrid first on PATH. Prefer CLI if Diagrid MCP is on another org / unauthenticated; note that as friction.
+Directory: diagridio/catalyst-quickstarts/${rel}.
 
-Goal: follow this quickstart's README enough to get it running on Catalyst and prove one successful request (the README's curl/HTTP example, or equivalent diagrid call invoke). Offline/canned model is fine when the quickstart supports it.
+Goal: follow this quickstart's README enough to get it running on Catalyst and prove
+one successful request (the README's example). Offline/canned model is fine when supported.
 
-Rules for THIS pass (quickstart coverage, not Spike A plain):
-- The quickstart may already use durable workflow runners — that is expected; do not strip them.
-- Create a dedicated Agent if needed (hint name: ${agent_hint}). Do not reuse unrelated Agents from other frameworks unless create is refused (then record friction).
-- Apply any YAML/resources the README requires that fit in project default.
-- After proof, stop diagrid dev run / tunnels and exit.
+Rules:
+- Keep durable workflow runners the quickstart already uses; do not strip them.
+- Do not create a new project if the org is already at its project limit.
 
-Print a RESULT block with:
-deploy ok|fail, run ok|fail, project, agent/app id, how you proved it (status + short answer excerpt), friction, skills/CLI used.
+RESULT: deploy ok|fail, run ok|fail, project, agent/app id, how you proved it,
+friction, what you used from the Diagrid plugin.
+Stop anything you started, then exit.
 ```
 
----
-
-## 4. Official quickstarts — crash recovery
+### C. Official quickstarts — crash recovery
 
 ```text
-Test Diagrid quickstart CRASH RECOVERY on Cloud Plus (not happy-path).
+Test this Diagrid quickstart's crash recovery (not the happy path).
 
-Folder = catalyst-quickstarts/${rel}
-Org eileen-plus-test staging Plus; project default; do not create projects.
-CLI ~/.local/bin/diagrid; MCP may be unauth — use CLI and note friction.
+Folder = catalyst-quickstarts/${rel}.
 
-Follow README crash section: create Agent ${agent} if needed; uv/npm/cargo as appropriate;
-diagrid dev run -f dev-crash-test.yaml --approve --project default;
-trigger crash with kill_after_seconds (or equivalent) on the crash endpoint;
-restart; resume same id; prove completion.
-Offline/canned OK. Keep durable runners.
+Follow the README crash section: trigger a crash, restart, resume the same id, prove completion.
+Keep durable runners. Offline/canned OK.
 
 RESULT: crash_path ok|fail, resume ok|fail, project, agent id, proof excerpt, friction.
-Then stop tunnels and exit.
+Stop anything you started, then exit.
 ```
 
-LangGraph-specific long form (same intent) also used: wait for crash mid-STEP2, restart, re-issue same id, prove booking confirmed / workflow completed.
+### D. `*-ai` adapter examples
+
+```text
+This directory is a Diagrid *-ai SDK example (often local dapr — not Spike A plain samples).
+
+Goal: run the primary README example(s) practical here.
+Record pass/fail, how proved, friction.
+Do not treat this as Spike A plain plugin scoring.
+```
 
 ---
 
-## 5. `*-ai` adapter examples
+## Deprecated
 
-### python-ai / examples/langgraph
-
-```text
-This directory is diagridio/python-ai/examples/langgraph (adapter SDK examples, often local dapr run — NOT catalyst-quickstarts).
-
-On this machine: dapr CLI available. Org for any Catalyst steps: eileen-plus-test staging Plus, project default.
-
-Goal: run the README examples that are practical here:
-1) simple_graph.py via dapr run (as README)
-2) test_crash_recovery.py two-run crash path if feasible
-Record pass/fail for each. If something needs Catalyst instead of local dapr, try with diagrid CLI on project default and note the path difference.
-
-Print RESULT table: example | ok/fail | how proved | friction.
-Do not confuse this with Spike A plain samples.
-```
-
-### Other language samples (short)
-
-```text
-Directory is diagridio/${dir} (SDK example, may be local dapr or Catalyst).
-Org eileen-plus-test staging Plus / project default if Catalyst needed.
-Run the primary README example (or quickstart.rs for goose).
-RESULT: ok|fail, proof, friction. Keep short.
-```
-
-(`${dir}` examples: `typescript-ai/examples/mastra`, `go-ai/examples/eino`, `rust-ai/crates/diagrid-goose/examples`.)
-
----
-
-## Notes
-
-- Skills are guidance; the **Rules** block is what constrains each layer.
-- Plain vs quickstart is the big fork: plain forbids durable wrappers; quickstart expects them.
-- Results live in `results/SUMMARY.md` (§ Scoreboard / Official quickstarts / Scenarios / `*-ai/examples`).
+Pre-2026-11-19-evening prompts fed CLI recipes, Prefer-Agent, whoami/PATH, and CLI-vs-MCP tips. Do not use for quality scoring. See git history.

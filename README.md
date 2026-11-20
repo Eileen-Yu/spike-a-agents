@@ -1,22 +1,22 @@
-# Spike A — plain agents through the Diagrid plugin
+# Spike A — plugin / skills quality test
 
 [CAP-2783](https://linear.app/diagrid/issue/CAP-2783): can the Diagrid plugin take a **plain** agent (no workflow wrapper, no identity middleware) and run it on Catalyst?
 
-**Pass** = ask about order **42**, answer contains **shipped**.
+**Spike A = quality test** of the Diagrid plugin + skills. **Pass** = ask about order **42**, answer contains **shipped**.
 
-Three coverage layers (do not mix conclusions):
+Do **not** put how-to into the agent prompt (CLI recipes, MCP vs CLI, PATH, whoami, ports, healthz). Those are what the plugin must supply; crib notes invalidate the score.
 
-| Layer | What we ran | Controlled same task? |
-|---|---|---|
-| Spike A plain samples (this repo) | Framework × Claude/Codex/Copilot | Yes — same `get_order_status` agent |
-| [`catalyst-quickstarts`](https://github.com/diagridio/catalyst-quickstarts) `agents/*` | Official durable quickstarts | No — different demos per framework |
-| `*-ai` repo `examples/` | Adapter SDK demos (often local `dapr run`) | No — different path from plugin plain-connect |
+| Layer | Role |
+|---|---|
+| Spike A plain samples (this repo) | **Quality score** — same `get_order_status` agent × client |
+| [`catalyst-quickstarts`](https://github.com/diagridio/catalyst-quickstarts) `agents/*` | Coverage only (durable demos) |
+| `*-ai` repo `examples/` | Coverage only (often local `dapr run`) |
 
 Full tables: [`results/SUMMARY.md`](results/SUMMARY.md). Triage: [CAP-2785](https://linear.app/diagrid/issue/CAP-2785).
 
 ## How to test
 
-**Org:** use a plan with App ID / identity headroom (e.g. Cloud Plus). Free **10/10** forces Agent reuse and muddies “create works” conclusions. Check `diagrid whoami` before you start.
+**Experimenter setup** (you, not the prompt): use a plan with App ID headroom (e.g. Cloud Plus). Free **10/10** forces Agent reuse and muddies “create works”.
 
 ```sh
 cp .env.example .env
@@ -24,9 +24,9 @@ cp .env.example .env
 cd ~/spike-runs/langgraph-<ts>
 ```
 
-In that directory, run Claude Code / Codex / Copilot with the Diagrid plugin and the **plain** prompt in [`results/spike-prompt.md`](results/spike-prompt.md) (§1) — **goal + Rules + success only** (no CLI cookbook). That file also records different prompts for quickstarts / crash / `*-ai/examples`.
+Paste only the **canonical** prompt from [`results/spike-prompt.md`](results/spike-prompt.md). Do not pre-patch the sample. Do not coach CLI/MCP/auth or Agent-vs-App (skills must supply that).
 
-Rules for the **plain** path: prefer Diagrid `Agent`; do **not** add a workflow runner or identity/OAuth middleware.
+Rules baked into that prompt: no workflow runner; no identity/OAuth middleware; keep the sample’s `/run` loop.
 
 Samples: `python/`, `dotnet/`, `java/`, `go/`, `typescript/`, `rust/` (+ `python/byoa`). Batch: `./run-matrix-loop.sh`.
 
@@ -36,9 +36,9 @@ Quickstarts / `*-ai` examples: clone those repos and follow their READMEs (separ
 
 **Plain matrix (Week 1, prod free `cattle-ackbar`):** **57/57** ok · LangGraph×Claude variance **3/3**. Many later cells **reused** a shared Agent (identity 10/10).
 
-**Plain Plus check (`eileen-plus-test` staging):** dedicated Agents for LangGraph, BYOA, Spring AI, Eino, Mastra — create + invoke ok.
+**Plugin quality (cookbook-free, Plus):** live score in [`results/SUMMARY.md`](results/SUMMARY.md) § Plugin quality + [`results/plugin-quality-plus/SCORECARD.md`](results/plugin-quality-plus/SCORECARD.md). Records tokens, tools, wall, MCP-vs-CLI. Partial: LangGraph / BYOA / CrewAI **ok** so far (MCP refused → CLI fallback).
 
-**LangGraph speed yardstick (Plus, dedicated create):** ~**709k** tokens in / ~**19** tool calls / ~**1m41s** (prefer over free-matrix cold numbers for [CAP-2541](https://linear.app/diagrid/issue/CAP-2541)).
+**Earlier hand-holding Plus yardstick (not quality score):** LangGraph ~**709k** tokens / ~**19** tools / ~**1m41s** — keep for [CAP-2541](https://linear.app/diagrid/issue/CAP-2541) history only.
 
 **Official quickstarts (Plus):** **15/15** README happy-path ok.
 
