@@ -1,12 +1,11 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 21:14:16 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 21:17:26 PST · ledger: `ledger.tsv`
 
 ## Running now
-- qs-langchaingo-claude-1
+- qs-langgraphjs-claude-1
 
-## Remaining (4)
-- qs-langchaingo × claude
+## Remaining (3)
 - qs-langgraphjs × claude
 - qs-spring-ai-event-planner × claude
 - qs-dapr-agents-durable × claude
@@ -25,4 +24,5 @@ qs-deepagents        claude  1        ok      Agent  catalyst  untouched  -     
 qs-mastra            claude  1        ok      Agent  catalyst  untouched  -          sre-agent               6          1130964    18     qs-mastra-claude-1.log            2026-11-19T20:55:58-08:00  204     6918        -
 qs-goose             claude  1        ok      Agent  catalyst  untouched  -          release-manager         4          1367795    18     qs-goose-claude-1.log             2026-11-19T20:59:03-08:00  178     8347        -
 qs-microsoft-dotnet  claude  1        ok      Agent  catalyst  untouched  -          event-planner           5          2277942    35     qs-microsoft-dotnet-claude-1.log  2026-11-19T21:14:11-08:00  902     12834       -
+qs-langchaingo       claude  1        ok      App    catalyst  untouched  -          crm-mcp                 0          902713     16     qs-langchaingo-claude-1.log       2026-11-19T21:17:20-08:00  184     6526        -
 ```
