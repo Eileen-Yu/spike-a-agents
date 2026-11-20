@@ -1,28 +1,28 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 21:20:33 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 21:24:47 PST · ledger: `ledger.tsv`
 
 ## Running now
-- qs-spring-ai-event-planner-claude-1
+- qs-dapr-agents-durable-claude-1
 
-## Remaining (2)
-- qs-spring-ai-event-planner × claude
+## Remaining (1)
 - qs-dapr-agents-durable × claude
 
 ## Ledger
 ```
-# slug               client  attempt  status  kind   via       code       violation  agent_id                mcp_calls  tokens_in  tools  log                               finished                   wall_s  tokens_out  credits
-qs-langgraph         claude  1        ok      Agent  catalyst  untouched  -          schedule-planner        3          1010627    16     qs-langgraph-claude-1.log         2026-11-19T20:27:40-08:00  174     6183        -
-qs-crewai            claude  1        ok      Agent  catalyst  untouched  -          venue-scout             3          1457284    22     qs-crewai-claude-1.log            2026-11-19T20:31:44-08:00  239     7998        -
-qs-adk               claude  1        ok      Agent  catalyst  untouched  -          entertainment-planner   4          999720     17     qs-adk-claude-1.log               2026-11-19T20:34:54-08:00  185     5952        -
-qs-strands           claude  1        ok      Agent  catalyst  untouched  -          budget-planner          3          1055478    16     qs-strands-claude-1.log           2026-11-19T20:37:49-08:00  169     5556        -
-qs-pydantic-ai       claude  1        ok      Agent  catalyst  untouched  -          decoration-planner      2          1370414    20     qs-pydantic-ai-claude-1.log       2026-11-19T20:41:19-08:00  204     6882        -
-qs-openai-agents     claude  1        ok      Agent  catalyst  untouched  -          catering-coordinator    3          1274566    18     qs-openai-agents-claude-1.log     2026-11-19T20:44:20-08:00  174     6789        -
-qs-claude-agents     claude  1        ok      Agent  catalyst  untouched  -          photography-planner     5          1822298    29     qs-claude-agents-claude-1.log     2026-11-19T20:49:07-08:00  280     10319       -
-qs-deepagents        claude  1        ok      Agent  catalyst  untouched  -          transportation-planner  5          1259436    21     qs-deepagents-claude-1.log        2026-11-19T20:52:27-08:00  194     6699        -
-qs-mastra            claude  1        ok      Agent  catalyst  untouched  -          sre-agent               6          1130964    18     qs-mastra-claude-1.log            2026-11-19T20:55:58-08:00  204     6918        -
-qs-goose             claude  1        ok      Agent  catalyst  untouched  -          release-manager         4          1367795    18     qs-goose-claude-1.log             2026-11-19T20:59:03-08:00  178     8347        -
-qs-microsoft-dotnet  claude  1        ok      Agent  catalyst  untouched  -          event-planner           5          2277942    35     qs-microsoft-dotnet-claude-1.log  2026-11-19T21:14:11-08:00  902     12834       -
-qs-langchaingo       claude  1        ok      App    catalyst  untouched  -          crm-mcp                 0          902713     16     qs-langchaingo-claude-1.log       2026-11-19T21:17:20-08:00  184     6526        -
-qs-langgraphjs       claude  1        ok      App    catalyst  untouched  -          identity-agent          2          1016033    18     qs-langgraphjs-claude-1.log       2026-11-19T21:20:26-08:00  180     5808        -
+# slug                      client  attempt  status  kind   via       code       violation  agent_id                 mcp_calls  tokens_in  tools  log                                      finished                   wall_s  tokens_out  credits
+qs-langgraph                claude  1        ok      Agent  catalyst  untouched  -          schedule-planner         3          1010627    16     qs-langgraph-claude-1.log                2026-11-19T20:27:40-08:00  174     6183        -
+qs-crewai                   claude  1        ok      Agent  catalyst  untouched  -          venue-scout              3          1457284    22     qs-crewai-claude-1.log                   2026-11-19T20:31:44-08:00  239     7998        -
+qs-adk                      claude  1        ok      Agent  catalyst  untouched  -          entertainment-planner    4          999720     17     qs-adk-claude-1.log                      2026-11-19T20:34:54-08:00  185     5952        -
+qs-strands                  claude  1        ok      Agent  catalyst  untouched  -          budget-planner           3          1055478    16     qs-strands-claude-1.log                  2026-11-19T20:37:49-08:00  169     5556        -
+qs-pydantic-ai              claude  1        ok      Agent  catalyst  untouched  -          decoration-planner       2          1370414    20     qs-pydantic-ai-claude-1.log              2026-11-19T20:41:19-08:00  204     6882        -
+qs-openai-agents            claude  1        ok      Agent  catalyst  untouched  -          catering-coordinator     3          1274566    18     qs-openai-agents-claude-1.log            2026-11-19T20:44:20-08:00  174     6789        -
+qs-claude-agents            claude  1        ok      Agent  catalyst  untouched  -          photography-planner      5          1822298    29     qs-claude-agents-claude-1.log            2026-11-19T20:49:07-08:00  280     10319       -
+qs-deepagents               claude  1        ok      Agent  catalyst  untouched  -          transportation-planner   5          1259436    21     qs-deepagents-claude-1.log               2026-11-19T20:52:27-08:00  194     6699        -
+qs-mastra                   claude  1        ok      Agent  catalyst  untouched  -          sre-agent                6          1130964    18     qs-mastra-claude-1.log                   2026-11-19T20:55:58-08:00  204     6918        -
+qs-goose                    claude  1        ok      Agent  catalyst  untouched  -          release-manager          4          1367795    18     qs-goose-claude-1.log                    2026-11-19T20:59:03-08:00  178     8347        -
+qs-microsoft-dotnet         claude  1        ok      Agent  catalyst  untouched  -          event-planner            5          2277942    35     qs-microsoft-dotnet-claude-1.log         2026-11-19T21:14:11-08:00  902     12834       -
+qs-langchaingo              claude  1        ok      App    catalyst  untouched  -          crm-mcp                  0          902713     16     qs-langchaingo-claude-1.log              2026-11-19T21:17:20-08:00  184     6526        -
+qs-langgraphjs              claude  1        ok      App    catalyst  untouched  -          identity-agent           2          1016033    18     qs-langgraphjs-claude-1.log              2026-11-19T21:20:26-08:00  180     5808        -
+qs-spring-ai-event-planner  claude  1        ok      Agent  catalyst  untouched  -          spring-ai-event-planner  4          1646614    26     qs-spring-ai-event-planner-claude-1.log  2026-11-19T21:24:41-08:00  248     9710        -
 ```

@@ -1,8 +1,8 @@
 # Quickstart coverage — v3 standard
 
-_Updated 2026-11-19 21:24 PST._ Prompt: `text-quickstart` block in [`../../spike-prompt.md`](../../spike-prompt.md). Claude, MCP signed in, graded by the harness (proof through Catalyst), one cell at a time with per-cell cleanup.
+_Updated 2026-11-19 21:29 PST._ Prompt: `text-quickstart` block in [`../../spike-prompt.md`](../../spike-prompt.md). Claude, MCP signed in, graded by the harness (proof through Catalyst), one cell at a time with per-cell cleanup.
 
-**14/14 ok** (pre-v3 README-follow run, self-graded: 15/15)
+**15/15 ok** (pre-v3 README-follow run, self-graded: 15/15)
 
 | Quickstart | Result | kind | via Catalyst | MCP calls | tokens in | time | id |
 |---|---|---|---|---:|---:|---:|---|
@@ -20,3 +20,4 @@ _Updated 2026-11-19 21:24 PST._ Prompt: `text-quickstart` block in [`../../spike
 | langchaingo | ok | App | catalyst | 0 | 903k | 3m04s | `crm-mcp` |
 | langgraphjs | ok | App | catalyst | 2 | 1.0M | 3m00s | `identity-agent` |
 | spring-ai-event-planner | ok | Agent | catalyst | 4 | 1.6M | 4m08s | `spring-ai-event-planner` |
+| dapr-agents-durable | ok | Agent | catalyst | 7 | 2.0M | 4m14s | `invitations-manager` |
