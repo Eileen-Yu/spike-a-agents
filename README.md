@@ -24,7 +24,7 @@ cp .env.example .env
 cd ~/spike-runs/langgraph-<ts>
 ```
 
-In that directory, run Claude Code / Codex / Copilot with the Diagrid plugin and the **plain** prompt in [`results/spike-prompt.md`](results/spike-prompt.md) (§1). That file also records the **different** prompts used for official quickstarts, crash recovery, and `*-ai/examples` — do not mix them.
+In that directory, run Claude Code / Codex / Copilot with the Diagrid plugin and the **plain** prompt in [`results/spike-prompt.md`](results/spike-prompt.md) (§1) — **goal + Rules + success only** (no CLI cookbook). That file also records different prompts for quickstarts / crash / `*-ai/examples`.
 
 Rules for the **plain** path: prefer Diagrid `Agent`; do **not** add a workflow runner or identity/OAuth middleware.
 

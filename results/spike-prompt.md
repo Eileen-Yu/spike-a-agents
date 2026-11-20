@@ -25,51 +25,46 @@ Org used for Plus passes: `eileen-plus-test` (staging) · project `default`. Wee
 
 ---
 
-## 1. Plain samples — canonical (Plus / dedicated Agent)
+## 1. Plain samples — plugin/skills quality (canonical)
 
-Used for Plus retests and the intended plain matrix. Swap `<FRAMEWORK>` / agent name.
+**This is the prompt to re-run.** Goal + constraints + success only.  
+**Do not** paste CLI recipes (`dev run`, `call invoke`, flags, ports, healthz paths) — those are what skills/MCP should supply. If the agent invents a working path, note which skills fired; if it fails or needs hand-holding, that is the finding.
+
+Swap `<FRAMEWORK>`.
 
 ```text
-Spike A (CAP-2783): This directory is a plain <FRAMEWORK> agent with get_order_status.
-Use the Diagrid skills/plugin (diagrid-deploy / diagrid-agent-scaffold /
-diagrid-develop / diagrid-app-tunnels) and the connected Diagrid MCP to deploy
-it to Catalyst and prove a run.
+Spike A (CAP-2783) — plugin and skills quality test.
+
+This directory is a plain <FRAMEWORK> agent with get_order_status.
+It knows nothing about Catalyst.
+
+Use the Diagrid plugin (skills + MCP) to get it running on Catalyst and prove a run.
+Prefer skills/MCP over inventing your own CLI procedure; if you fall back to raw CLI
+because skills/MCP are missing or wrong, record that as friction.
 
 Rules:
-- Prefer a Diagrid Agent resource (kind: Agent), NOT a plain App.
-- NO workflow runner wrapper (no DaprWorkflow*Runner / harness rewrite).
-- NO identity/OAuth middleware.
-- The sample's HTTP /run loop stays as-is; tunnel it behind the Agent's App ID.
+- Prefer a Diagrid Agent resource (kind: Agent), not a plain App.
+- Do NOT add a workflow runner wrapper (no DaprWorkflow*Runner / harness rewrite).
+- Do NOT add identity/OAuth middleware.
+- Keep the sample's existing HTTP /run loop; do not rewrite the agent into a durable harness.
 
-Org eileen-plus-test (staging, Diagrid Cloud Plus). Use project `default`
-(it exists). Create a dedicated Agent per run (e.g. <framework>-order-agent) —
-do NOT reuse a generic shared Agent unless create is refused; if refused, record friction.
-Create caller App spike-caller if missing.
+Use the org/project already selected for this machine (`diagrid whoami` / MCP whoami).
+Prefer a dedicated Agent for this framework; if you reuse another framework's Agent, say so as friction.
 
-CLI must be ~/.local/bin/diagrid first on PATH; flags --id and --yes.
-API is https://api.staging.diagrid.dev (already selected via `diagrid whoami`).
-Sample has GET /healthz. If port 8000 busy use another free port.
+Success: asking about order 42 returns an answer that contains "shipped".
 
-Create Agent (e.g. <framework>-order-agent). Tunnel on its managed App ID:
-  diagrid dev run --project <p> --id <agent-app-id> --app-port <port>
-  --enable-app-health-check --app-health-check-path /healthz --yes --
-  uv run --env-file .env main.py.
-
-After Connected wait ~5s then proof:
-  diagrid call invoke post '<agent-app-id>.run' --id spike-caller -p <project>
-  --data '{"prompt":"What is the status of order 42?"}' -v.
-
-Success = answer contains shipped.
-Print RESULT with deploy/run ok|fail, project, resource kind (Agent|App),
-agent/app id, friction, which Diagrid skills you used.
-
-After printing RESULT: stop any diagrid dev run / tunnels
-(`diagrid dev stop --id <id> -p <project>`), then exit immediately.
+When done, print RESULT with:
+deploy ok|fail, run ok|fail, project, resource kind (Agent|App), agent/app id,
+which Diagrid skills you used, whether MCP or raw CLI did the writes,
+and friction / skill or MCP gaps.
+Stop anything you started for the tunnel/run, then exit.
 ```
 
-Week-1 free-org variant replaced the org block with roughly:  
-`Org cattle-ackbar. Reuse project langgraph-spike when possible (3 project max). Reuse caller spike-caller.`  
-Same rules otherwise (no wrapper / no identity).
+### 1b. Deprecated hand-holding prompt (do not use for quality scoring)
+
+Earlier Plus/matrix runs included explicit `diagrid agent create` / `dev run` / `call invoke` / healthz / port instructions. That **feeds the answer** and under-tests the plugin. Kept only for history — see git history before 2026-11-19 evening.
+
+Week-1 free-org runs also used a shorter variant (cattle-ackbar / reuse project) still with growing amounts of CLI detail over time.
 
 ---
 
