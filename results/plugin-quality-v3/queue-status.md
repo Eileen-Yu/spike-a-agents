@@ -1,9 +1,10 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 18:50:07 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 18:55:07 PST · ledger: `ledger.tsv`
 
 ## Current
-last finished: LangGraph × claude #1 (ok)
+running: LangGraph × claude #2
+started: 2026-11-19T18:55:07-08:00
 
 ## Remaining (19)
 - langgraph × claude

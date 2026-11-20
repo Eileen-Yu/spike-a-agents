@@ -26,6 +26,8 @@
 #                        https://mcp.cloud.staging.diagrid.dev/mcp  (exported as DIAGRID_MCP_URL,
 #                        which the plugin's own MCP config honours)
 #   SPIKE_ORG            expected org name; preflight refuses to start if CLI or MCP is elsewhere
+#   SPIKE_PARALLEL=N     run N cells at once (default 1). Cells are staggered by
+#                        SPIKE_STAGGER_SECS (30). Each cell only cleans up its own run dir.
 #   SPIKE_PUBLISH=0      don't regenerate SUMMARY/SCORECARD and commit+push after each cell
 #   SPIKE_MAX_CELLS      stop after this many cells this invocation (e.g. 1 for a smoke run)
 #   SPIKE_CELL_TIMEOUT_SECS (1200), SPIKE_RESULT_GRACE_SECS (20)
@@ -36,6 +38,8 @@ OUT="${SPIKE_OUT:-$HERE/results/plugin-quality-v3}"
 case "$OUT" in /*) ;; *) OUT="$HERE/$OUT" ;; esac
 SPIKE_RUNS="${SPIKE_RUNS:-$HOME/spike-runs}"
 PROJECT="${SPIKE_PROJECT:-default}"
+PARALLEL="${SPIKE_PARALLEL:-1}"
+CUR_RUN=""
 REPEATS="${SPIKE_REPEATS:-1}"
 LEDGER="$OUT/ledger.tsv"
 STATUS="$OUT/queue-status.md"
@@ -126,8 +130,8 @@ write_status() {
     echo
     echo "Updated: $(date '+%Y-%m-%d %H:%M:%S %Z') · ledger: \`$(basename "$LEDGER")\`"
     echo
-    echo "## Current"
-    cat "$OUT/current-cell.txt" 2>/dev/null || echo "(idle)"
+    echo "## Running now"
+    ls "$OUT/running" 2>/dev/null | sed 's/^/- /' | grep . || echo "(none)"
     echo
     echo "## Remaining (${#QUEUE[@]})"
     local q
@@ -154,12 +158,12 @@ build_prompt() { # display_name slug
 
 # Kill anything whose working directory is inside a spike run dir, plus any
 # `diagrid dev run`. Earlier sessions' tunnels held port 8000 and contaminated runs.
-cleanup_runs() {
-  local pids
-  pkill -f 'diagrid dev run' 2>/dev/null || true
+cleanup_runs() { # [run_dir] — no arg: everything under $SPIKE_RUNS + all `diagrid dev run`
+  local root="${1:-$SPIKE_RUNS}" pids
+  [[ -z "${1:-}" ]] && { pkill -f 'diagrid dev run' 2>/dev/null || true; }
   if command -v lsof >/dev/null; then
-    pids=$(lsof -a -d cwd -Fpn 2>/dev/null | awk -v root="$SPIKE_RUNS/" '
-      /^p/{pid=substr($0,2)} /^n/{ if (index(substr($0,2), root)==1) print pid }' | sort -u)
+    pids=$(lsof -a -d cwd -Fpn 2>/dev/null | awk -v root="${root%/}/" '
+      /^p/{pid=substr($0,2)} /^n/{ if (index(substr($0,2)"/", root)==1) print pid }' | sort -u)
     [[ -n "$pids" ]] && kill $pids 2>/dev/null
   fi
   sleep 1
@@ -283,19 +287,21 @@ PY
 run_one() {
   local slug="$1" path="$2" name="$3" client="$4"
   local attempt ts run logfile prompt rc status kind via agent_id
-  attempt=$(( $(attempts "$slug" "$client") + 1 ))
+  attempt="${5:-$(( $(attempts "$slug" "$client") + 1 ))}"
   ts=$(date +%Y%m%d-%H%M%S)
   echo "=== START $name × $client #$attempt @ $ts ===" | tee -a "$OUT/loop.log"
   printf 'running: %s × %s #%s\nstarted: %s\n' "$name" "$client" "$attempt" "$(date -Iseconds)" >"$OUT/current-cell.txt"
+  mkdir -p "$OUT/running"; : >"$OUT/running/${slug}-${client}-${attempt}"
   write_status
-  cleanup_runs
+  [[ "$PARALLEL" -le 1 ]] && cleanup_runs
   AGENTS_BEFORE=""
   if [[ "${SPIKE_DELETE_AGENTS:-0}" == "1" ]]; then
     AGENTS_BEFORE=$(diagrid agent list --project "$PROJECT" 2>&1 || true)
   fi
 
   run=$("$HERE/new-run.sh" "$path") || { echo "new-run failed" | tee -a "$OUT/loop.log"; return 1; }
-  echo "RUN=$run" | tee -a "$OUT/loop.log"
+  CUR_RUN="$run"
+  echo "RUN=$run ($name × $client #$attempt)" | tee -a "$OUT/loop.log"
   cp "$HERE/.env" "$run/.env"   # untracked (sample .gitignore / not in commit); agent loads it like a user would
   if [[ -d "$HERE/.agents/skills" ]]; then
     mkdir -p "$run/.agents/skills"
@@ -335,7 +341,7 @@ run_one() {
   wait "$pid" 2>/dev/null; rc=$?
   CHILD_PID=""
   set +m
-  cleanup_runs
+  cleanup_runs "$run"
 
   # --- grade from outside the model ---
   grade_diff "$run" "$OUT/${slug}-${client}-${attempt}.diff"
@@ -373,8 +379,12 @@ run_one() {
     fi
   fi
   printf 'last finished: %s × %s #%s (%s)\n' "$name" "$client" "$attempt" "$status" >"$OUT/current-cell.txt"
+  rm -f "$OUT/running/${slug}-${client}-${attempt}"
   if [[ "${SPIKE_PUBLISH:-1}" == "1" ]]; then
+    local w=0
+    until mkdir "$OUT/.publish.lock" 2>/dev/null; do sleep 2; w=$((w+2)); [[ $w -gt 300 ]] && break; done
     SPIKE_OUT="$OUT" "$HERE/publish.sh" "$name × $client #$attempt $status" 2>&1 | tee -a "$OUT/loop.log"
+    rmdir "$OUT/.publish.lock" 2>/dev/null
   fi
 }
 
@@ -383,12 +393,24 @@ run_one() {
 # Ctrl-C / kill: the client runs in its own process group (so timeouts can kill
 # the whole tree), which means the terminal's SIGINT never reaches it. Forward it.
 CHILD_PID=""
-on_abort() {
-  echo; echo "aborting — stopping client and tunnels" | tee -a "$OUT/loop.log"
+WORKER_PIDS=()
+worker_abort() {
   if [[ -n "$CHILD_PID" ]]; then
     kill -TERM -"$CHILD_PID" 2>/dev/null; sleep 2; kill -KILL -"$CHILD_PID" 2>/dev/null
   fi
+  [[ -n "$CUR_RUN" ]] && cleanup_runs "$CUR_RUN"
+  exit 130
+}
+on_abort() {
+  echo; echo "aborting — stopping clients and tunnels" | tee -a "$OUT/loop.log"
+  local w
+  for w in ${WORKER_PIDS[@]+"${WORKER_PIDS[@]}"}; do kill -TERM "$w" 2>/dev/null; done
+  if [[ -n "$CHILD_PID" ]]; then
+    kill -TERM -"$CHILD_PID" 2>/dev/null; sleep 2; kill -KILL -"$CHILD_PID" 2>/dev/null
+  fi
+  sleep 3
   cleanup_runs
+  rm -rf "$OUT/running" "$OUT/.publish.lock" 2>/dev/null
   printf 'aborted: %s\n' "$(date -Iseconds)" >"$OUT/current-cell.txt"
   exit 130
 }
@@ -402,7 +424,38 @@ if [[ "${SPIKE_DRY:-0}" == "1" ]]; then
 fi
 
 preflight
-echo "matrix v3 start $(date -Iseconds) OUT=$OUT" | tee -a "$OUT/loop.log"
+echo "matrix v3 start $(date -Iseconds) OUT=$OUT parallel=$PARALLEL" | tee -a "$OUT/loop.log"
+cleanup_runs
+rm -rf "$OUT/running" "$OUT/.publish.lock" 2>/dev/null
+
+if [[ "$PARALLEL" -gt 1 ]]; then
+  JOBS=()
+  for client in "${CLIENTS[@]}"; do
+    for entry in "${FRAMEWORKS[@]}"; do
+      IFS='|' read -r f_slug f_path f_name <<<"$entry"
+      in_scope "$f_slug" "$client" || continue
+      have=$(attempts "$f_slug" "$client"); want=$(target "$f_slug" "$client")
+      a=$((have + 1))
+      while [[ $a -le $want ]]; do JOBS+=("$f_slug|$f_path|$f_name|$client|$a"); a=$((a + 1)); done
+    done
+  done
+  if [[ -n "${SPIKE_MAX_CELLS:-}" && ${#JOBS[@]} -gt "$SPIKE_MAX_CELLS" ]]; then
+    JOBS=("${JOBS[@]:0:$SPIKE_MAX_CELLS}")
+  fi
+  echo "parallel: ${#JOBS[@]} cells, $PARALLEL at a time" | tee -a "$OUT/loop.log"
+  for job in ${JOBS[@]+"${JOBS[@]}"}; do
+    while [[ $(jobs -rp | wc -l | tr -d ' ') -ge "$PARALLEL" ]]; do sleep 5; done
+    IFS='|' read -r slug path name client a <<<"$job"
+    ( trap worker_abort INT TERM; run_one "$slug" "$path" "$name" "$client" "$a" ) &
+    WORKER_PIDS+=($!)
+    sleep "${SPIKE_STAGGER_SECS:-30}"
+  done
+  wait
+  echo "parallel batch done $(date -Iseconds)" | tee -a "$OUT/loop.log"
+  printf 'idle: batch done\nfinished: %s\n' "$(date -Iseconds)" >"$OUT/current-cell.txt"
+  write_status
+  exit 0
+fi
 CELLS_RUN=0
 while true; do
   if [[ -n "${SPIKE_MAX_CELLS:-}" && "$CELLS_RUN" -ge "$SPIKE_MAX_CELLS" ]]; then
