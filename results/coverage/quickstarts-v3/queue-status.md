@@ -1,12 +1,11 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 20:27:45 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 20:31:49 PST · ledger: `ledger.tsv`
 
 ## Running now
-- qs-crewai-claude-1
+- qs-adk-claude-1
 
-## Remaining (14)
-- qs-crewai × claude
+## Remaining (13)
 - qs-adk × claude
 - qs-strands × claude
 - qs-pydantic-ai × claude
@@ -25,4 +24,5 @@ Updated: 2026-11-19 20:27:45 PST · ledger: `ledger.tsv`
 ```
 # slug        client  attempt  status  kind   via       code       violation  agent_id          mcp_calls  tokens_in  tools  log                        finished                   wall_s  tokens_out  credits
 qs-langgraph  claude  1        ok      Agent  catalyst  untouched  -          schedule-planner  3          1010627    16     qs-langgraph-claude-1.log  2026-11-19T20:27:40-08:00  174     6183        -
+qs-crewai     claude  1        ok      Agent  catalyst  untouched  -          venue-scout       3          1457284    22     qs-crewai-claude-1.log     2026-11-19T20:31:44-08:00  239     7998        -
 ```

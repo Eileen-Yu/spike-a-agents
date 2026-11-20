@@ -19,6 +19,20 @@ The "seen in" counts are runs whose own RESULT/friction list mentions the proble
 | 6 | [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) | **MCP/CLI behaviour misleads**: prod console URL on a staging org; silent appConfig + endpoint rewrite; `list_agents` ignores filters; `dev run` exits 0 on app crash and prints "managed workflow enabled" for a plain agent | console URL 27/27 · filters 4/27 · "enabled" 4/27 | Medium |
 | 7 | [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) | **Example READMEs miss prerequisites** (coverage runs): python-ai needs Dapr ≥ 1.18 and a venv; Goose needs `GOOSE_PROVIDER`; "Uvicorn running" ≠ ready in the crash quickstarts | 3 READMEs | Medium |
 
+## Who fixes what
+
+| Ticket | Skill / plugin (this project) | Other teams |
+|---|---|---|
+| [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) connect-an-existing-agent path | **Nearly all of it**: App vs Agent, where the code runs, proof recipe, name and project checks | MCP `invoke` tool (MCP server, follow-up) |
+| [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) credentials in chat | "Never read `~/.diagrid/*`" rule, optional hook | `get_connection` returns the token inline (MCP server); base64 creds file (CLI) |
+| [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) invisible quotas | Check usage first; say what to do at a cap; Dapr Agents hint | Topic cap missing from `get_usage`; unused topics never cleaned up (platform) |
+| [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) MCP vs CLI env mismatch | Compare whoami, CLI fallback, document `DIAGRID_MCP_URL` | `invalid_client` error message (auth server) |
+| [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) tunnel ~10s timeout | Troubleshooting note only | **Nearly all**: tunnel proxy timeout, Agent timeout field (platform). Verify on prod first |
+| [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) MCP/CLI behaviour | Work around only | **Nearly all**: readiness, side effects, filters, dry run, exit code, console URL (MCP / CLI / API) |
+| [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) example READMEs | — | **All**: `python-ai`, `rust-ai`, `catalyst-quickstarts` READMEs |
+
+In short, the main fix ([CAP-2876](https://linear.app/diagrid/issue/CAP-2876)) is entirely in the skills, and it's also what makes a connect slow.
+
 ## Cost (Week 2 baseline, [CAP-2541](https://linear.app/diagrid/issue/CAP-2541))
 
 | | tokens in | tool calls | time |

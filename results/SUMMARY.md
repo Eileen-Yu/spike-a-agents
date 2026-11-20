@@ -1,6 +1,6 @@
 # Spike A — results ([CAP-2783](https://linear.app/diagrid/issue/CAP-2783))
 
-_Updated 2026-11-19 20:31 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
+_Updated 2026-11-19 20:33 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
 
 **Current run = v3:** user-voice prompt ([`spike-prompt.md`](spike-prompt.md)), plugin MCP signed in, staging Plus `eileen-plus-test`/`default`, graded outside the model (git diff, proof path). Plugin 0.10.2, Claude = claude-opus-5-5.
 
@@ -51,6 +51,20 @@ Tokens in = everything the model read (incl. cache). Time = harness clock per ce
 7. **Cost**: ~1.9M tokens / ~3 min per connect (≈ week-1 baseline); Copilot 4–8 min — [CAP-2541](https://linear.app/diagrid/issue/CAP-2541)
 
 Evidence counts per finding: [`plugin-quality-v3/FINDINGS.md`](plugin-quality-v3/FINDINGS.md).
+
+## Who fixes what
+
+| Ticket | Skill / plugin (this project) | Other teams |
+|---|---|---|
+| [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) connect-an-existing-agent path | **Nearly all of it**: App vs Agent, where the code runs, proof recipe, name and project checks | MCP `invoke` tool (MCP server, follow-up) |
+| [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) credentials in chat | "Never read `~/.diagrid/*`" rule, optional hook | `get_connection` returns the token inline (MCP server); base64 creds file (CLI) |
+| [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) invisible quotas | Check usage first; say what to do at a cap; Dapr Agents hint | Topic cap missing from `get_usage`; unused topics never cleaned up (platform) |
+| [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) MCP vs CLI env mismatch | Compare whoami, CLI fallback, document `DIAGRID_MCP_URL` | `invalid_client` error message (auth server) |
+| [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) tunnel ~10s timeout | Troubleshooting note only | **Nearly all**: tunnel proxy timeout, Agent timeout field (platform). Verify on prod first |
+| [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) MCP/CLI behaviour | Work around only | **Nearly all**: readiness, side effects, filters, dry run, exit code, console URL (MCP / CLI / API) |
+| [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) example READMEs | — | **All**: `python-ai`, `rust-ai`, `catalyst-quickstarts` READMEs |
+
+In short, the main fix ([CAP-2876](https://linear.app/diagrid/issue/CAP-2876)) is entirely in the skills, and it's also what makes a connect slow.
 
 ## Coverage (separate from the quality score, NOT run to the v3 standard)
 
