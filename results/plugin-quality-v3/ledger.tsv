@@ -20,9 +20,4 @@ langchaingo	claude	1	ok	App	catalyst	untouched	-	order-agent-langchaingo	12	1657
 eino	claude	1	ok	Agent	catalyst	untouched	-	order-agent-eino	13	1875157	27	eino-claude-1.log	2026-11-19T19:18:23-08:00	199	9186	-
 goose	claude	1	ok	App	catalyst	untouched	-	order-agent-goose	12	1585973	28	goose-claude-1.log	2026-11-19T19:18:24-08:00	140	7621	-
 mastra	claude	1	ok	App	catalyst	untouched	-	order-agent-mastra-1915	13	1589066	25	mastra-claude-1.log	2026-11-19T19:18:46-08:00	176	7652	-
-langgraph	codex	1	fail-noresult(rc=143)	-	unknown	untouched	-	-	-	-	-	langgraph-codex-1.log	2026-11-19T19:30:01-08:00	8	(in total)	-
-dapr-agents	claude	2	fail-noresult(rc=143)	-	unknown	untouched	-	-	3	144016	7	dapr-agents-claude-2.log	2026-11-19T19:30:20-08:00	26	1251	-
-byoa	codex	1	ok	Agent	catalyst	untouched	-	-	-	-	-	byoa-codex-1.log	2026-11-19T19:30:46-08:00	29	(in total)	-
-byoa	codex	1	ok	Agent	catalyst	untouched	-	-	-	-	-	byoa-codex-1.log	2026-11-19T19:30:51-08:00	28	(in total)	-
-langgraph	copilot	1	fail-noresult(rc=143)	-	unknown	untouched	-	-	-	54200	-	langgraph-copilot-1.log	2026-11-19T19:31:16-08:00	29	1400	0.32
-langgraph	copilot	1	fail-noresult(rc=143)	-	unknown	untouched	-	-	-	54200	-	langgraph-copilot-1.log	2026-11-19T19:31:16-08:00	23	1400	0.32
+langgraph	claude	4	ok	Agent	catalyst	untouched	-	order-agent-langgraph	13	1821259	26	langgraph-claude-4.log	2026-11-19T19:44:51-08:00	151	8075	-

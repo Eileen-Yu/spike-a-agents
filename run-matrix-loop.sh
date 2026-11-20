@@ -29,6 +29,7 @@
 #   SPIKE_PARALLEL=N     run N cells at once (default 1). Cells are staggered by
 #                        SPIKE_STAGGER_SECS (30). Each cell only cleans up its own run dir.
 #   SPIKE_PUBLISH=0      don't regenerate SUMMARY/SCORECARD and commit+push after each cell
+#   SPIKE_EXTRA          per-cell attempt targets, e.g. "dapr-agents:claude:2,langgraph:claude:4"
 #   SPIKE_MAX_CELLS      stop after this many cells this invocation (e.g. 1 for a smoke run)
 #   SPIKE_CELL_TIMEOUT_SECS (1200), SPIKE_RESULT_GRACE_SECS (20)
 set -u
@@ -100,7 +101,11 @@ in_scope() { # slug client
 }
 
 target() { # slug client -> attempts wanted
-  local n="$REPEATS"
+  local n="$REPEATS" x
+  # SPIKE_EXTRA="slug:client:N,..." raises one cell's attempt count (e.g. a rerun)
+  for x in ${SPIKE_EXTRA//,/ }; do
+    if [[ "${x%%:*}" == "$1" && "$(cut -d: -f2 <<<"$x")" == "$2" ]]; then echo "${x##*:}"; return; fi
+  done
   if [[ "$1" == "langgraph" && "$2" == "claude" && "$n" -lt 3 ]]; then n=3; fi
   echo "$n"
 }
@@ -225,10 +230,15 @@ preflight() {
 
 # ---------- grading ----------
 
+# A real RESULT block: "RESULT" at the start of a line and a "run: ok|fail" line.
+# (Codex echoes the prompt, which contains "RESULT ... run ok|fail" mid-sentence —
+# the old loose match killed Codex 20s in and graded it ok.)
+# "run: ok", "run=ok", "deploy/run: **ok**", "deploy/run ok |" — but not the prompt's "run ok|fail"
+RUN_LINE_RE='\brun(\*\*)?[[:space:]]*[:=]?[[:space:]]*(\*\*)?[[:space:]]*(ok|fail)([^|a-z]|$)'
 result_has() { # log
   [[ -f "$1" ]] || return 1
-  rg -q 'RESULT' "$1" 2>/dev/null || return 1
-  rg -qi 'run[^a-z]{0,40}(ok|fail)' "$1" 2>/dev/null
+  grep -v 'print a RESULT block' "$1" 2>/dev/null | rg -q '\bRESULT\b' || return 1
+  rg -qi "$RUN_LINE_RE" "$1" 2>/dev/null
 }
 
 field() { # log regex -> first match of the value after the label
@@ -346,7 +356,6 @@ run_one() {
   printf 'running: %s × %s #%s\nstarted: %s\n' "$name" "$client" "$attempt" "$(date -Iseconds)" >"$OUT/current-cell.txt"
   mkdir -p "$OUT/running"; : >"$OUT/running/${slug}-${client}-${attempt}"
   write_status
-  [[ "$PARALLEL" -le 1 ]] && cleanup_runs
   AGENTS_BEFORE=""
   if [[ "${SPIKE_DELETE_AGENTS:-0}" == "1" ]]; then
     AGENTS_BEFORE=$( { diagrid agent list --project "$PROJECT"; diagrid app list --project "$PROJECT"; } 2>&1 || true)
@@ -376,8 +385,8 @@ run_one() {
     unset ANTHROPIC_API_KEY
     case "$client" in
       claude)  "$CLAUDE" -p --dangerously-skip-permissions --output-format text "$prompt" ;;
-      codex)   "$CODEX" exec -s danger-full-access -m "${CODEX_MODEL:-gpt-5.4}" "$prompt" ;;
-      copilot) COPILOT_ALLOW_ALL=true "$COPILOT" -p "$prompt" --allow-all --disable-builtin-mcps ;;
+      codex)   "$CODEX" exec -s danger-full-access -m "${CODEX_MODEL:-gpt-5.4}" "$prompt" </dev/null ;;
+      copilot) COPILOT_ALLOW_ALL=true "$COPILOT" -p "$prompt" --allow-all --disable-builtin-mcps </dev/null ;;
     esac
   ) >"$logfile" 2>&1 &
   local pid=$!
@@ -410,7 +419,7 @@ run_one() {
     status=fail-rules
   elif ! result_has "$logfile"; then
     status="fail-noresult(rc=$rc)"
-  elif rg -qi '^\s*(run|deploy)[^a-z]{0,40}fail' "$logfile"; then
+  elif rg -qi '\b(run|deploy)(\*\*)?[[:space:]]*[:=]?[[:space:]]*(\*\*)?[[:space:]]*fail([^|a-z]|$)' "$logfile"; then
     status=fail
   elif [[ "$via" == localhost ]]; then
     status=fail-localhost
@@ -486,6 +495,19 @@ if [[ "${SPIKE_DRY:-0}" == "1" ]]; then
   echo "--- prompt (LangGraph) ---"; build_prompt LangGraph langgraph
   exit 0
 fi
+
+# One runner at a time: a second one would kill the first one's cells in its
+# startup cleanup (that is what happened on 2026-11-19 19:30).
+LOCK="$SPIKE_RUNS/.runner.lock"
+if ! mkdir "$LOCK" 2>/dev/null; then
+  other=$(cat "$LOCK/pid" 2>/dev/null)
+  if [[ -n "$other" ]] && kill -0 "$other" 2>/dev/null; then
+    echo "Another run-matrix-loop is running (pid $other). Wait for it or stop it; one runner at a time." >&2; exit 4
+  fi
+  echo "stale runner lock (pid ${other:-?} gone) — taking it"
+fi
+echo $$ >"$LOCK/pid"
+trap 'rm -rf "$LOCK" 2>/dev/null' EXIT
 
 preflight
 echo "matrix v3 start $(date -Iseconds) OUT=$OUT parallel=$PARALLEL" | tee -a "$OUT/loop.log"

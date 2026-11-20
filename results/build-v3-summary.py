@@ -34,7 +34,7 @@ TOP_FINDINGS = [
     "4. **App vs Agent contradictory** in `diagrid-deploy` → 8/21 landed on App — [CAP-2876](https://linear.app/diagrid/issue/CAP-2876)",
     "5. **Silent identity clobber**: `list_apps` hides Agent-owned App IDs, dry run says `would_replace` — [CAP-2930](https://linear.app/diagrid/issue/CAP-2930)",
     "6. **No documented way to call / prove a plain agent through Catalyst**; readiness reads wrong — [CAP-2878](https://linear.app/diagrid/issue/CAP-2878), [CAP-2929](https://linear.app/diagrid/issue/CAP-2929), [CAP-2934](https://linear.app/diagrid/issue/CAP-2934)",
-    "7. **Cost**: ~1.9M tokens in per connect with MCP on, ~3× the CLI path — [CAP-2541](https://linear.app/diagrid/issue/CAP-2541)",
+    "7. **Cost**: ~1.9M tokens in / ~3 min per connect — about the same as the week-1 LangGraph baseline (1.4–1.9M); the Week 2 speed baseline — [CAP-2541](https://linear.app/diagrid/issue/CAP-2541)",
 ]
 CLIENTS = ["claude", "codex", "copilot"]
 # Spec matrix (CAP-2783): every framework × Claude; LangGraph+BYOA × Codex/Copilot; LangGraph × Claude ×3
@@ -325,7 +325,7 @@ def build():
         "",
         "## Earlier runs (superseded, not a quality score)",
         "",
-        "Week-1 57/57 and v1/v2 used prompts with CLI recipes and ran with MCP not signed in (0 MCP calls, ~0.4–0.8M tokens/cell). Kept for history only: [`archive/SUMMARY-pre-v3.md`](archive/SUMMARY-pre-v3.md).",
+        "Week-1 57/57 and v1/v2 used prompts with CLI recipes; v1/v2 also ran with MCP not signed in (0 MCP calls, ~0.4–0.8M tokens/cell). Their token numbers are **not comparable** to v3 (different prompt and task, not just MCP). They still show one real scenario: with MCP unavailable an agent can finish via the CLI, but no skill tells it how ([CAP-2921](https://linear.app/diagrid/issue/CAP-2921)). Kept for history only: [`archive/SUMMARY-pre-v3.md`](archive/SUMMARY-pre-v3.md).",
         "",
     ]
     SUMMARY.write_text("\n".join(page))

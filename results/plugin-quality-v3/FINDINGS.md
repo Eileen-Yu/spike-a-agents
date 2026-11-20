@@ -7,7 +7,7 @@ Ticket parent: [CAP-2783](https://linear.app/diagrid/issue/CAP-2783) · triage: 
 
 ## Claude row — result (21/21 run)
 
-**20 ok · 1 fail (Dapr Agents, [CAP-2932](https://linear.app/diagrid/issue/CAP-2932))** · 0 rule violations · 0 localhost proofs · MCP used in every cell (avg 13 calls) · **8/21 landed on App** ([CAP-2876](https://linear.app/diagrid/issue/CAP-2876)) · tokens in avg **1.88M** (1.45–2.78M), ~3× v2's CLI path ([CAP-2541](https://linear.app/diagrid/issue/CAP-2541)).
+**20 ok · 1 fail (Dapr Agents, [CAP-2932](https://linear.app/diagrid/issue/CAP-2932))** · 0 rule violations · 0 localhost proofs · MCP used in every cell (avg 13 calls) · **8/21 landed on App** ([CAP-2876](https://linear.app/diagrid/issue/CAP-2876)) · tokens in avg **1.88M** (1.45–2.78M) — about the same as the week-1 LangGraph baseline (1.44–1.87M); not comparable to v2, whose prompt and task differed ([CAP-2541](https://linear.app/diagrid/issue/CAP-2541)).
 
 Top issues by impact: [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) tunnel ~10s timeout → 502 · [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) Dapr Agents topic cap · [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) creds printed (security) · [CAP-2930](https://linear.app/diagrid/issue/CAP-2930) silent identity clobber · [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) App vs Agent.
 
@@ -54,7 +54,7 @@ Cells run after the reset are marked "clean project" in the scorecard notes.
 | Run-proof steps unavailable for plain HTTP agents (`get_metrics` stays 0, no request log, `get_logs` refused by data sharing); `dev run` reports managed workflow/pub/sub/KV "enabled" for an agent using none | Spring AI, .NET MAF, Eino, Mastra, Claude Agent SDK, LangChain, LangChainGo, Deep Agents | [CAP-2934](https://linear.app/diagrid/issue/CAP-2934) | Medium |
 | Skill examples use `timeout`, absent on macOS | LangGraph #3 | [CAP-2907](https://linear.app/diagrid/issue/CAP-2907) | Low |
 | Sidecar probes `GET /` and `/dapr/config` (404) though tunnel says `/healthz`, probing disabled | LangGraph × claude #1 | [CAP-2878](https://linear.app/diagrid/issue/CAP-2878) | Low |
-| Connect-an-agent cost with MCP on: 1.8–2.5M tokens in, 26–33 tool calls (13–16 MCP) — ~3× v2's CLI path | LangGraph #1–3, LangChain | [CAP-2541](https://linear.app/diagrid/issue/CAP-2541) (comment) | (speed baseline) |
+| Connect-an-agent cost with MCP on: 1.8–2.5M tokens in, 26–33 tool calls (13–16 MCP) — ≈ week-1 baseline; v2 not comparable (different prompt) | LangGraph #1–3, LangChain | [CAP-2541](https://linear.app/diagrid/issue/CAP-2541) (comment) | (speed baseline) |
 
 _Last edited 2026-11-19 19:25 PT — Claude row complete (21/21)._
 
