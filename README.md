@@ -76,7 +76,8 @@ Workflows = [Spike B / CAP-2784](https://linear.app/diagrid/issue/CAP-2784).
 | Agent read `~/.diagrid/creds` and printed CLI tokens into transcript (env mismatch debugging) | [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) | v3 LangGraph #1 |
 | `diagrid-deploy` vs `diagrid-app-tunnels` contradict on app-to-app access default | [CAP-2927](https://linear.app/diagrid/issue/CAP-2927) | v3 env run |
 | No path at the identity cap (free 10/10) — agent reuses an unrelated Agent or stops | [CAP-2928](https://linear.app/diagrid/issue/CAP-2928) | v3 env run |
-| `diagrid_get_agent` ready before identity ready; undocumented agent appConfig | [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) | v3 LangGraph × claude #1 |
+| `diagrid_get_agent` ready before identity ready; undocumented agent appConfig | [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) | v3 5/5 cells |
+| `list_apps` hides Agent-owned App IDs; dry run says `would_replace` (clobber risk) | [CAP-2930](https://linear.app/diagrid/issue/CAP-2930) | v3 LangGraph #2, #3 |
 
 Free-plan **10/10 identity** is an environment ceiling, not evidence the plugin cannot create Agents.  
 (`agent-registry` missing from `component list` is intentional — managed/reserved; [CAP-2924](https://linear.app/diagrid/issue/CAP-2924) canceled.)
