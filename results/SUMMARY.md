@@ -12,7 +12,7 @@ _Updated 2026-11-19 19:18 PST — in progress._ Scorecard: [`plugin-quality-v3/S
 
 Why v3 supersedes v1/v2: v1/v2 named the test and the plugin, allowed localhost proofs, ran `claude -p` with MCP unauthenticated (every cell `tools_mcp=0`, CLI fallback), and exported `.env` (incl. `ANTHROPIC_API_KEY`) into the coding client. v3 fixes all of these.
 
-**20/25 planned cells run** · ok 19 · fail 1 · Agent 13 · App 7 · rule violations 0 · localhost-only proofs 0 · Claude cells with 0 MCP calls 0
+**21/25 planned cells run** · ok 19 · fail 2 · Agent 13 · App 8 · rule violations 1 · localhost-only proofs 0 · Claude cells with 0 MCP calls 0
 
 | # | Framework | Claude | Codex | Copilot |
 |---|---|---|---|---|
@@ -33,7 +33,7 @@ Why v3 supersedes v1/v2: v1/v2 named the test and the plugin, allowed localhost 
 | 15 | Spring AI | ok · Agent | — | — |
 | 16 | LangChainGo | ok · App | — | — |
 | 17 | Eino | ok · Agent | — | — |
-| 18 | Mastra | pending 1 | — | — |
+| 18 | Mastra | fail-rules · App | — | — |
 | 19 | Goose | ok · App | — | — |
 
 <!-- v3:end -->
