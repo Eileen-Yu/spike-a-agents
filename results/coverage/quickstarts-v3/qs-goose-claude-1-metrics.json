@@ -1,0 +1,30 @@
+{
+  "session": "714887bc-fbee-494b-9855-b4dfe4cbc8c7",
+  "subagent_files": 0,
+  "client": "claude-code 2.1.329",
+  "model": "claude-opus-5-5",
+  "plugin": "-",
+  "tokens_in": 1367795,
+  "tokens_out": 8347,
+  "model_requests": 17,
+  "tool_calls": 18,
+  "catalyst_calls": 4,
+  "failed_calls": 1,
+  "repeated_calls": 1,
+  "user_turns": 0,
+  "skill_bytes": 0,
+  "wall_seconds": 163,
+  "tools": {
+    "Bash": 13,
+    "mcp__plugin_diagrid_diagrid__diagrid_start_workflow": 2,
+    "ToolSearch": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_whoami": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_get_workflow_run": 1
+  },
+  "catalyst_tools": {
+    "mcp__plugin_diagrid_diagrid__diagrid_whoami": 1,
+    "mcp__plugin_diagrid_diagrid__diagrid_start_workflow": 2,
+    "mcp__plugin_diagrid_diagrid__diagrid_get_workflow_run": 1
+  },
+  "skills": {}
+}
