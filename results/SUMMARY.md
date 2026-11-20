@@ -1,16 +1,16 @@
 # Spike A — results ([CAP-2783](https://linear.app/diagrid/issue/CAP-2783))
 
-_Updated 2026-11-19 19:44 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
+_Updated 2026-11-19 19:47 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
 
 **Current run = v3:** user-voice prompt ([`spike-prompt.md`](spike-prompt.md)), plugin MCP signed in, staging Plus `eileen-plus-test`/`default`, graded outside the model (git diff, proof path). Plugin 0.10.2, Claude = claude-opus-5-5.
 
-**Score: claude 21/21 · codex 0/2 (2 pending) · copilot 0/2 (2 pending)** · App instead of Agent: 8 · rule violations: 0 · localhost proofs: 0
+**Score: claude 21/21 · codex 1/2 (1 pending) · copilot 0/2 (2 pending)** · App instead of Agent: 8 · rule violations: 0 · localhost proofs: 0
 
 ## Each cell — result · resource kind · tokens in · time
 
 | Framework | Claude | Codex | Copilot |
 |---|---|---|---|
-| LangGraph | #1 ok · Agent · 1.8M · 2m13s<br>#2 ok · Agent · 2.0M · 3m06s<br>#3 ok · Agent · 2.0M · 2m39s<br>#4 ok · Agent · 1.8M · 2m31s | _pending 1_ | _pending 1_ |
+| LangGraph | #1 ok · Agent · 1.8M · 2m13s<br>#2 ok · Agent · 2.0M · 3m06s<br>#3 ok · Agent · 2.0M · 2m39s<br>#4 ok · Agent · 1.8M · 2m31s | ok · Agent · 108k · 4m21s | _pending 1_ |
 | LangChain | ok · Agent · 2.5M · 3m05s |  |  |
 | CrewAI | ok · **App** · 1.6M · 4m15s |  |  |
 | Google ADK | ok · Agent · 1.6M · 3m03s |  |  |
@@ -37,6 +37,7 @@ Tokens in = everything the model read (incl. cache). Time = harness clock per ce
 | Client | cells | ok | avg tokens in | avg time | total tokens in | total time |
 |---|---:|---:|---:|---:|---:|---:|
 | claude | 22 | 21 | 1.9M | 2m 52s | 41.3M | 63m 16s |
+| codex | 1 | 1 | 108k | 4m 21s | 108k | 4m 21s |
 
 ## Top findings
 
