@@ -1,8 +1,8 @@
 # Quickstart coverage — v3 standard
 
-_Updated 2026-11-19 20:59 PST._ Prompt: `text-quickstart` block in [`../../spike-prompt.md`](../../spike-prompt.md). Claude, MCP signed in, graded by the harness (proof through Catalyst), one cell at a time with per-cell cleanup.
+_Updated 2026-11-19 21:14 PST._ Prompt: `text-quickstart` block in [`../../spike-prompt.md`](../../spike-prompt.md). Claude, MCP signed in, graded by the harness (proof through Catalyst), one cell at a time with per-cell cleanup.
 
-**10/10 ok** (pre-v3 README-follow run, self-graded: 15/15)
+**11/11 ok** (pre-v3 README-follow run, self-graded: 15/15)
 
 | Quickstart | Result | kind | via Catalyst | MCP calls | tokens in | time | id |
 |---|---|---|---|---:|---:|---:|---|
@@ -16,3 +16,4 @@ _Updated 2026-11-19 20:59 PST._ Prompt: `text-quickstart` block in [`../../spike
 | deepagents | ok | Agent | catalyst | 5 | 1.3M | 3m14s | `transportation-planner` |
 | mastra | ok | Agent | catalyst | 6 | 1.1M | 3m24s | `sre-agent` |
 | goose | ok | Agent | catalyst | 4 | 1.4M | 2m58s | `release-manager` |
+| microsoft-dotnet | ok | Agent | catalyst | 5 | 2.3M | 15m02s | `event-planner` |
