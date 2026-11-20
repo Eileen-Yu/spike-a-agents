@@ -157,6 +157,13 @@ def cost_section(rows):
     out.append("")
     return out
 
+def qs_v3_line():
+    led = HERE / "coverage" / "quickstarts-v3" / "ledger.tsv"
+    if not led.exists(): return []
+    ls = [l.split("\t") for l in led.read_text().splitlines()[1:] if l.strip() and not l.startswith("#")]
+    ok = sum(1 for c in ls if c[3].startswith("ok"))
+    return [f"- **Quickstarts rerun to the v3 standard** (Claude, MCP on, harness-graded): **{ok}/{len(ls)} ok** — [`coverage/quickstarts-v3/SCORECARD.md`](coverage/quickstarts-v3/SCORECARD.md)", ""]
+
 def status_cell(r):
     s = r.get("status", "")
     return f"**{s}**" if s == "ok" else f"**{s}** ❗" if s.startswith("fail") else s
@@ -328,11 +335,14 @@ def build():
         "",
         "Evidence counts per finding: [`plugin-quality-v3/FINDINGS.md`](plugin-quality-v3/FINDINGS.md).",
         "",
-        "## Coverage (separate from the quality score)",
+        "## Coverage (separate from the quality score, NOT run to the v3 standard)",
         "",
-        "- Official quickstarts `agents/*` (README happy path, staging Plus): **15/15 ok**",
+        "Run before v3 (2026-11-19 15:35–16:32 PT), Claude only, one run each, MCP not signed in (0 MCP calls), graded by the model's own RESULT. They answer \"does the README work\", not \"how good is the plugin\".",
+        "",
+        *qs_v3_line(),
+        "- Official quickstarts `agents/*` (README happy path, staging Plus): **15/15 ok**. Their leftover topics later filled the pub/sub cap ([CAP-2932](https://linear.app/diagrid/issue/CAP-2932))",
         "- Crash recovery (LangGraph, CrewAI, Mastra): **3/3** crash + resume",
-        "- `*-ai/examples` sample: Mastra, Eino, Goose ok; python-ai LangGraph needs Dapr ≥ 1.18 ([CAP-2920](https://linear.app/diagrid/issue/CAP-2920))",
+        "- `*-ai/examples` sample (mostly local `dapr run`): Mastra, Eino, Goose ok; python-ai LangGraph needs Dapr ≥ 1.18 ([CAP-2920](https://linear.app/diagrid/issue/CAP-2920))",
         "",
         "Ledgers: [`coverage/`](coverage/) · details in [`archive/SUMMARY-pre-v3.md`](archive/SUMMARY-pre-v3.md#official-quickstarts-coverage-plus).",
         "",

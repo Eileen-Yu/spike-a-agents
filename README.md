@@ -12,7 +12,7 @@
 | Findings with evidence counts → 7 tickets | [`results/plugin-quality-v3/FINDINGS.md`](results/plugin-quality-v3/FINDINGS.md) |
 | Every run (tokens, time, MCP calls, diff, RESULT) | [`results/plugin-quality-v3/SCORECARD.md`](results/plugin-quality-v3/SCORECARD.md) |
 | The prompt and grading rules | [`results/spike-prompt.md`](results/spike-prompt.md) |
-| Coverage (official quickstarts 15/15, crash recovery 3/3, `*-ai` examples) | [`results/coverage/`](results/coverage/) |
+| Coverage: official quickstarts 15/15, crash recovery 3/3, `*-ai` examples (pre-v3: README-follow, Claude only, MCP off, self-graded) | [`results/coverage/`](results/coverage/) |
 | Earlier, superseded runs (week-1 57/57, v1, v2) | [`results/archive/`](results/archive/) |
 
 ## What's here

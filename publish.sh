@@ -8,7 +8,8 @@ set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 cd "$HERE" || exit 1
 OUT="${SPIKE_OUT:-$HERE/results/plugin-quality-v3}"
-python3 results/build-v3-summary.py "$OUT" || echo "summary build failed (continuing)"
+python3 results/build-v3-summary.py || echo "summary build failed (continuing)"
+python3 results/build-coverage-summary.py || true
 
 # Everything that isn't ignored. .gitignore keeps logs, .env and run state out.
 git add -A -- . 2>/dev/null

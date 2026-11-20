@@ -19,6 +19,24 @@ skills and MCP tools you used, and every place the Diagrid instructions were wro
 missing or pointed you the wrong way. Then stop everything you started.
 ```
 
+## Quickstart prompt (coverage, `SPIKE_MODE=quickstart`)
+
+Same rules, run against the official `catalyst-quickstarts/agents/*`. The README is the product, so the agent may follow it, but nothing beyond it is given.
+
+```text-quickstart
+This folder is a Diagrid quickstart: <FRAMEWORK>. Get it running on Diagrid Catalyst
+the way its README describes, and send it one request through Catalyst (not straight
+to localhost) that shows it works.
+
+When you're done, print a RESULT block with: deploy ok|fail, run ok|fail, org,
+project, resource kind (Agent|App), agent/app id(s), the exact command or request that
+proved the run and its response, which Diagrid skills and MCP tools you used, and every
+place the README or the Diagrid instructions were wrong, missing or pointed you the wrong
+way. Then stop everything you started.
+```
+
+Graded like the plain samples, except that durable runners are expected, so the `fail-rules` diff check is off. Cells run one at a time, and everything a cell created (Agents, Apps, pub/sub topics) is deleted afterwards, so the 10-topic cap isn't refilled.
+
 ## Graded by the harness, not by the model
 
 | Check | How | Outcome |

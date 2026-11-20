@@ -35,7 +35,12 @@
 set -u
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
-OUT="${SPIKE_OUT:-$HERE/results/plugin-quality-v3}"
+MODE="${SPIKE_MODE:-plain}"   # plain = Spike A samples; quickstart = official catalyst-quickstarts agents/*
+if [[ "$MODE" == quickstart ]]; then
+  OUT="${SPIKE_OUT:-$HERE/results/coverage/quickstarts-v3}"
+else
+  OUT="${SPIKE_OUT:-$HERE/results/plugin-quality-v3}"
+fi
 case "$OUT" in /*) ;; *) OUT="$HERE/$OUT" ;; esac
 SPIKE_RUNS="${SPIKE_RUNS:-$HOME/spike-runs}"
 PROJECT="${SPIKE_PROJECT:-default}"
@@ -80,7 +85,32 @@ FRAMEWORKS=(
   "mastra|typescript/mastra|Mastra"
   "goose|rust/goose|Goose"
 )
-IFS=',' read -r -a CLIENTS <<<"${SPIKE_CLIENTS:-claude,codex,copilot}"
+if [[ "$MODE" == quickstart ]]; then
+  QS="${SPIKE_QS_ROOT:-$HERE/../catalyst-quickstarts/agents}"
+  QS="$(cd "$QS" 2>/dev/null && pwd)" || { echo "catalyst-quickstarts not found (set SPIKE_QS_ROOT)" >&2; exit 2; }
+  FRAMEWORKS=(
+    "qs-langgraph|$QS/langgraph|LangGraph"
+    "qs-crewai|$QS/crewai|CrewAI"
+    "qs-adk|$QS/adk|Google ADK"
+    "qs-strands|$QS/strands|Strands"
+    "qs-pydantic-ai|$QS/pydantic-ai|Pydantic AI"
+    "qs-openai-agents|$QS/openai-agents|OpenAI Agents"
+    "qs-claude-agents|$QS/claude-agents|Claude Agent SDK"
+    "qs-deepagents|$QS/deepagents|Deep Agents"
+    "qs-mastra|$QS/mastra|Mastra"
+    "qs-goose|$QS/goose|Goose"
+    "qs-microsoft-dotnet|$QS/microsoft-dotnet|Microsoft Agent Framework (.NET)"
+    "qs-langchaingo|$QS/langchaingo|LangChainGo"
+    "qs-langgraphjs|$QS/langgraphjs|LangGraph.js"
+    "qs-spring-ai-event-planner|$QS/spring-ai/event-planner|Spring AI event planner"
+    "qs-dapr-agents-durable|$QS/dapr-agents/durable-agent|Dapr Agents durable agent"
+  )
+  if [[ "$PARALLEL" -gt 1 ]]; then
+    echo "quickstart mode runs one cell at a time (per-cell topic cleanup needs it); ignoring SPIKE_PARALLEL=$PARALLEL" >&2
+    PARALLEL=1
+  fi
+fi
+IFS=',' read -r -a CLIENTS <<<"${SPIKE_CLIENTS:-$([[ "$MODE" == quickstart ]] && echo claude || echo claude,codex,copilot)}"
 IFS=',' read -r -a ONLY <<<"${SPIKE_ONLY:-}"
 
 LEDGER_HEADER=$'# slug\tclient\tattempt\tstatus\tkind\tvia\tcode\tviolation\tagent_id\tmcp_calls\ttokens_in\ttools\tlog\tfinished\twall_s\ttokens_out\tcredits'
@@ -152,8 +182,9 @@ write_status() {
 # ---------- prompt ----------
 
 build_prompt() { # display_name slug
-  awk '
-    /^```text$/{inblock=1; next}
+  local fence='```text'; [[ "$MODE" == quickstart ]] && fence='```text-quickstart'
+  awk -v f="$fence" '
+    $0==f {inblock=1; next}
     /^```$/{if(inblock) exit}
     inblock{print}
   ' "$PROMPT_FILE" | sed "s/<FRAMEWORK>/${1}/g; s/<framework>/${2}/g"
@@ -344,6 +375,17 @@ PY2
   esac
 }
 
+# "agent <name>" / "app <name>" / "topic <name> <broker>" — what's in the project now
+project_snapshot() {
+  command -v diagrid >/dev/null || return 0
+  local nm='NR>1 && NF && $1!~/^-+$/ && $1!="No" {print $1}' b
+  diagrid agent list -p "$PROJECT" 2>/dev/null | awk "$nm" | sed 's/^/agent /'
+  diagrid app list -p "$PROJECT" 2>/dev/null | awk "$nm" | sed 's/^/app /'
+  for b in $(diagrid pubsub list -p "$PROJECT" 2>/dev/null | awk "$nm"); do
+    diagrid pubsub topics list --pubsub "$b" -p "$PROJECT" 2>/dev/null | awk "$nm" | sed "s/^/topic /; s/\$/ $b/"
+  done
+}
+
 # ---------- one cell ----------
 
 run_one() {
@@ -356,6 +398,8 @@ run_one() {
   printf 'running: %s × %s #%s\nstarted: %s\n' "$name" "$client" "$attempt" "$(date -Iseconds)" >"$OUT/current-cell.txt"
   mkdir -p "$OUT/running"; : >"$OUT/running/${slug}-${client}-${attempt}"
   write_status
+  local SNAP_BEFORE=""
+  [[ "${SPIKE_DELETE_AGENTS:-0}" == "1" && "$PARALLEL" -le 1 ]] && SNAP_BEFORE=$(project_snapshot)
   AGENTS_BEFORE=""
   if [[ "${SPIKE_DELETE_AGENTS:-0}" == "1" ]]; then
     AGENTS_BEFORE=$( { diagrid agent list --project "$PROJECT"; diagrid app list --project "$PROJECT"; } 2>&1 || true)
@@ -416,6 +460,7 @@ run_one() {
     | grep -oE '[a-z0-9][a-z0-9-]*-[a-z0-9-]+' | grep -viE '^(app-id|agent-id|no-registry|the-)' | head -1 || true)
   agent_id="${agent_id:--}"
 
+  [[ "$MODE" == quickstart ]] && VIOLATION="-"   # quickstarts ship durable runners on purpose
   if [[ "$VIOLATION" != "-" ]]; then
     status=fail-rules
   elif ! result_has "$logfile"; then
@@ -445,7 +490,19 @@ run_one() {
     "$wall_s" "$TOKENS_OUT" "$CREDITS" >>"$LEDGER"
   echo "=== $status $name × $client #$attempt (kind=$kind via=$via code=$CODE_CHANGED violation=$VIOLATION) ===" | tee -a "$OUT/loop.log"
 
-  if [[ "${SPIKE_DELETE_AGENTS:-0}" == "1" && "$agent_id" != "-" ]]; then
+  if [[ "${SPIKE_DELETE_AGENTS:-0}" == "1" && "$PARALLEL" -le 1 ]]; then
+    # serial: delete exactly what appeared during this cell (Agents, Apps, pub/sub topics)
+    local line kind_ name broker
+    comm -13 <(printf '%s\n' "$SNAP_BEFORE" | sort) <(project_snapshot | sort) | while read -r kind_ name broker; do
+      [[ -z "$name" ]] && continue
+      echo "cleanup: $kind_ $name ${broker:-}" | tee -a "$OUT/loop.log"
+      case "$kind_" in
+        agent) yes | diagrid agent delete "$name" --project "$PROJECT" >>"$OUT/loop.log" 2>&1 ;;
+        app)   yes | diagrid app delete "$name" --project "$PROJECT" >>"$OUT/loop.log" 2>&1 ;;
+        topic) yes | diagrid pubsub topics delete "$name" --pubsub "$broker" -p "$PROJECT" >>"$OUT/loop.log" 2>&1 ;;
+      esac
+    done
+  elif [[ "${SPIKE_DELETE_AGENTS:-0}" == "1" && "$agent_id" != "-" ]]; then
     # Only delete what this cell created: if the model reused an Agent that was
     # already there (e.g. at the identity cap), leave it alone.
     if grep -qw -- "$agent_id" <<<"$AGENTS_BEFORE"; then

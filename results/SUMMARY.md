@@ -1,6 +1,6 @@
 # Spike A — results ([CAP-2783](https://linear.app/diagrid/issue/CAP-2783))
 
-_Updated 2026-11-19 20:14 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
+_Updated 2026-11-19 20:27 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
 
 **Current run = v3:** user-voice prompt ([`spike-prompt.md`](spike-prompt.md)), plugin MCP signed in, staging Plus `eileen-plus-test`/`default`, graded outside the model (git diff, proof path). Plugin 0.10.2, Claude = claude-opus-5-5.
 
@@ -52,11 +52,15 @@ Tokens in = everything the model read (incl. cache). Time = harness clock per ce
 
 Evidence counts per finding: [`plugin-quality-v3/FINDINGS.md`](plugin-quality-v3/FINDINGS.md).
 
-## Coverage (separate from the quality score)
+## Coverage (separate from the quality score, NOT run to the v3 standard)
 
-- Official quickstarts `agents/*` (README happy path, staging Plus): **15/15 ok**
+Run before v3 (2026-11-19 15:35–16:32 PT), Claude only, one run each, MCP not signed in (0 MCP calls), graded by the model's own RESULT. They answer "does the README work", not "how good is the plugin".
+
+- **Quickstarts rerun to the v3 standard** (Claude, MCP on, harness-graded): **1/1 ok** — [`coverage/quickstarts-v3/SCORECARD.md`](coverage/quickstarts-v3/SCORECARD.md)
+
+- Official quickstarts `agents/*` (README happy path, staging Plus): **15/15 ok**. Their leftover topics later filled the pub/sub cap ([CAP-2932](https://linear.app/diagrid/issue/CAP-2932))
 - Crash recovery (LangGraph, CrewAI, Mastra): **3/3** crash + resume
-- `*-ai/examples` sample: Mastra, Eino, Goose ok; python-ai LangGraph needs Dapr ≥ 1.18 ([CAP-2920](https://linear.app/diagrid/issue/CAP-2920))
+- `*-ai/examples` sample (mostly local `dapr run`): Mastra, Eino, Goose ok; python-ai LangGraph needs Dapr ≥ 1.18 ([CAP-2920](https://linear.app/diagrid/issue/CAP-2920))
 
 Ledgers: [`coverage/`](coverage/) · details in [`archive/SUMMARY-pre-v3.md`](archive/SUMMARY-pre-v3.md#official-quickstarts-coverage-plus).
 

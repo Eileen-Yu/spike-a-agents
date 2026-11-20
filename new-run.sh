@@ -8,15 +8,16 @@ set -eu
 
 sample="${1:?usage: new-run.sh <language>/<framework>}"
 here="$(cd "$(dirname "$0")" && pwd)"
-[ -d "$here/$sample" ] || { echo "no sample at $here/$sample" >&2; exit 1; }
+case "$sample" in /*) src="$sample" ;; *) src="$here/$sample" ;; esac
+[ -d "$src" ] || { echo "no sample at $src" >&2; exit 1; }
 
 dest="${SPIKE_RUNS:-$HOME/spike-runs}/$(basename "$sample")-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$dest"
 rsync -a --exclude .venv --exclude __pycache__ --exclude node_modules --exclude target --exclude bin --exclude obj \
-  "$here/$sample/" "$dest/"
+  "$src/" "$dest/"
 
 cd "$dest"
 git init -q
 git add -A
-git -c user.name=spike -c user.email=spike@localhost commit -qm "plain sample: $sample"
+git -c user.name=spike -c user.email=spike@localhost commit -qm "sample: $sample"
 echo "$dest"
