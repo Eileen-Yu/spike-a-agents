@@ -1,0 +1,223 @@
+#!/usr/bin/env python3
+"""Regenerate the Spike A v3 records from the batch ledger.
+
+Writes results/plugin-quality-v3/SCORECARD.md and replaces the block between
+<!-- v3:begin --> and <!-- v3:end --> in results/SUMMARY.md. Safe to run any
+time (run-matrix-loop.sh calls it after every cell through publish.sh).
+
+Logs stay local (gitignored: they can hold credentials). Only redacted RESULT
+excerpts are copied into the scorecard.
+"""
+import csv, datetime, re, sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent            # results/
+OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / "plugin-quality-v3"
+LEDGER = OUT / "ledger.tsv"
+SUMMARY = HERE / "SUMMARY.md"
+FINDINGS = OUT / "FINDINGS.md"
+
+NAMES = {
+    "langgraph": "LangGraph", "langchain": "LangChain", "crewai": "CrewAI", "adk": "Google ADK",
+    "strands": "Strands", "pydantic-ai": "Pydantic AI", "openai-agents": "OpenAI Agents",
+    "claude-agents": "Claude Agent SDK", "smolagents": "smolagents", "deepagents": "Deep Agents",
+    "holmesgpt": "HolmesGPT", "dapr-agents": "Dapr Agents", "byoa": "BYOA",
+    "microsoft-agent-framework": ".NET MAF", "spring-ai": "Spring AI", "langchaingo": "LangChainGo",
+    "eino": "Eino", "mastra": "Mastra", "goose": "Goose",
+}
+ORDER = list(NAMES)
+CLIENTS = ["claude", "codex", "copilot"]
+# Spec matrix (CAP-2783): every framework × Claude; LangGraph+BYOA × Codex/Copilot; LangGraph × Claude ×3
+def planned():
+    cells = {(s, "claude"): 1 for s in ORDER}
+    cells[("langgraph", "claude")] = 3
+    for s in ("langgraph", "byoa"):
+        for c in ("codex", "copilot"):
+            cells[(s, c)] = 1
+    return cells
+
+REDACT = [
+    (re.compile(r"eyJ[\w-]{8,}\.[\w-]{8,}\.[\w-]{8,}"), "[REDACTED-JWT]"),
+    (re.compile(r"(?i)(dapr-api-token|authorization|api[_-]?key|token)([\"':= ]+(bearer )?)(?!<)([A-Za-z0-9._~+/=-]{20,})"), r"\1\2[REDACTED]"),
+    (re.compile(r"sk-[A-Za-z0-9_-]{16,}"), "[REDACTED-KEY]"),
+    (re.compile(r"\b[A-Za-z0-9+/]{60,}={0,2}"), "[REDACTED-B64]"),
+]
+def redact(s):
+    for rx, rep in REDACT:
+        s = rx.sub(rep, s)
+    return s
+
+def read_ledger():
+    if not LEDGER.exists():
+        return []
+    rows = []
+    with LEDGER.open() as f:
+        header = None
+        for line in f:
+            line = line.rstrip("\n")
+            if not line.strip():
+                continue
+            if line.startswith("#"):
+                header = line.lstrip("# ").split("\t")
+                continue
+            vals = line.split("\t")
+            rows.append(dict(zip(header, vals + [""] * (len(header) - len(vals)))))
+    return rows
+
+def metrics_row(slug, client, attempt):
+    p = OUT / f"{slug}-{client}-{attempt}-metrics.md"
+    if not p.exists():
+        return {}
+    lines = [l for l in p.read_text().splitlines() if l.startswith("|")]
+    if len(lines) < 3:
+        return {}
+    head = [c.strip() for c in lines[0].strip("|").split("|")]
+    vals = [c.strip() for c in lines[2].strip("|").split("|")]
+    return dict(zip(head, vals))
+
+def result_excerpt(log):
+    if not log.exists():
+        return ""
+    t = log.read_text(errors="replace")
+    i = t.find("RESULT")
+    if i < 0:
+        return redact("\n".join(t.strip().splitlines()[-25:]))
+    start = t.rfind("\n", 0, i) + 1
+    body = t[start:].strip()
+    body = body.replace("```", "").strip()
+    lines = body.splitlines()[:80]
+    return redact("\n".join(lines))
+
+def headline(log):
+    if not log.exists():
+        return ""
+    for line in log.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if line and not line.startswith(("⚠", "RESULT", "```")):
+            return redact(line[:220])
+    return ""
+
+def status_cell(r):
+    s = r.get("status", "")
+    return f"**{s}**" if s == "ok" else f"**{s}** ❗" if s.startswith("fail") else s
+
+def build():
+    rows = read_ledger()
+    plan = planned()
+    now = datetime.datetime.now().astimezone().strftime("%Y-%m-%d %H:%M %Z")
+    done = {}
+    for r in rows:
+        done.setdefault((r["slug"], r["client"]), []).append(r)
+    total_planned = sum(plan.values())
+    total_done = sum(min(len(done.get(k, [])), n) for k, n in plan.items())
+    ok = sum(1 for r in rows if r["status"] == "ok")
+    fails = [r for r in rows if r["status"].startswith("fail")]
+    kinds = {"Agent": 0, "App": 0}
+    for r in rows:
+        if r.get("kind") in kinds:
+            kinds[r["kind"]] += 1
+    mcp_zero = sum(1 for r in rows if r["client"] == "claude" and r.get("mcp_calls") in ("0",))
+    violations = [r for r in rows if r.get("violation", "-") not in ("-", "")]
+    localhost = [r for r in rows if r.get("via") == "localhost"]
+
+    # ---------- matrix ----------
+    mat = ["| # | Framework | Claude | Codex | Copilot |", "|---|---|---|---|---|"]
+    for n, slug in enumerate(ORDER, 1):
+        cells = []
+        for c in CLIENTS:
+            want = plan.get((slug, c), 0)
+            got = done.get((slug, c), [])
+            if not want and not got:
+                cells.append("—")
+                continue
+            parts = []
+            for r in got:
+                k = r.get("kind", "-")
+                parts.append(("ok" if r["status"] == "ok" else r["status"]) + (f" · {k}" if k not in ("-", "") else ""))
+            if len(got) < want:
+                parts.append(f"pending {want - len(got)}")
+            cells.append("<br>".join(parts))
+        mat.append(f"| {n} | {NAMES[slug]} | " + " | ".join(cells) + " |")
+
+    # ---------- run table ----------
+    tab = ["| Framework | Client | # | Result | kind | via Catalyst | code | rule violation | id | MCP calls | tokens in | tokens out | model req | tools (all/catalyst/failed/rpt) | skills | wall |",
+           "|---|---|---:|---|---|---|---|---|---|---:|---:|---:|---:|---|---|---|"]
+    for r in rows:
+        m = metrics_row(r["slug"], r["client"], r["attempt"])
+        tab.append("| " + " | ".join([
+            NAMES.get(r["slug"], r["slug"]), r["client"], r["attempt"], status_cell(r), r.get("kind", "-"),
+            r.get("via", "-"), r.get("code", "-"), r.get("violation", "-"), f"`{r.get('agent_id','-')}`",
+            r.get("mcp_calls", "-"), m.get("tokens in", r.get("tokens_in", "-")), m.get("tokens out", "-"),
+            m.get("model requests", "-"), m.get("tool calls (all / catalyst / failed / repeated)", r.get("tools", "-")),
+            m.get("skills (bytes)", "-"), m.get("wall time", "-"),
+        ]) + " |")
+
+    status_line = (f"**{total_done}/{total_planned} planned cells run** · ok {ok} · fail {len(fails)} · "
+                   f"Agent {kinds['Agent']} · App {kinds['App']} · rule violations {len(violations)} · "
+                   f"localhost-only proofs {len(localhost)} · Claude cells with 0 MCP calls {mcp_zero}")
+    state = "complete" if total_done >= total_planned else "in progress"
+
+    findings_link = "[`plugin-quality-v3/FINDINGS.md`](plugin-quality-v3/FINDINGS.md)" if FINDINGS.exists() else "_(findings file not written yet)_"
+
+    # ---------- SCORECARD ----------
+    sc = [
+        "# Spike A v3 — plugin quality scorecard",
+        "",
+        f"_Updated {now} — {state}._ Regenerated by `results/build-v3-summary.py` after every cell.",
+        "",
+        "- Ticket: [CAP-2783](https://linear.app/diagrid/issue/CAP-2783) · triage [CAP-2785](https://linear.app/diagrid/issue/CAP-2785)",
+        "- Prompt: canonical **v3** in [`../spike-prompt.md`](../spike-prompt.md) (user voice; no test framing, no plugin/class names; proof must go through Catalyst)",
+        "- Env: staging Diagrid Cloud Plus, org `eileen-plus-test`, project `default`; Claude's plugin MCP pointed at staging via `DIAGRID_MCP_URL` ([CAP-2925](https://linear.app/diagrid/issue/CAP-2925)); CLI on the same org (preflight-checked)",
+        "- Grading is outside the model: `git diff` of code/deps (runner/identity/diagrid SDK = `fail-rules`), proof path (`via`), session metrics",
+        f"- Findings and their tickets: {findings_link}",
+        "",
+        status_line,
+        "",
+        "## Matrix (spec: every framework × Claude; LangGraph + BYOA × Codex/Copilot; LangGraph × Claude ×3)",
+        "",
+        *mat,
+        "",
+        "## Runs",
+        "",
+        *tab,
+        "",
+        "## Per-run RESULT (redacted excerpt; full logs are local only)",
+        "",
+    ]
+    for r in rows:
+        log = OUT / r.get("log", "")
+        sc += [f"<details><summary>{NAMES.get(r['slug'], r['slug'])} × {r['client']} #{r['attempt']} — {r['status']} — {headline(log)}</summary>",
+               "", "```", result_excerpt(log), "```", "", "</details>", ""]
+    (OUT / "SCORECARD.md").write_text("\n".join(sc) + "\n")
+
+    # ---------- SUMMARY block ----------
+    block = [
+        "<!-- v3:begin (generated by results/build-v3-summary.py — do not edit by hand) -->",
+        "## Plugin quality v3 — user-voice prompt, MCP on, graded outside the model (current)",
+        "",
+        f"_Updated {now} — {state}._ Scorecard: [`plugin-quality-v3/SCORECARD.md`](plugin-quality-v3/SCORECARD.md) · Findings: {findings_link}",
+        "",
+        "Why v3 supersedes v1/v2: v1/v2 named the test and the plugin, allowed localhost proofs, ran `claude -p` with MCP unauthenticated (every cell `tools_mcp=0`, CLI fallback), and exported `.env` (incl. `ANTHROPIC_API_KEY`) into the coding client. v3 fixes all of these.",
+        "",
+        status_line,
+        "",
+        *mat,
+        "",
+        "<!-- v3:end -->",
+    ]
+    text = SUMMARY.read_text() if SUMMARY.exists() else "# Spike A — consolidated results matrix\n"
+    b, e = "<!-- v3:begin", "<!-- v3:end -->"
+    if b in text and e in text:
+        s = text.index(b); t_end = text.index(e) + len(e)
+        text = text[:s] + "\n".join(block) + text[t_end:]
+    else:
+        anchor = "## Conclusion"
+        i = text.find(anchor)
+        ins = "\n".join(block) + "\n\n---\n\n"
+        text = text[:i] + ins + text[i:] if i >= 0 else text + "\n\n" + ins
+    text = re.sub(r"^Generated: .*$", f"Generated: {now}", text, count=1, flags=re.M)
+    SUMMARY.write_text(text)
+    print(f"v3 summary: {status_line}")
+
+if __name__ == "__main__":
+    build()

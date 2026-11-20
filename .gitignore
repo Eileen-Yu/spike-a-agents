@@ -33,3 +33,8 @@ results/current-cell.txt
 results/loop.pid
 results/done.tsv.bak*
 results/loop.log
+
+# v3 batch transcripts can contain credentials the coding agent printed
+results/plugin-quality-*/*.log
+results/plugin-quality-*/*.runpath
+results/plugin-quality-*/current-cell.txt

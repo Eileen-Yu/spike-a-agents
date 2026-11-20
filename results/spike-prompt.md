@@ -7,7 +7,7 @@ Do **not** put *how* to use Diagrid in the prompt (CLI flags, MCP vs CLI, PATH, 
 
 | Layer | Role | Prompt |
 |---|---|---|
-| Plain samples (this repo) | **Quality score** | Canonical block below |
+| Plain samples (this repo) | **Quality score** | Canonical v3 block below |
 | Official quickstarts | Coverage only | Appendix B–C — follow that tree’s README |
 | `*-ai/examples` | Coverage only | Appendix D — follow that tree’s README |
 
@@ -28,29 +28,49 @@ Do **not** put Prefer-Agent in the prompt. Skills must steer. Record RESULT `res
 
 ---
 
-## Canonical prompt (only paste this for Spike A)
+## Canonical prompt (only paste this for Spike A) — v3 (2026-11-19)
 
-Swap `<FRAMEWORK>`.
+Swap `<FRAMEWORK>`. Written the way a user would ask: no test framing, no plugin name,
+no product class names. Skill routing is part of what is being graded.
 
 ```text
+This folder is my <FRAMEWORK> agent. It answers order questions over HTTP (POST /run).
+
+Deploy it to Diagrid Catalyst and run it there, as-is. Don't change how the agent
+works: don't make it durable and don't add auth/identity. I just want this exact
+agent running on Catalyst.
+
+Done means a request that goes through Catalyst (not straight to localhost) asking
+about order 42 gets an answer that says "shipped".
+
+When you're done, print a RESULT block with: deploy ok|fail, run ok|fail, org,
+project, resource kind (Agent|App), agent/app id, the exact command or request that
+proved the run and its response, the console URL if there is one, which Diagrid
+skills and MCP tools you used, and every place the Diagrid instructions were wrong,
+missing or pointed you the wrong way. Then stop everything you started.
+```
+
+### Grading (done by `run-matrix-loop.sh`, not by the model)
+
+| Check | How | Effect |
+|---|---|---|
+| deploy / run | RESULT block | ok / fail |
+| No wrapper / identity | `git diff` of code + dependency files in the run dir: any added `diagrid` SDK import, `*Runner`, `DurableAgent`, workflow ext, identity/OAuth | **fail** the cell |
+| Code untouched | same diff, any change to code files | flag `code-changed` for review |
+| Run went through Catalyst | log mentions `call invoke` / a cloud endpoint, and the proof isn't localhost | flag `via=catalyst|unknown` for review |
+| Resource kind | RESULT | Agent expected; App = finding |
+| MCP used | `session_metrics.py` (Claude) | 0 MCP calls = finding, not fail |
+| Console | experimenter opens the URL from RESULT | note in SUMMARY |
+
+### v2 prompt (2026-11-19 evening, superseded by v3)
+
+Told the model it was a test, named the plugin and `DaprWorkflow*Runner`, and allowed
+a localhost "proof". Used for `results/plugin-quality-plus/` (5 cells).
+
+```
 Spike A (CAP-2783) — plugin and skills quality test.
-
-This directory is a plain <FRAMEWORK> agent with get_order_status.
-It knows nothing about Catalyst.
-
+This directory is a plain <FRAMEWORK> agent with get_order_status. ...
 Use the Diagrid plugin to get it running on Catalyst and prove a run.
-
-Rules:
-- Do NOT add a workflow runner wrapper (no DaprWorkflow*Runner / harness rewrite).
-- Do NOT add identity/OAuth middleware.
-- Keep the sample's existing HTTP /run loop; do not rewrite the agent into a durable harness.
-
-Success: asking about order 42 returns an answer that contains "shipped".
-
-When done, print RESULT with:
-deploy ok|fail, run ok|fail, project, resource kind (Agent|App), agent/app id,
-what you used from the Diagrid plugin, and any friction or gaps you hit.
-Stop anything you started, then exit.
 ```
 
 ### Keep out of the prompt
