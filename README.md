@@ -61,8 +61,8 @@ Workflows = [Spike B / CAP-2784](https://linear.app/diagrid/issue/CAP-2784) (not
 | python-ai examples: document Dapr ≥1.18 + venv | [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) |
 | Framework list / BYOA / Goose docs | [CAP-2787](https://linear.app/diagrid/issue/CAP-2787), [CAP-2554](https://linear.app/diagrid/issue/CAP-2554), [CAP-2923](https://linear.app/diagrid/issue/CAP-2923) |
 | Staging `dev run` prints prod console URL | [CAP-2922](https://linear.app/diagrid/issue/CAP-2922) |
-| `agent-registry` used but missing from `component list` | [CAP-2924](https://linear.app/diagrid/issue/CAP-2924) |
 
-Free-plan **10/10 identity** is an environment ceiling, not evidence the plugin cannot create Agents.
+Free-plan **10/10 identity** is an environment ceiling, not evidence the plugin cannot create Agents.  
+(`agent-registry` missing from `component list` is intentional — managed/reserved; [CAP-2924](https://linear.app/diagrid/issue/CAP-2924) canceled.)
 
 Week 2 re-run: [CAP-2786](https://linear.app/diagrid/issue/CAP-2786).
