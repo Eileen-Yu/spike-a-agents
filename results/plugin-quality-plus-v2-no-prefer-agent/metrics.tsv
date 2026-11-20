@@ -1,0 +1,6 @@
+slug	result	agent_id	kind	tokens_in	tokens_out	model_req	tools_all	tools_mcp	wall	wall_seconds	skills	model	writes_via	log
+langgraph	ok	order-agent-lg-1119	App	615663	4831	15	16	0	2m 24s	144	diagrid-deploy	claude-opus-5-5	CLI (MCP auth refused)	langgraph.log
+byoa	ok	order-agent-byoa-1813	Agent	606350	4514	15	19	0	2m 14s	134	diagrid-agent-scaffold	claude-opus-5-5	CLI (MCP auth refused)	byoa.log
+crewai	ok	order-agent-crewai-1119	App	476674	4961	12	12	0	2m 49s	169	diagrid-agent-scaffold	claude-opus-5-5	CLI (MCP auth refused)	crewai.log
+mastra	ok	order-agent-mastra-1829	Agent	1361411	8315	23	24	0	3m 36s	216	diagrid-setup	claude-opus-5-5	CLI (MCP auth refused)	mastra.log
+eino	ok	order-agent-eino-1822	Agent	1144782	6916	21	22	0	2m 59s	179	diagrid-setup	claude-opus-5-5	CLI (MCP auth refused)	eino.log

@@ -1,0 +1,6 @@
+slug	result	kind	skills_mcp_notes	log
+langgraph	ok	App	RESULT deploy:         ok   (App resource read back as Status: ready) run:            ok   (POST order-agent-lg-1119.run → 200; answer contains "shipped") project:        default   (org eileen-plus-test, region diagrid	langgraph.log
+byoa	ok	Agent	RESULT deploy: ok run:    ok   (HTTP 200, answer: "The status of order 42 is that it has been shipped and is expected to arrive on Friday.") project: default (staging, diagrid-staging region, prj-106588333) resource kind	byoa.log
+crewai	ok	App	RESULT deploy: ok run: ok. Called /run through Catalyst and got {"answer":"Order 42: shipped, arriving Friday."} project: default (org eileen-plus-test, staging API) resource kind: App app id: order-agent-crewai-1119 ```	crewai.log
+mastra	ok	Agent	RESULT deploy:        ok run:           ok   (via Catalyst service invocation, HTTP 200, answer contains "shipped") project:       default  (org eileen-plus-test, region diagrid-staging) resource kind: Agent agent/app id	mastra.log
+eino	ok	Agent	RESULT deploy:        ok run:           ok — HTTP 200, answer: "The status of order 42 is that it has been shipped and is expected to arrive on Friday." project:       default (org eileen-plus-test, staging region) res	eino.log

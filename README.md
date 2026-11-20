@@ -40,7 +40,7 @@ Full tables + verdict: [`results/SUMMARY.md`](results/SUMMARY.md).
 
 | Pass | What it means |
 |---|---|
-| Quality v2 (canonical prompt, no Prefer-Agent) | In progress — ledger `plugin-quality-plus-v2-no-prefer-agent/` |
+| Quality v2 (canonical prompt, no Prefer-Agent) | **5/5 shipped** · Agent 3 · App 2 — `plugin-quality-plus-v2-no-prefer-agent/` |
 | Quality v1 (Prefer-Agent still in prompt) | 5/5 shipped · all Agent — App drift hidden · `plugin-quality-plus/` |
 | Week-1 matrix 57/57 | Old crib prompts + free 10/10 reuse — **not** quality score |
 | Quickstarts 15/15 · crash 3/3 · `*-ai` sample | Coverage only (durable / local dapr) |
@@ -51,7 +51,7 @@ Workflows = [Spike B / CAP-2784](https://linear.app/diagrid/issue/CAP-2784).
 
 | Problem | Ticket | Cookbook-free retest |
 |---|---|---|
-| Skills steer durable → plain path lands on `App` | [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) → [CAP-2550](https://linear.app/diagrid/issue/CAP-2550) | **Confirmed** v2 (2/3 App so far) |
+| Skills steer durable → plain path lands on `App` | [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) → [CAP-2550](https://linear.app/diagrid/issue/CAP-2550) | **Confirmed** v2 (2/5 App) |
 | Skills require MCP writes; MCP unusable / org mismatch in non-interactive | [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) | **Confirmed** every cell `tools_mcp=0` |
 | No MCP invoke; Connected ≠ healthy; `/healthz` | [CAP-2878](https://linear.app/diagrid/issue/CAP-2878) → [CAP-2600](https://linear.app/diagrid/issue/CAP-2600) | **Confirmed** |
 | Connect-an-agent still heavy (tokens / tools) | [CAP-2541](https://linear.app/diagrid/issue/CAP-2541) | ~0.4–0.8M in / ~12–19 tools / ~2–5 min |

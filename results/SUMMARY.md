@@ -23,19 +23,19 @@ Week-1 **57/57** and early Plus “dedicated Agent” rows used hand-holding pro
 ## Plugin quality v2 — no Prefer-Agent (canonical)
 
 Prompt: [`spike-prompt.md`](spike-prompt.md) canonical (no Prefer-Agent). Org `eileen-plus-test` / `default`.  
-Ledger: [`plugin-quality-plus-v2-no-prefer-agent/`](plugin-quality-plus-v2-no-prefer-agent/)
+Ledger: [`plugin-quality-plus-v2-no-prefer-agent/`](plugin-quality-plus-v2-no-prefer-agent/) · **5/5 ok** · Agent 3 · App 2
 
 | Framework | Result | kind | id | tokens in | tools (all / MCP) | wall | writes via | log |
 |---|---|---|---|---:|---:|---|---|---|
-| LangGraph | **ok** | **App** | `order-agent-lg-1119` | 615,663 | 16 / 0 | 2m 24s | CLI | `…/langgraph.log` |
-| BYOA | **ok** | **Agent** | `order-agent-byoa-1813` | 606,350 | 19 / 0 | 2m 14s | CLI | `…/byoa.log` |
-| CrewAI | **ok** | **App** | `order-agent-crewai-1119` | 476,674 | 12 / 0 | 2m 49s | CLI | `…/crewai.log` |
-| Mastra | _running_ | | | | | | | |
-| Eino | _queued_ | | | | | | | |
+| LangGraph | **ok** | **App** | `order-agent-lg-1119` | 615,663 | 16 / 0 | 2m 24s | CLI (MCP auth refused) | `plugin-quality-plus-v2-no-prefer-agent/langgraph.log` |
+| BYOA | **ok** | **Agent** | `order-agent-byoa-1813` | 606,350 | 19 / 0 | 2m 14s | CLI (MCP auth refused) | `plugin-quality-plus-v2-no-prefer-agent/byoa.log` |
+| CrewAI | **ok** | **App** | `order-agent-crewai-1119` | 476,674 | 12 / 0 | 2m 49s | CLI (MCP auth refused) | `plugin-quality-plus-v2-no-prefer-agent/crewai.log` |
+| Mastra | **ok** | **Agent** | `order-agent-mastra-1829` | 1,361,411 | 24 / 0 | 3m 36s | CLI (MCP auth refused) | `plugin-quality-plus-v2-no-prefer-agent/mastra.log` |
+| Eino | **ok** | **Agent** | `order-agent-eino-1822` | 1,144,782 | 22 / 0 | 2m 59s | CLI (MCP auth refused) | `plugin-quality-plus-v2-no-prefer-agent/eino.log` |
 
-**So far:** 2/3 landed on **App** when the prompt stopped coaching Agent. That is the CAP-2876 signal under a clean prompt.
+**App drift without Prefer-Agent: 2/5** landed on plain App (LangGraph, CrewAI). CAP-2876 confirmed. All writes CLI (`tools_mcp=0`).
 
-_Updated 2026-11-19 18:20 — v2 in progress._
+_Updated 2026-11-19 18:25 — v2 complete._
 
 ---
 
