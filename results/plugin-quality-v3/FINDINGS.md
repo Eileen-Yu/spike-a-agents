@@ -5,9 +5,23 @@ Ticket parent: [CAP-2783](https://linear.app/diagrid/issue/CAP-2783) · triage: 
 "Seen in" names cells as `framework × client #attempt` (see [`SCORECARD.md`](SCORECARD.md)); `env` = the
 [`../plugin-quality-v3-envmismatch/`](../plugin-quality-v3-envmismatch/) runs (MCP on prod free, CLI on staging).
 
+## Consolidated tickets (current)
+
+| Ticket | What | Priority |
+|---|---|---|
+| [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) | Skills have no first-class "connect an existing agent" path (App vs Agent, where code runs, proving a run, naming, project) | Urgent |
+| [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) | Tunnel return path ~10s timeout → 502 on slow agent turns | High |
+| [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) | Credentials end up in agent transcripts | High |
+| [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) | Invisible quotas (pub/sub 10-topic cap, identity cap) | High |
+| [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) | MCP vs CLI env/org mismatch, no CLI fallback, `DIAGRID_MCP_URL` undocumented | High |
+| [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) | MCP/CLI behaviour misleads agents (readiness, side effects, filters, dry run, console URL) | Medium |
+| [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) | Quickstart / example READMEs miss prerequisites | Medium |
+
+Merged on 2026-11-19 (marked duplicate): 2877, 2878, 2927, 2930, 2934 → 2876 · 2933, 2922 → 2929 · 2928 → 2932 · 2925 → 2921 · 2919, 2923 → 2920. CAP-2924 canceled. Rows below keep their original ticket IDs; follow the map above.
+
 ## Result
 
-**Claude 22/22 ok** (Dapr Agents failed on attempt 1 because leftover topics filled the cap, ok on a clean project — [CAP-2932](https://linear.app/diagrid/issue/CAP-2932)) · **Codex 2/2 ok** · **Copilot 1/2** (BYOA rerun pending — first try shared an App with the parallel Codex cell) · 0 rule violations · 0 localhost proofs · MCP used in every cell (avg 13 calls) · **landed on App: Claude 8/21, Codex 2/2, Copilot 1/1** ([CAP-2876](https://linear.app/diagrid/issue/CAP-2876)) · Copilot ≈ 8–9 min and 4.8–6.3 AI credits per cell · tokens in avg **1.88M** (1.45–2.78M) — about the same as the week-1 LangGraph baseline (1.44–1.87M); not comparable to v2, whose prompt and task differed ([CAP-2541](https://linear.app/diagrid/issue/CAP-2541)).
+**Claude 22/22 ok** (Dapr Agents failed on attempt 1 because leftover topics filled the cap, ok on a clean project — [CAP-2932](https://linear.app/diagrid/issue/CAP-2932)) · **Codex 2/2 ok** · **Copilot 2/2** (BYOA rerun alone after the first try shared an App with the parallel Codex cell) · 0 rule violations · 0 localhost proofs · MCP used in every cell (avg 13 calls) · **landed on App: Claude 8/21, Codex 2/2, Copilot 1/2** ([CAP-2876](https://linear.app/diagrid/issue/CAP-2876)) · Copilot 4–8 min and 2.7–4.8 AI credits per cell · tokens in avg **1.88M** (1.45–2.78M) — about the same as the week-1 LangGraph baseline (1.44–1.87M); not comparable to v2, whose prompt and task differed ([CAP-2541](https://linear.app/diagrid/issue/CAP-2541)).
 
 Top issues by impact: [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) tunnel ~10s timeout → 502 · [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) App vs Agent (all clients) · [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) undocumented topic cap · [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) creds printed (security) · [CAP-2930](https://linear.app/diagrid/issue/CAP-2930) silent identity clobber · [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) App vs Agent.
 
@@ -58,7 +72,7 @@ Cells run after the reset are marked "clean project" in the scorecard notes.
 | Sidecar probes `GET /` and `/dapr/config` (404) though tunnel says `/healthz`, probing disabled | LangGraph × claude #1 | [CAP-2878](https://linear.app/diagrid/issue/CAP-2878) | Low |
 | Connect-an-agent cost with MCP on: 1.8–2.5M tokens in, 26–33 tool calls (13–16 MCP) — ≈ week-1 baseline; v2 not comparable (different prompt) | LangGraph #1–3, LangChain | [CAP-2541](https://linear.app/diagrid/issue/CAP-2541) (comment) | (speed baseline) |
 
-_Last edited 2026-11-19 20:00 PT — spec matrix done except BYOA × Copilot rerun._
+_Last edited 2026-11-19 20:12 PT — matrix complete (25/25), tickets consolidated to 7._
 
 ## Harness / environment notes (not skill findings)
 

@@ -1,12 +1,11 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 20:03:49 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 20:08:03 PST · ledger: `ledger.tsv`
 
 ## Running now
-- byoa-copilot-1
+(none)
 
-## Remaining (1)
-- byoa × copilot
+## Remaining (0)
 
 ## Ledger
 ```
@@ -37,4 +36,5 @@ langgraph                  codex    1        ok      App    catalyst  untouched 
 dapr-agents                claude   2        ok      Agent  catalyst  untouched  -          order-agent                 22         3803406    44     dapr-agents-claude-2.log                2026-11-19T19:48:01-08:00  311     12635       -
 byoa                       codex    1        ok      App    catalyst  untouched  -          order-agent-byoa            -          90190      -      byoa-codex-1.log                        2026-11-19T19:49:02-08:00  312     (in total)  -
 langgraph                  copilot  1        ok      App    catalyst  untouched  -          order-agent-langgraph-api   -          1900000    -      langgraph-copilot-1.log                 2026-11-19T19:52:22-08:00  482     38400       4.8
+byoa                       copilot  1        ok      Agent  catalyst  untouched  -          order-agent-byoa            -          1200000    -      byoa-copilot-1.log                      2026-11-19T20:08:00-08:00  251     16500       2.7
 ```

@@ -1,6 +1,6 @@
 # Spike A — results ([CAP-2783](https://linear.app/diagrid/issue/CAP-2783))
 
-_Updated 2026-11-19 20:08 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
+_Updated 2026-11-19 20:10 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
 
 **Current run = v3:** user-voice prompt ([`spike-prompt.md`](spike-prompt.md)), plugin MCP signed in, staging Plus `eileen-plus-test`/`default`, graded outside the model (git diff, proof path). Plugin 0.10.2, Claude = claude-opus-5-5.
 
@@ -42,13 +42,13 @@ Tokens in = everything the model read (incl. cache). Time = harness clock per ce
 
 ## Top findings
 
-1. **Tunnel return path times out at ~10s → HTTP 502** for slow agent turns; Agent kind has no timeout setting — [CAP-2931](https://linear.app/diagrid/issue/CAP-2931)
-2. **Undocumented 10-topic cap** on managed pub/sub: Dapr Agents auto-subscribes and crashed once leftovers filled it (ok on a clean project) — [CAP-2932](https://linear.app/diagrid/issue/CAP-2932)
-3. **Security**: agent read `~/.diagrid/creds` and printed CLI tokens into the transcript — [CAP-2926](https://linear.app/diagrid/issue/CAP-2926)
-4. **App vs Agent contradictory** in `diagrid-deploy` → landed on App: Claude 8/21, Codex 2/2, Copilot 1/1; skills never say Catalyst doesn't host your code — [CAP-2876](https://linear.app/diagrid/issue/CAP-2876)
-5. **Name check misleads** (low): `list_apps` leaves out Agent identities by design and `apply` dry run says `would_replace` on an Agent's name; the real apply is refused, so no clobber — [CAP-2930](https://linear.app/diagrid/issue/CAP-2930)
-6. **No documented way to call / prove a plain agent through Catalyst**; readiness reads wrong — [CAP-2878](https://linear.app/diagrid/issue/CAP-2878), [CAP-2929](https://linear.app/diagrid/issue/CAP-2929), [CAP-2934](https://linear.app/diagrid/issue/CAP-2934)
-7. **Cost**: ~1.9M tokens in / ~3 min per connect — about the same as the week-1 LangGraph baseline (1.4–1.9M); the Week 2 speed baseline — [CAP-2541](https://linear.app/diagrid/issue/CAP-2541)
+1. **Skills have no first-class "connect an existing agent" path**: App vs Agent contradicts (landed on App: Claude 8/21, Codex 2/2, Copilot 1/2), skills never say Catalyst doesn't host your code, no documented way to prove a run, name checks mislead — [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) (Urgent)
+2. **Tunnel return path times out at ~10s → HTTP 502** on slow agent turns; Agent kind has no timeout setting — [CAP-2931](https://linear.app/diagrid/issue/CAP-2931)
+3. **Credentials in transcripts**: agent printed `~/.diagrid/creds`; `get_connection` returns tokens into chat — [CAP-2926](https://linear.app/diagrid/issue/CAP-2926)
+4. **Invisible quotas**: pub/sub 10-topic cap (Dapr Agents crashed on leftover topics, ok on a clean project) and identity cap — [CAP-2932](https://linear.app/diagrid/issue/CAP-2932)
+5. **MCP vs CLI on different env/org**, no CLI fallback, `DIAGRID_MCP_URL` undocumented — [CAP-2921](https://linear.app/diagrid/issue/CAP-2921)
+6. **MCP/CLI behaviour misleads**: readiness, silent side effects, list filters, dry run, console URL — [CAP-2929](https://linear.app/diagrid/issue/CAP-2929)
+7. **Cost**: ~1.9M tokens / ~3 min per connect (≈ week-1 baseline); Copilot 4–8 min — [CAP-2541](https://linear.app/diagrid/issue/CAP-2541)
 
 All findings → tickets: [`plugin-quality-v3/FINDINGS.md`](plugin-quality-v3/FINDINGS.md).
 

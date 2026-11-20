@@ -62,29 +62,16 @@ Workflows = [Spike B / CAP-2784](https://linear.app/diagrid/issue/CAP-2784).
 
 ## What to improve next
 
-| Problem | Ticket | Cookbook-free retest |
+Spike A findings, consolidated into 7 tickets:
+
+| Ticket | What | Priority |
 |---|---|---|
-| Skills steer durable → plain path lands on `App` | [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) → [CAP-2550](https://linear.app/diagrid/issue/CAP-2550) | **Confirmed** v2 (2/5 App) |
-| Skills require MCP writes; MCP unusable / org mismatch in non-interactive | [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) | **Confirmed** every cell `tools_mcp=0` |
-| No MCP invoke; Connected ≠ healthy; `/healthz` | [CAP-2878](https://linear.app/diagrid/issue/CAP-2878) → [CAP-2600](https://linear.app/diagrid/issue/CAP-2600) | **Confirmed** |
-| Connect-an-agent still heavy (tokens / tools) | [CAP-2541](https://linear.app/diagrid/issue/CAP-2541) | ~0.4–0.8M in / ~12–19 tools / ~2–5 min |
-| Skills assume `default` project when missing | [CAP-2877](https://linear.app/diagrid/issue/CAP-2877) | (Plus had `default`) |
-| Crash quickstart: Uvicorn ≠ ready | [CAP-2919](https://linear.app/diagrid/issue/CAP-2919) | coverage pass |
-| python-ai Dapr ≥1.18 + venv | [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) | coverage |
-| Framework list / BYOA / Goose docs | [CAP-2787](https://linear.app/diagrid/issue/CAP-2787), [CAP-2554](https://linear.app/diagrid/issue/CAP-2554), [CAP-2923](https://linear.app/diagrid/issue/CAP-2923) | — |
-| Staging `dev run` prints prod console URL | [CAP-2922](https://linear.app/diagrid/issue/CAP-2922) | still seen |
-| Plugin MCP env switch `DIAGRID_MCP_URL` undocumented; hand-written MCP config → `unknown client_id` | [CAP-2925](https://linear.app/diagrid/issue/CAP-2925) | found in v3 setup (staging) |
-| Agent read `~/.diagrid/creds` and printed CLI tokens into transcript (env mismatch debugging) | [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) | v3 LangGraph #1 |
-| `diagrid-deploy` vs `diagrid-app-tunnels` contradict on app-to-app access default | [CAP-2927](https://linear.app/diagrid/issue/CAP-2927) | v3 env run |
-| No path at the identity cap (free 10/10) — agent reuses an unrelated Agent or stops | [CAP-2928](https://linear.app/diagrid/issue/CAP-2928) | v3 env run |
-| `diagrid_get_agent` ready before identity ready; undocumented agent appConfig | [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) | v3 5/5 cells |
-| `list_apps` omits Agent identities (by design) + dry run says `would_replace` on an Agent's name; real apply is refused (no clobber) | [CAP-2930](https://linear.app/diagrid/issue/CAP-2930) | v3 LangGraph #2, #3 |
-| Tunnel return path ~10s timeout → 502 for slow agent turns | [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) | v3 Claude Agent SDK |
-| Dapr Agents crashes on undocumented 10-topic cap (auto-subscribes `agent-pubsub`) | [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) | v3 Dapr Agents **fail** |
-| `list_agents` ignores appId filter / partial on UPSTREAM_ERROR | [CAP-2933](https://linear.app/diagrid/issue/CAP-2933) | v3 BYOA, MAF |
-| Run-proof steps unavailable for plain agents; `dev run` reports managed workflow/pubsub for an agent using none | [CAP-2934](https://linear.app/diagrid/issue/CAP-2934) | v3 8 cells |
+| [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) | Skills have no first-class "connect an existing agent" path (App vs Agent, where code runs, proving a run, naming, project) | Urgent |
+| [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) | Tunnel return path ~10s timeout → 502 on slow agent turns | High |
+| [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) | Credentials end up in agent transcripts | High |
+| [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) | Invisible quotas (pub/sub 10-topic cap, identity cap) | High |
+| [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) | MCP vs CLI env/org mismatch, no CLI fallback, `DIAGRID_MCP_URL` undocumented | High |
+| [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) | MCP/CLI behaviour misleads agents (readiness, side effects, filters, dry run, console URL) | Medium |
+| [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) | Quickstart / example READMEs miss prerequisites | Medium |
 
-Free-plan **10/10 identity** is an environment ceiling, not evidence the plugin cannot create Agents.  
-(`agent-registry` missing from `component list` is intentional — managed/reserved; [CAP-2924](https://linear.app/diagrid/issue/CAP-2924) canceled.)
-
-Week 2 re-run: [CAP-2786](https://linear.app/diagrid/issue/CAP-2786).
+Merged on 2026-11-19 (marked duplicate): 2877, 2878, 2927, 2930, 2934 → 2876 · 2933, 2922 → 2929 · 2928 → 2932 · 2925 → 2921 · 2919, 2923 → 2920. CAP-2924 canceled.
