@@ -1,10 +1,10 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 18:55:07 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 18:58:27 PST · ledger: `ledger.tsv`
 
 ## Current
-running: LangGraph × claude #2
-started: 2026-11-19T18:55:07-08:00
+running: LangGraph × claude #3
+started: 2026-11-19T18:58:26-08:00
 
 ## Remaining (19)
 - langgraph × claude
@@ -31,4 +31,5 @@ started: 2026-11-19T18:55:07-08:00
 ```
 # slug     client  attempt  status  kind   via       code       violation  agent_id             mcp_calls  tokens_in  tools  log                     finished
 langgraph  claude  1        ok      Agent  catalyst  untouched  -          order-agent-lg-1847  13         1823790    26     langgraph-claude-1.log  2026-11-19T18:50:06-08:00
+langgraph  claude  2        ok      Agent  catalyst  untouched  -          order-agent-lg-1855  16         1957451    30     langgraph-claude-2.log  2026-11-19T18:58:24-08:00
 ```

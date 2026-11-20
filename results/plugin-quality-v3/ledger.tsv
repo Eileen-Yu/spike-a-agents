@@ -1,3 +1,4 @@
 # slug	client	attempt	status	kind	via	code	violation	agent_id	mcp_calls	tokens_in	tools	log	finished
 langgraph	claude	1	ok	Agent	catalyst	untouched	-	order-agent-lg-1847	13	1823790	26	langgraph-claude-1.log	2026-11-19T18:50:06-08:00
 langgraph	claude	2	ok	Agent	catalyst	untouched	-	order-agent-lg-1855	16	1957451	30	langgraph-claude-2.log	2026-11-19T18:58:24-08:00
+langgraph	claude	3	ok	Agent	catalyst	untouched	-	order-agent-lg-1858	14	1957335	28	langgraph-claude-3.log	2026-11-19T19:01:18-08:00

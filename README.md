@@ -33,6 +33,7 @@ Paste only the **canonical v3** prompt from [`results/spike-prompt.md`](results/
 SPIKE_ONLY=langgraph,byoa ./run-matrix-loop.sh
 SPIKE_REPEATS=2 SPIKE_DELETE_AGENTS=1 ./run-matrix-loop.sh   # repeats; free-tier headroom
 SPIKE_DRY=1 ./run-matrix-loop.sh              # show queue + prompt only
+SPIKE_PARALLEL=4 ./run-matrix-loop.sh        # 4 cells at once (each cleans only its own run dir; port/tunnel contention is environment noise, not a skill finding)
 ```
 
 The runner grades from outside the model: `git diff` of code/dependency files (any `diagrid` SDK, runner, durable or identity import = `fail-rules`), whether the proof went through Catalyst (`via`), resource kind, and Claude session metrics incl. MCP calls. `.env` is **not** exported into the coding client (it switched Claude to API-key auth in v2); the agent reads `.env` itself. Resumable: re-run and it continues from the ledger.
