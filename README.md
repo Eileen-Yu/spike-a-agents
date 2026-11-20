@@ -30,7 +30,7 @@ LangGraph Plus yardstick: **~709k** tokens in / **~19** tool calls / **~1m41s** 
 
 Details: [`results/SUMMARY.md`](results/SUMMARY.md).
 
-**Official quickstarts (Plus):** 15/15 README happy-path ok — see SUMMARY § Official quickstarts. Not yet: crash scenarios, `*-ai/examples`, workflows.
+**Official quickstarts (Plus):** 15/15 README happy-path ok — see SUMMARY § Official quickstarts. Crash sample 3/3 + `*-ai/examples` sample in SUMMARY. Workflows = Spike B.
 
 ## What to improve next
 

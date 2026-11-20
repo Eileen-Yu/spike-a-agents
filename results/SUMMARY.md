@@ -1,6 +1,6 @@
 # Spike A — consolidated results matrix
 
-Generated: 2026-11-19 16:26
+Generated: 2026-11-19 16:32
 Week-1 matrix org: `cattle-ackbar` (prod free) · Plus retest org: `eileen-plus-test` (staging, Diagrid Cloud Plus)  
 Plugin: `diagrid@diagrid` 0.10.2 · CLI: `diagrid` 1.130.0  
 Self-contained: status, resource kind, id, and friction are inline. You should not need to open per-cell logs for the overview.
@@ -74,6 +74,24 @@ Beyond README happy-path. Org `eileen-plus-test` / project `default`. Sample of 
 Ledger: `results/scenarios-plus/done.tsv`
 
 _Updated 2026-11-19 16:26._
+
+
+## `*-ai/examples` sample (adapter SDK demos)
+
+**Separate path from Spike A plain and from `catalyst-quickstarts`.** Often local `dapr run`; not a controlled same-task matrix.
+
+| Sample | Path | Result | Notes |
+|---|---|---|---|
+| python-ai LangGraph | `python-ai/examples/langgraph` | **mixed → ok on Dapr 1.18** | Machine default Dapr runtime **1.14.5**: `simple_graph` **FAILED** (history mismatch). Same example **ok** + crash recovery **TEST PASSED** on isolated runtime **1.18.11**. README omits min runtime / venv. |
+| typescript-ai Mastra | `typescript-ai/examples/mastra` | **ok** | Local dapr + `pnpm simple`; needed corepack/pnpm install. |
+| go-ai Eino | `go-ai/examples/eino` | **ok** | Catalyst path on Plus `default` (`perimeter-watch`); needs real OpenAI key. |
+| rust-ai Goose quickstart | `rust-ai/.../examples` | **ok** | Local dapr; needed `GOOSE_PROVIDER`/`GOOSE_MODEL` (README under-documents). |
+
+Ledger: `results/examples-plus/done.tsv`
+
+**Takeaway:** `*-ai/examples` validate adapter+SDK docs, not plugin plain-connect. Pin/document Dapr runtime (1.18+) for python-ai or users on older sidecars will fail.
+
+_Updated 2026-11-19 16:32._
 
 
 ## Scoreboard (Week-1 free matrix)

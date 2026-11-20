@@ -1,0 +1,5 @@
+slug	path	result	notes	log
+typescript-mastra	typescript-ai/examples/mastra	ok	**RESULT: ok**  Ran `simple-agent.ts` on the local Dapr path (`dapr run --app-id mastra-simple --resources-path ./resources -- pnpm simple`)	typescript-mastra.log
+go-eino	go-ai/examples/eino	ok	**RESULT: ok**  Ran the README's primary path (Catalyst, `eileen-plus-test` staging / `default`): `diagrid agent create perimeter-watch --wa	go-eino.log
+rust-goose-quickstart	rust-ai/crates/diagrid-goose/examples	ok	**RESULT: ok** — on the second attempt, on local Dapr (Catalyst wasn't needed).  **Proof** — the README quickstart command (`dapr run --	rust-goose-quickstart.log
+python-langgraph-examples	python-ai/examples/langgraph	ok	## RESULT  | example | ok/fail | how proved | friction | |---|---|---|---| | `simple_graph.py`, README verbatim (machine's Dapr: CLI 1.12.0, runtime 1.14.5) | *	python-langgraph-examples.log
