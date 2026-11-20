@@ -22,3 +22,4 @@ goose	claude	1	ok	App	catalyst	untouched	-	order-agent-goose	12	1585973	28	goose
 mastra	claude	1	ok	App	catalyst	untouched	-	order-agent-mastra-1915	13	1589066	25	mastra-claude-1.log	2026-11-19T19:18:46-08:00	176	7652	-
 langgraph	claude	4	ok	Agent	catalyst	untouched	-	order-agent-langgraph	13	1821259	26	langgraph-claude-4.log	2026-11-19T19:44:51-08:00	151	8075	-
 langgraph	codex	1	ok	Agent	catalyst	untouched	-	-	-	108298	-	langgraph-codex-1.log	2026-11-19T19:47:41-08:00	261	(in total)	-
+dapr-agents	claude	2	ok	Agent	catalyst	untouched	-	order-agent	22	3803406	44	dapr-agents-claude-2.log	2026-11-19T19:48:01-08:00	311	12635	-
