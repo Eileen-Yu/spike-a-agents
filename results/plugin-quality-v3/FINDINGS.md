@@ -5,11 +5,11 @@ Ticket parent: [CAP-2783](https://linear.app/diagrid/issue/CAP-2783) · triage: 
 "Seen in" names cells as `framework × client #attempt` (see [`SCORECARD.md`](SCORECARD.md)); `env` = the
 [`../plugin-quality-v3-envmismatch/`](../plugin-quality-v3-envmismatch/) runs (MCP on prod free, CLI on staging).
 
-## Claude row — result (21/21 run)
+## Result
 
-**20 ok · 1 fail (Dapr Agents, [CAP-2932](https://linear.app/diagrid/issue/CAP-2932))** · 0 rule violations · 0 localhost proofs · MCP used in every cell (avg 13 calls) · **8/21 landed on App** ([CAP-2876](https://linear.app/diagrid/issue/CAP-2876)) · tokens in avg **1.88M** (1.45–2.78M) — about the same as the week-1 LangGraph baseline (1.44–1.87M); not comparable to v2, whose prompt and task differed ([CAP-2541](https://linear.app/diagrid/issue/CAP-2541)).
+**Claude 22/22 ok** (Dapr Agents failed on attempt 1 because leftover topics filled the cap, ok on a clean project — [CAP-2932](https://linear.app/diagrid/issue/CAP-2932)) · **Codex 2/2 ok** · **Copilot 1/2** (BYOA rerun pending — first try shared an App with the parallel Codex cell) · 0 rule violations · 0 localhost proofs · MCP used in every cell (avg 13 calls) · **landed on App: Claude 8/21, Codex 2/2, Copilot 1/1** ([CAP-2876](https://linear.app/diagrid/issue/CAP-2876)) · Copilot ≈ 8–9 min and 4.8–6.3 AI credits per cell · tokens in avg **1.88M** (1.45–2.78M) — about the same as the week-1 LangGraph baseline (1.44–1.87M); not comparable to v2, whose prompt and task differed ([CAP-2541](https://linear.app/diagrid/issue/CAP-2541)).
 
-Top issues by impact: [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) tunnel ~10s timeout → 502 · [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) Dapr Agents topic cap · [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) creds printed (security) · [CAP-2930](https://linear.app/diagrid/issue/CAP-2930) silent identity clobber · [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) App vs Agent.
+Top issues by impact: [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) tunnel ~10s timeout → 502 · [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) App vs Agent (all clients) · [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) undocumented topic cap · [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) creds printed (security) · [CAP-2930](https://linear.app/diagrid/issue/CAP-2930) silent identity clobber · [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) App vs Agent.
 
 ## Clean-project pass (after the Claude row)
 
@@ -46,22 +46,27 @@ Cells run after the reset are marked "clean project" in the scorecard notes.
 | `diagrid_get_agent` ready before identity; `get_connection` blocked ~1 min after `dev run`; undocumented appConfig + endpoint rewritten to `trust.diagrid.io`; tool description says "model configuration"; stale tunnel records stay `ready` | 5/5 | [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) | Medium |
 | `diagrid-deploy` (deny-by-default) vs `diagrid-app-tunnels` (allowed by default) contradict on app-to-app access | env #1 | [CAP-2927](https://linear.app/diagrid/issue/CAP-2927) | Medium |
 | **Tunnel return path times out at ~10s → HTTP 502 EOF** for slow agent turns; Agent kind has no timeout setting | Claude Agent SDK | [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) | **High** |
-| **Dapr Agents crashes**: auto-subscribes to `agent-pubsub`, managed broker's undocumented 10-topic cap already used; develop skill wrong about state; `dev run` exits 0 when app exits 1 | Dapr Agents (**fail**) | [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) | **High** |
+| Managed pub/sub **10-topic cap undocumented/invisible**; Dapr Agents auto-subscribes to `agent-pubsub` → crashes once leftover topics fill it (ok on a clean project); develop skill wrong about state; `dev run` exits 0 when app exits 1 | Dapr Agents #1 fail, #2 ok | [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) | Medium |
 | First call after tunnel attaches → 502 `context canceled`; `get_connection` refuses ~1 min while `updating` | CrewAI, HolmesGPT, Pydantic AI, OpenAI Agents, LangChain | [CAP-2878](https://linear.app/diagrid/issue/CAP-2878) (comment) | Medium |
 | `diagrid_list_agents` ignores `appId`/`nameLike` filters for Agent resources; partial data on `UPSTREAM_ERROR` | BYOA, .NET MAF, Dapr Agents, LangChainGo, Mastra | [CAP-2933](https://linear.app/diagrid/issue/CAP-2933) | Medium |
-| `diagrid_list_apps` hides Agent-owned App IDs; dry run of an App on that name says `would_replace` without warning (clobber risk) | LangGraph #2, #3 | [CAP-2930](https://linear.app/diagrid/issue/CAP-2930) | High |
+| Skills never say Catalyst doesn't host your code → Copilot reported `deploy: fail` though the run through Catalyst passed | BYOA × Copilot, and every Claude cell | [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) (comment) | Medium |
+| Undocumented simpler proof: `diagrid call invoke post <id>.run --id <same-id>`; `/docs` as no-code health path; `get_app` stays `updating` after success | LangGraph × Codex | [CAP-2878](https://linear.app/diagrid/issue/CAP-2878), [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) (comments) | Low |
+| `list_apps` leaves out Agent-owned identities **by design** (they're in `list_agents`), but the skill doesn't say to check both; `apply` dry run says `would_replace` on an Agent's name (checks existence, not kind); the **real apply is refused** (verified on staging) — no clobber, just wasted turns | LangGraph #2, #3 | [CAP-2930](https://linear.app/diagrid/issue/CAP-2930) | Low |
 | `diagrid_get_connection` returns the API token into chat although app-tunnels says keep it out | LangGraph #3, Strands | [CAP-2901](https://linear.app/diagrid/issue/CAP-2901) (comment) | Medium |
 | Run-proof steps unavailable for plain HTTP agents (`get_metrics` stays 0, no request log, `get_logs` refused by data sharing); `dev run` reports managed workflow/pub/sub/KV "enabled" for an agent using none | Spring AI, .NET MAF, Eino, Mastra, Claude Agent SDK, LangChain, LangChainGo, Deep Agents | [CAP-2934](https://linear.app/diagrid/issue/CAP-2934) | Medium |
 | Skill examples use `timeout`, absent on macOS | LangGraph #3 | [CAP-2907](https://linear.app/diagrid/issue/CAP-2907) | Low |
 | Sidecar probes `GET /` and `/dapr/config` (404) though tunnel says `/healthz`, probing disabled | LangGraph × claude #1 | [CAP-2878](https://linear.app/diagrid/issue/CAP-2878) | Low |
 | Connect-an-agent cost with MCP on: 1.8–2.5M tokens in, 26–33 tool calls (13–16 MCP) — ≈ week-1 baseline; v2 not comparable (different prompt) | LangGraph #1–3, LangChain | [CAP-2541](https://linear.app/diagrid/issue/CAP-2541) (comment) | (speed baseline) |
 
-_Last edited 2026-11-19 19:25 PT — Claude row complete (21/21)._
+_Last edited 2026-11-19 20:00 PT — spec matrix done except BYOA × Copilot rerun._
 
 ## Harness / environment notes (not skill findings)
 
 | Note | Seen in | Action |
 |---|---|---|
+| Several runners started at once killed each other's cells; Codex prompt echo matched the RESULT check (killed at 20s, graded ok); Codex backtick format and prompt-echo `kind` mis-graded | 19:30 batch, BYOA/LangGraph × Codex | **fixed**: single-runner lock, strict RESULT/run/kind parsing from the last RESULT block; invalid rows in `../plugin-quality-v3-envmismatch/harness-killed/` |
+| BYOA × Codex and × Copilot ran in parallel and shared App `order-agent-byoa` | BYOA × Copilot | **fixed**: one framework at a time across clients; Copilot cell moved to `shared-identity/`, rerun |
+| Clean-project LangGraph #4 ≈ dirty #1–3 (1.82M tokens, 26 tools, 2m31s) — leftovers didn't change cost | LangGraph × Claude #4 | Claude row numbers stand |
 | Sample run dirs have no `.gitignore`, agents warn that `.env` (keys) could be committed | LangGraph #2, #3 | harness: add `.gitignore` to samples after this batch (would change the baseline mid-batch) |
 | Parallel cells see each other's `dev run` / tunnels and pick other ports | LangChain, Strands | expected with `SPIKE_PARALLEL=4`; not filed |
 | Runner mis-parsed agent id (`identity`, `app`) and only deletes **Agents**, not Apps → leftovers: `order-agent-strands`, Claude Agent SDK's agent, 5 Apps (`crewai-orders`, `order-agent-pydantic-ai`, `order-agent-openai`, `order-agent-smolagents`, `order-agent-holmesgpt`), `order-agent-dapr-agents` + `statestore` | Strands, Claude Agent SDK, App cells, Dapr Agents | harness **fixed** (id parse, Apps deleted too); leftovers still to clean up |

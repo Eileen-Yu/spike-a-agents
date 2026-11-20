@@ -103,7 +103,7 @@ in_scope() { # slug client
 target() { # slug client -> attempts wanted
   local n="$REPEATS" x
   # SPIKE_EXTRA="slug:client:N,..." raises one cell's attempt count (e.g. a rerun)
-  for x in ${SPIKE_EXTRA//,/ }; do
+  for x in ${SPIKE_EXTRA:+${SPIKE_EXTRA//,/ }}; do
     if [[ "${x%%:*}" == "$1" && "$(cut -d: -f2 <<<"$x")" == "$2" ]]; then echo "${x##*:}"; return; fi
   done
   if [[ "$1" == "langgraph" && "$2" == "claude" && "$n" -lt 3 ]]; then n=3; fi
@@ -234,7 +234,7 @@ preflight() {
 # (Codex echoes the prompt, which contains "RESULT ... run ok|fail" mid-sentence —
 # the old loose match killed Codex 20s in and graded it ok.)
 # "run: ok", "run=ok", "deploy/run: **ok**", "deploy/run ok |" — but not the prompt's "run ok|fail"
-RUN_LINE_RE='\brun(\*\*)?[[:space:]]*[:=]?[[:space:]]*(\*\*)?[[:space:]]*(ok|fail)([^|a-z]|$)'
+RUN_LINE_RE='\brun[`*]*[[:space:]]*[:=]?[[:space:]]*[`*]*[[:space:]]*(ok|fail)([^|a-z]|$)'
 result_has() { # log
   [[ -f "$1" ]] || return 1
   grep -v 'print a RESULT block' "$1" 2>/dev/null | rg -q '\bRESULT\b' || return 1
@@ -408,10 +408,11 @@ run_one() {
   # --- grade from outside the model ---
   grade_diff "$run" "$OUT/${slug}-${client}-${attempt}.diff"
   via=$(grade_via "$logfile")
-  kind=$(field "$logfile" 'kind[^A-Za-z]{0,20}(Agent|App)\b' | grep -oE '(Agent|App)$' || true); kind="${kind:--}"
+  local res_part; res_part=$(awk '/RESULT/ && !/print a RESULT block/ {buf=""; on=1} on {buf=buf $0 "\n"} END {printf "%s", buf}' "$logfile")
+  kind=$(rg -o -i 'kind[^A-Za-z]{0,20}(Agent|App)\b' <<<"$res_part" | tail -1 | grep -oE '(Agent|App)$' || true); kind="${kind:--}"
   # first id-looking token after an "agent/app id" label that isn't a filler word
   # (v3 Strands/Claude Agent SDK logs read "id: identity …" / "app id: app …")
-  agent_id=$(rg -o -i '(agent/app|agent|app) id[^a-z0-9]{0,20}[^\n]{0,80}' "$logfile" 2>/dev/null | head -3 \
+  agent_id=$(rg -o -i '(agent/app|agent|app) id[^a-z0-9]{0,20}[^\n]{0,80}' <<<"$res_part" 2>/dev/null | tail -3 \
     | grep -oE '[a-z0-9][a-z0-9-]*-[a-z0-9-]+' | grep -viE '^(app-id|agent-id|no-registry|the-)' | head -1 || true)
   agent_id="${agent_id:--}"
 
@@ -419,7 +420,13 @@ run_one() {
     status=fail-rules
   elif ! result_has "$logfile"; then
     status="fail-noresult(rc=$rc)"
-  elif rg -qi '\b(run|deploy)(\*\*)?[[:space:]]*[:=]?[[:space:]]*(\*\*)?[[:space:]]*fail([^|a-z]|$)' "$logfile"; then
+  elif rg -qi '\brun[`*]*[[:space:]]*[:=]?[[:space:]]*[`*]*[[:space:]]*fail([^|a-z]|$)' "$logfile"; then
+    status=fail
+  elif rg -qi '\bdeploy[`*]*[[:space:]]*[:=]?[[:space:]]*[`*]*[[:space:]]*fail([^|a-z]|$)' "$logfile"; then
+    # the request went through Catalyst but the model called its own deploy a failure
+    # (e.g. Copilot expected Catalyst to host the code) — the run passed, flag it
+    status=ok-deploy-self-fail
+  elif false; then
     status=fail
   elif [[ "$via" == localhost ]]; then
     status=fail-localhost
@@ -530,8 +537,10 @@ if [[ "$PARALLEL" -gt 1 ]]; then
   fi
   echo "parallel: ${#JOBS[@]} cells, $PARALLEL at a time" | tee -a "$OUT/loop.log"
   for job in ${JOBS[@]+"${JOBS[@]}"}; do
-    while [[ $(jobs -rp | wc -l | tr -d ' ') -ge "$PARALLEL" ]]; do sleep 5; done
     IFS='|' read -r slug path name client a <<<"$job"
+    # wait for a free slot AND for no other client running the same framework
+    # (BYOA × codex and × copilot in parallel shared order-agent-byoa on 2026-11-19)
+    while [[ $(jobs -rp | wc -l | tr -d ' ') -ge "$PARALLEL" ]] || ls "$OUT/running/${slug}-"* >/dev/null 2>&1; do sleep 5; done
     ( trap worker_abort INT TERM; run_one "$slug" "$path" "$name" "$client" "$a" ) &
     WORKER_PIDS+=($!)
     sleep "${SPIKE_STAGGER_SECS:-30}"

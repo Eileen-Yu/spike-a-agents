@@ -29,10 +29,10 @@ ORDER = list(NAMES)
 FAIL_TICKET = {"dapr-agents": "CAP-2932"}
 TOP_FINDINGS = [
     "1. **Tunnel return path times out at ~10s → HTTP 502** for slow agent turns; Agent kind has no timeout setting — [CAP-2931](https://linear.app/diagrid/issue/CAP-2931)",
-    "2. **Dapr Agents crashes**: auto-subscribes to `agent-pubsub`, undocumented 10-topic cap — [CAP-2932](https://linear.app/diagrid/issue/CAP-2932)",
+    "2. **Undocumented 10-topic cap** on managed pub/sub: Dapr Agents auto-subscribes and crashed once leftovers filled it (ok on a clean project) — [CAP-2932](https://linear.app/diagrid/issue/CAP-2932)",
     "3. **Security**: agent read `~/.diagrid/creds` and printed CLI tokens into the transcript — [CAP-2926](https://linear.app/diagrid/issue/CAP-2926)",
-    "4. **App vs Agent contradictory** in `diagrid-deploy` → 8/21 landed on App — [CAP-2876](https://linear.app/diagrid/issue/CAP-2876)",
-    "5. **Silent identity clobber**: `list_apps` hides Agent-owned App IDs, dry run says `would_replace` — [CAP-2930](https://linear.app/diagrid/issue/CAP-2930)",
+    "4. **App vs Agent contradictory** in `diagrid-deploy` → landed on App: Claude 8/21, Codex 2/2, Copilot 1/1; skills never say Catalyst doesn't host your code — [CAP-2876](https://linear.app/diagrid/issue/CAP-2876)",
+    "5. **Name check misleads** (low): `list_apps` leaves out Agent identities by design and `apply` dry run says `would_replace` on an Agent's name; the real apply is refused, so no clobber — [CAP-2930](https://linear.app/diagrid/issue/CAP-2930)",
     "6. **No documented way to call / prove a plain agent through Catalyst**; readiness reads wrong — [CAP-2878](https://linear.app/diagrid/issue/CAP-2878), [CAP-2929](https://linear.app/diagrid/issue/CAP-2929), [CAP-2934](https://linear.app/diagrid/issue/CAP-2934)",
     "7. **Cost**: ~1.9M tokens in / ~3 min per connect — about the same as the week-1 LangGraph baseline (1.4–1.9M); the Week 2 speed baseline — [CAP-2541](https://linear.app/diagrid/issue/CAP-2541)",
 ]
@@ -143,7 +143,7 @@ def cost_section(rows):
         outs = [x for x in (_int(r.get("tokens_out")) for r in rs) if x is not None]
         ws = [x for x in (_int(r.get("wall_s")) for r in rs) if x is not None]
         cr = [float(r["credits"]) for r in rs if r.get("credits") not in (None, "", "-")]
-        ok = sum(1 for r in rs if r["status"] == "ok")
+        ok = sum(1 for r in rs if r["status"].startswith("ok"))
         out.append(f"| {c} | {len(rs)} | {ok} | {sum(ins):,} | {(sum(ins)//len(ins)) if ins else 0:,} | {sum(outs):,} | "
                    f"{fmt_s(sum(ws)) if ws else '-'} | {fmt_s(sum(ws)//len(ws)) if ws else '-'} | "
                    f"{(fmt_s(min(ws))+' – '+fmt_s(max(ws))) if ws else '-'} | {('%.2f' % sum(cr)) if cr else '-'} |")
@@ -170,7 +170,7 @@ def build():
         done.setdefault((r["slug"], r["client"]), []).append(r)
     total_planned = sum(plan.values())
     total_done = sum(min(len(done.get(k, [])), n) for k, n in plan.items())
-    ok = sum(1 for r in rows if r["status"] == "ok")
+    ok = sum(1 for r in rows if r["status"].startswith("ok"))
     fails = [r for r in rows if r["status"].startswith("fail")]
     kinds = {"Agent": 0, "App": 0}
     for r in rows:
@@ -193,7 +193,7 @@ def build():
             parts = []
             for r in got:
                 k = r.get("kind", "-")
-                parts.append(("ok" if r["status"] == "ok" else r["status"]) + (f" · {k}" if k not in ("-", "") else ""))
+                parts.append(("ok" if r["status"].startswith("ok") else r["status"]) + (f" · {k}" if k not in ("-", "") else ""))
             if len(got) < want:
                 parts.append(f"pending {want - len(got)}")
             cells.append("<br>".join(parts))
@@ -259,7 +259,7 @@ def build():
         m = metrics_row(r["slug"], r["client"], r["attempt"])
         tok = short_tok(m.get("tokens in", r.get("tokens_in")))
         w = _int(r.get("wall_s")); wall = f"{w//60}m{w%60:02d}s" if w else m.get("wall time", "-")
-        st = "ok" if r["status"] == "ok" else f"**FAIL**"
+        st = "ok" if r["status"].startswith("ok") else f"**FAIL**"
         if r["status"] != "ok" and r["slug"] in FAIL_TICKET:
             st += f" [{FAIL_TICKET[r['slug']]}](https://linear.app/diagrid/issue/{FAIL_TICKET[r['slug']]})"
         kind = r.get("kind", "-")
@@ -281,7 +281,7 @@ def build():
         if not rs: continue
         ins = [x for x in (_int(r.get("tokens_in")) for r in rs) if x]
         ws = [x for x in (_int(r.get("wall_s")) for r in rs) if x]
-        ok_n = sum(1 for r in rs if r["status"] == "ok")
+        ok_n = sum(1 for r in rs if r["status"].startswith("ok"))
         cost.append(f"| {c} | {len(rs)} | {ok_n} | {short_tok(sum(ins)//len(ins)) if ins else '-'} | "
                     f"{fmt_s(sum(ws)//len(ws)) if ws else '-'} | {short_tok(sum(ins)) if ins else '-'} | {fmt_s(sum(ws)) if ws else '-'} |")
     by_client = []
@@ -289,7 +289,20 @@ def build():
         rs = [r for r in rows if r["client"] == c]
         want = sum(n for (s_, cc), n in plan.items() if cc == c)
         if want:
-            by_client.append(f"{c} {sum(1 for r in rs if r['status']=='ok')}/{want}" + ("" if len(rs) >= want else f" ({want-len(rs)} pending)"))
+            # per cell: a cell counts as ok if its LATEST attempt is ok (reruns replace earlier tries);
+            # LangGraph × Claude needs all of its planned attempts, each counted
+            cells_c = [k for k in plan if k[1] == c]
+            ok_c = 0; ran_c = 0
+            for k in cells_c:
+                got = done.get(k, [])
+                n = plan[k]
+                if n > 1:
+                    ok_c += sum(1 for r in got[:max(n, len(got))] if r["status"].startswith("ok")); ran_c += min(len(got), n) if len(got) <= n else len(got)
+                    continue
+                if got:
+                    ran_c += 1; ok_c += got[-1]["status"].startswith("ok")
+            want_c = sum(max(plan[k], len(done.get(k, []))) if plan[k] > 1 else 1 for k in cells_c)
+            by_client.append(f"{c} {ok_c}/{want_c}" + ("" if ran_c >= want_c else f" ({want_c-ran_c} pending)"))
     page = [
         "# Spike A — results ([CAP-2783](https://linear.app/diagrid/issue/CAP-2783))",
         "",
@@ -297,7 +310,7 @@ def build():
         "",
         "**Current run = v3:** user-voice prompt ([`spike-prompt.md`](spike-prompt.md)), plugin MCP signed in, staging Plus `eileen-plus-test`/`default`, graded outside the model (git diff, proof path). Plugin 0.10.2, Claude = claude-opus-5-5.",
         "",
-        f"**Score: {' · '.join(by_client)}** · App instead of Agent: {kinds['App']} · rule violations: {len(violations)} · localhost proofs: {len(localhost)}",
+        f"**Score (cells ok, latest attempt): {' · '.join(by_client)}** · landed on App instead of Agent: {kinds['App']} runs · rule violations: {len(violations)} · localhost proofs: {len(localhost)}",
         "",
         "## Each cell — result · resource kind · tokens in · time",
         "",
