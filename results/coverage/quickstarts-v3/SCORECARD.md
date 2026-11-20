@@ -1,8 +1,8 @@
 # Quickstart coverage — v3 standard
 
-_Updated 2026-11-19 20:49 PST._ Prompt: `text-quickstart` block in [`../../spike-prompt.md`](../../spike-prompt.md). Claude, MCP signed in, graded by the harness (proof through Catalyst), one cell at a time with per-cell cleanup.
+_Updated 2026-11-19 20:52 PST._ Prompt: `text-quickstart` block in [`../../spike-prompt.md`](../../spike-prompt.md). Claude, MCP signed in, graded by the harness (proof through Catalyst), one cell at a time with per-cell cleanup.
 
-**7/7 ok** (pre-v3 README-follow run, self-graded: 15/15)
+**8/8 ok** (pre-v3 README-follow run, self-graded: 15/15)
 
 | Quickstart | Result | kind | via Catalyst | MCP calls | tokens in | time | id |
 |---|---|---|---|---:|---:|---:|---|
@@ -13,3 +13,4 @@ _Updated 2026-11-19 20:49 PST._ Prompt: `text-quickstart` block in [`../../spike
 | pydantic-ai | ok | Agent | catalyst | 2 | 1.4M | 3m24s | `decoration-planner` |
 | openai-agents | ok | Agent | catalyst | 3 | 1.3M | 2m54s | `catering-coordinator` |
 | claude-agents | ok | Agent | catalyst | 5 | 1.8M | 4m40s | `photography-planner` |
+| deepagents | ok | Agent | catalyst | 5 | 1.3M | 3m14s | `transportation-planner` |

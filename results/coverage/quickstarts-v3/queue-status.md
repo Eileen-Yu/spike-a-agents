@@ -1,12 +1,11 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 20:44:27 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 20:49:14 PST · ledger: `ledger.tsv`
 
 ## Running now
-- qs-claude-agents-claude-1
+- qs-deepagents-claude-1
 
-## Remaining (9)
-- qs-claude-agents × claude
+## Remaining (8)
 - qs-deepagents × claude
 - qs-mastra × claude
 - qs-goose × claude
@@ -25,4 +24,5 @@ qs-adk            claude  1        ok      Agent  catalyst  untouched  -        
 qs-strands        claude  1        ok      Agent  catalyst  untouched  -          budget-planner         3          1055478    16     qs-strands-claude-1.log        2026-11-19T20:37:49-08:00  169     5556        -
 qs-pydantic-ai    claude  1        ok      Agent  catalyst  untouched  -          decoration-planner     2          1370414    20     qs-pydantic-ai-claude-1.log    2026-11-19T20:41:19-08:00  204     6882        -
 qs-openai-agents  claude  1        ok      Agent  catalyst  untouched  -          catering-coordinator   3          1274566    18     qs-openai-agents-claude-1.log  2026-11-19T20:44:20-08:00  174     6789        -
+qs-claude-agents  claude  1        ok      Agent  catalyst  untouched  -          photography-planner    5          1822298    29     qs-claude-agents-claude-1.log  2026-11-19T20:49:07-08:00  280     10319       -
 ```
