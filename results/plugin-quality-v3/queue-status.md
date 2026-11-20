@@ -1,16 +1,15 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 19:09:27 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 19:10:43 PST · ledger: `ledger.tsv`
 
 ## Running now
 - claude-agents-claude-1
+- dapr-agents-claude-1
 - deepagents-claude-1
 - holmesgpt-claude-1
-- smolagents-claude-1
 
-## Remaining (12)
+## Remaining (11)
 - claude-agents × claude
-- smolagents × claude
 - deepagents × claude
 - holmesgpt × claude
 - dapr-agents × claude
@@ -34,4 +33,5 @@ adk            claude  1        ok      Agent  catalyst  untouched  -          o
 crewai         claude  1        ok      App    catalyst  untouched  -          crewai-orders               8          1585944    23     crewai-claude-1.log         2026-11-19T19:07:42-08:00
 pydantic-ai    claude  1        ok      App    catalyst  untouched  -          order-agent-pydantic-ai     16         2108207    28     pydantic-ai-claude-1.log    2026-11-19T19:08:52-08:00
 openai-agents  claude  1        ok      App    catalyst  untouched  -          order-agent-openai          12         1452833    23     openai-agents-claude-1.log  2026-11-19T19:09:17-08:00
+smolagents     claude  1        ok      App    catalyst  untouched  -          order-agent-smolagents      12         1787720    26     smolagents-claude-1.log     2026-11-19T19:10:37-08:00
 ```
