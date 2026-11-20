@@ -25,3 +25,4 @@ dapr-agents	claude	2	fail-noresult(rc=143)	-	unknown	untouched	-	-	3	144016	7	da
 byoa	codex	1	ok	Agent	catalyst	untouched	-	-	-	-	-	byoa-codex-1.log	2026-11-19T19:30:46-08:00	29	(in total)	-
 byoa	codex	1	ok	Agent	catalyst	untouched	-	-	-	-	-	byoa-codex-1.log	2026-11-19T19:30:51-08:00	28	(in total)	-
 langgraph	copilot	1	fail-noresult(rc=143)	-	unknown	untouched	-	-	-	54200	-	langgraph-copilot-1.log	2026-11-19T19:31:16-08:00	29	1400	0.32
+langgraph	copilot	1	fail-noresult(rc=143)	-	unknown	untouched	-	-	-	54200	-	langgraph-copilot-1.log	2026-11-19T19:31:16-08:00	23	1400	0.32
