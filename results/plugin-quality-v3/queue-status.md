@@ -1,15 +1,14 @@
 # Spike A v3 — queue status
 
-Updated: 2026-11-19 19:12:08 PST · ledger: `ledger.tsv`
+Updated: 2026-11-19 19:12:53 PST · ledger: `ledger.tsv`
 
 ## Running now
 - byoa-claude-1
 - dapr-agents-claude-1
-- holmesgpt-claude-1
 - microsoft-agent-framework-claude-1
+- spring-ai-claude-1
 
-## Remaining (9)
-- holmesgpt × claude
+## Remaining (8)
 - dapr-agents × claude
 - byoa × claude
 - microsoft-agent-framework × claude
@@ -34,4 +33,5 @@ openai-agents  claude  1        ok      App    catalyst  untouched  -          o
 smolagents     claude  1        ok      App    catalyst  untouched  -          order-agent-smolagents      12         1787720    26     smolagents-claude-1.log     2026-11-19T19:10:37-08:00
 deepagents     claude  1        ok      Agent  catalyst  untouched  -          order-agent-deepagents      11         1616268    24     deepagents-claude-1.log     2026-11-19T19:11:32-08:00
 claude-agents  claude  1        ok      Agent  catalyst  untouched  -          app                         15         2543636    33     claude-agents-claude-1.log  2026-11-19T19:11:57-08:00
+holmesgpt      claude  1        ok      App    catalyst  untouched  -          order-agent-holmesgpt       12         2013171    30     holmesgpt-claude-1.log      2026-11-19T19:12:48-08:00
 ```
