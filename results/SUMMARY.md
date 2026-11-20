@@ -12,13 +12,13 @@ _Updated 2026-11-19 19:07 PST — in progress._ Scorecard: [`plugin-quality-v3/S
 
 Why v3 supersedes v1/v2: v1/v2 named the test and the plugin, allowed localhost proofs, ran `claude -p` with MCP unauthenticated (every cell `tools_mcp=0`, CLI fallback), and exported `.env` (incl. `ANTHROPIC_API_KEY`) into the coding client. v3 fixes all of these.
 
-**6/25 planned cells run** · ok 6 · fail 0 · Agent 6 · App 0 · rule violations 0 · localhost-only proofs 0 · Claude cells with 0 MCP calls 0
+**7/25 planned cells run** · ok 7 · fail 0 · Agent 6 · App 1 · rule violations 0 · localhost-only proofs 0 · Claude cells with 0 MCP calls 0
 
 | # | Framework | Claude | Codex | Copilot |
 |---|---|---|---|---|
 | 1 | LangGraph | ok · Agent<br>ok · Agent<br>ok · Agent | pending 1 | pending 1 |
 | 2 | LangChain | ok · Agent | — | — |
-| 3 | CrewAI | pending 1 | — | — |
+| 3 | CrewAI | ok · App | — | — |
 | 4 | Google ADK | ok · Agent | — | — |
 | 5 | Strands | ok · Agent | — | — |
 | 6 | Pydantic AI | pending 1 | — | — |
