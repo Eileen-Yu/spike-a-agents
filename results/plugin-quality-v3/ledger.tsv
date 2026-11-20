@@ -18,3 +18,4 @@ microsoft-agent-framework	claude	1	ok	Agent	catalyst	changed	-	order-agent-maf	1
 spring-ai	claude	1	ok	Agent	catalyst	untouched	-	order-agent-spring-ai	13	2026608	28	spring-ai-claude-1.log	2026-11-19T19:15:43-08:00
 langchaingo	claude	1	ok	App	catalyst	untouched	-	order-agent-langchaingo	12	1657310	26	langchaingo-claude-1.log	2026-11-19T19:17:33-08:00
 eino	claude	1	ok	Agent	catalyst	untouched	-	order-agent-eino	13	1875157	27	eino-claude-1.log	2026-11-19T19:18:23-08:00
+goose	claude	1	ok	App	catalyst	changed	-	order-agent-goose	12	1585973	28	goose-claude-1.log	2026-11-19T19:18:24-08:00
