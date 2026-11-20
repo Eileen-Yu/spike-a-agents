@@ -1,13 +1,64 @@
 # Spike A — consolidated results matrix
 
-Generated: 2026-11-19 16:32
-Week-1 matrix org: `cattle-ackbar` (prod free) · Plus retest org: `eileen-plus-test` (staging, Diagrid Cloud Plus)  
+Generated: 2026-11-19 18:20  
+Week-1 matrix org: `cattle-ackbar` (prod free) · Plus org: `eileen-plus-test` (staging, Diagrid Cloud Plus)  
 Plugin: `diagrid@diagrid` 0.10.2 · CLI: `diagrid` 1.130.0  
-Self-contained: status, resource kind, id, and friction are inline. You should not need to open per-cell logs for the overview.
+Prompt record: [`spike-prompt.md`](spike-prompt.md) (canonical = no CLI/MCP/Agent cribs).
 
-## Plus retest (staging) — quota was the free-plan ceiling
+## Conclusion (plugin / skills quality)
 
-Week-1 free org hit **10/10 App ID / identity** → many cells reused a shared `order-agent` and could not prove dedicated Agent create. Retested on **Cloud Plus** (`eileen-plus-test`, API `api.staging.diagrid.dev`, project `default` exists, region App IDs 30).
+**Pass/fail on “shipped” is not the quality bar.** With a cookbook-free prompt on Plus, cells can still return order-42 **shipped**, but they do it by inventing CLI paths because skills/MCP do not carry a plain-connect route.
+
+| Verdict | Detail | Ticket |
+|---|---|---|
+| MCP writes unavailable in non-interactive `claude -p` | Every quality cell: `tools_mcp=0`, CLI fallback; skills still say MCP for everything | [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) |
+| No first-class plain Agent connect | Scaffold steers durable / kill-resume; without Prefer-Agent in the prompt, cells drift to plain `App` | [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) → [CAP-2550](https://linear.app/diagrid/issue/CAP-2550) |
+| No MCP invoke + readiness gaps | Prove-a-run via rediscovered `call invoke`; `/healthz` / Connected≠healthy | [CAP-2878](https://linear.app/diagrid/issue/CAP-2878) |
+| Connect still heavy | Cookbook-free ~0.4M–0.8M tokens in, ~12–19 tools, ~2–5 min wall (`claude-opus-5-5`) | [CAP-2541](https://linear.app/diagrid/issue/CAP-2541) |
+
+Week-1 **57/57** and early Plus “dedicated Agent” rows used hand-holding prompts — **not** valid as the quality score. Prefer the sections below.
+
+---
+
+## Plugin quality v2 — no Prefer-Agent (canonical)
+
+Prompt: [`spike-prompt.md`](spike-prompt.md) canonical (no Prefer-Agent). Org `eileen-plus-test` / `default`.  
+Ledger: [`plugin-quality-plus-v2-no-prefer-agent/`](plugin-quality-plus-v2-no-prefer-agent/)
+
+| Framework | Result | kind | id | tokens in | tools (all / MCP) | wall | writes via | log |
+|---|---|---|---|---:|---:|---|---|---|
+| LangGraph | **ok** | **App** | `order-agent-lg-1119` | 615,663 | 16 / 0 | 2m 24s | CLI | `…/langgraph.log` |
+| BYOA | **ok** | **Agent** | `order-agent-byoa-1813` | 606,350 | 19 / 0 | 2m 14s | CLI | `…/byoa.log` |
+| CrewAI | **ok** | **App** | `order-agent-crewai-1119` | 476,674 | 12 / 0 | 2m 49s | CLI | `…/crewai.log` |
+| Mastra | _running_ | | | | | | | |
+| Eino | _queued_ | | | | | | | |
+
+**So far:** 2/3 landed on **App** when the prompt stopped coaching Agent. That is the CAP-2876 signal under a clean prompt.
+
+_Updated 2026-11-19 18:20 — v2 in progress._
+
+---
+
+## Plugin quality v1 — Prefer-Agent still in prompt (historical quality)
+
+Same cookbook-free rules **except** Prefer-Agent was still in the prompt (invalidates Agent-vs-App scoring). All 5 used **Agent** + CLI.  
+Ledger: [`plugin-quality-plus/SCORECARD.md`](plugin-quality-plus/SCORECARD.md)
+
+| Framework | Result | kind | id | tokens in | tools | wall | log |
+|---|---|---|---|---:|---:|---|---|
+| LangGraph | **ok** | Agent | `order-agent-spike-a` | 633,881 | 17 / 0 | 2m 03s | `plugin-quality-plus/langgraph.log` |
+| BYOA | **ok** | Agent | `order-agent-byoa` | 697,435 | 17 / 0 | 1m 55s | `plugin-quality-plus/byoa.log` |
+| CrewAI | **ok** | Agent | `order-agent-crewai` | 716,768 | 18 / 0 | 3m 06s | `plugin-quality-plus/crewai.log` |
+| Mastra | **ok** | Agent | `order-agent-mastra` | 824,663 | 19 / 0 | 2m 13s | `plugin-quality-plus/mastra.log` |
+| Eino | **ok** | Agent | `order-agent-eino` | 421,113 | 12 / 0 | 5m 19s | `plugin-quality-plus/eino.log` |
+
+**5/5 shipped**, but Prefer-Agent in the prompt hid App drift. Shared friction same as Conclusion table (MCP=0, scaffold durable, prove-a-run gap, ports/healthz).
+
+---
+
+## Plus retest (earlier, cookbook prompt) — quota was the free-plan ceiling
+
+Week-1 free org hit **10/10 App ID / identity** → many cells reused a shared `order-agent`. Earlier Plus pass used a **more hand-holding prompt** (CLI tips / recipes) — **not** the quality score. Kept for history / CAP-2541 yardstick comparison.
 
 | Framework | Result | Agent id | tokens in | tools | wall | log |
 |---|---|---|---:|---:|---|---|
@@ -17,14 +68,14 @@ Week-1 free org hit **10/10 App ID / identity** → many cells reused a shared `
 | Eino | ok · Agent | `eino-order-agent` | 412,383 | 14 | 2m 08s | `eino-claude-plus.log` |
 | Mastra | ok · Agent | `mastra-order-agent` | 402,961 | 14 | 1m 58s | `mastra-claude-plus.log` |
 
-**Conclusion:** dedicated Agent create + tunnel + invoke works on Plus. Free-plan identity quota was an **environment ceiling**, not a plugin “cannot create Agent” bug. Prefer Plus (or clear headroom) for Spike / Week-2 speed baselines.
+**Conclusion (that pass):** dedicated Agent create + tunnel + invoke works on Plus. Free-plan identity quota was an **environment ceiling**, not a plugin “cannot create Agent” bug.
 
 **Still real friction on Plus (not quota):**
 - Diagrid **MCP often on wrong org / unauthenticated** in non-interactive runs while CLI is on staging Plus → skills say “MCP for writes” but create/apply went through CLI.
 - Agent `ready` before managed App ID is ready; missing `/healthz` → first invoke 500.
 - Port 8000 busy; `dev run` still prints production console URL on staging.
 
-Updated Week-2 LangGraph yardstick (Plus, dedicated create): **~709k tokens in / ~19 tool calls / ~1m41s** (free-matrix cold rows ~1.4M–1.9M mixed reuse/credit noise — use Plus row for comparisons).
+Earlier hand-holding LangGraph yardstick (Plus): **~709k tokens in / ~19 tool calls / ~1m41s** (`claude-fable-5-2`). Cookbook-free LangGraph above: **~634k / 17 tools / 2m03s** (`claude-opus-5-5`) — different model; compare within the same prompt class.
 
 ## Official quickstarts coverage (Plus)
 

@@ -32,35 +32,34 @@ Samples: `python/`, `dotnet/`, `java/`, `go/`, `typescript/`, `rust/` (+ `python
 
 Quickstarts / `*-ai` examples: clone those repos and follow their READMEs (separate from this plain matrix).
 
-## Results
+## Results / conclusion
 
-**Plain matrix (Week 1, prod free `cattle-ackbar`):** **57/57** ok · LangGraph×Claude variance **3/3**. Many later cells **reused** a shared Agent (identity 10/10).
+**Quality bar ≠ shipped.** Cookbook-free Plus runs can still get order-42 **shipped**, but via raw CLI (`tools_mcp=0`). Without Prefer-Agent in the prompt, cells drift to plain **`App`** (v2: LangGraph+CrewAI App, BYOA Agent so far).
 
-**Plugin quality (cookbook-free, Plus):** live score in [`results/SUMMARY.md`](results/SUMMARY.md) § Plugin quality + [`results/plugin-quality-plus/SCORECARD.md`](results/plugin-quality-plus/SCORECARD.md). Records tokens, tools, wall, MCP-vs-CLI. Partial: LangGraph / BYOA / CrewAI **ok** so far (MCP refused → CLI fallback).
+Full tables + verdict: [`results/SUMMARY.md`](results/SUMMARY.md).
 
-**Earlier hand-holding Plus yardstick (not quality score):** LangGraph ~**709k** tokens / ~**19** tools / ~**1m41s** — keep for [CAP-2541](https://linear.app/diagrid/issue/CAP-2541) history only.
+| Pass | What it means |
+|---|---|
+| Quality v2 (canonical prompt, no Prefer-Agent) | In progress — ledger `plugin-quality-plus-v2-no-prefer-agent/` |
+| Quality v1 (Prefer-Agent still in prompt) | 5/5 shipped · all Agent — App drift hidden · `plugin-quality-plus/` |
+| Week-1 matrix 57/57 | Old crib prompts + free 10/10 reuse — **not** quality score |
+| Quickstarts 15/15 · crash 3/3 · `*-ai` sample | Coverage only (durable / local dapr) |
 
-**Official quickstarts (Plus):** **15/15** README happy-path ok.
-
-**Crash recovery sample (Plus):** LangGraph, CrewAI, Mastra — **3/3** crash + resume ok.
-
-**`*-ai/examples` sample:** typescript Mastra / go Eino / rust Goose ok; python-ai LangGraph needs Dapr runtime **≥1.18** (fails on 1.14).
-
-Workflows = [Spike B / CAP-2784](https://linear.app/diagrid/issue/CAP-2784) (not this repo).
+Workflows = [Spike B / CAP-2784](https://linear.app/diagrid/issue/CAP-2784).
 
 ## What to improve next
 
-| Problem | Ticket |
-|---|---|
-| Skills steer to durable workflows → `App` instead of plain `Agent` | [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) → [CAP-2550](https://linear.app/diagrid/issue/CAP-2550) |
-| Skills assume `default` project when it may be missing | [CAP-2877](https://linear.app/diagrid/issue/CAP-2877) |
-| No MCP invoke; Connected ≠ healthy; need `/healthz` + wait | [CAP-2878](https://linear.app/diagrid/issue/CAP-2878) → [CAP-2600](https://linear.app/diagrid/issue/CAP-2600) |
-| Crash quickstart: “Uvicorn running” ≠ ready to create workflows | [CAP-2919](https://linear.app/diagrid/issue/CAP-2919) |
-| MCP org can differ from CLI org; skills still say “MCP for writes” | [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) |
-| Connect-an-agent still heavy (tokens / tools) | [CAP-2541](https://linear.app/diagrid/issue/CAP-2541) |
-| python-ai examples: document Dapr ≥1.18 + venv | [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) |
-| Framework list / BYOA / Goose docs | [CAP-2787](https://linear.app/diagrid/issue/CAP-2787), [CAP-2554](https://linear.app/diagrid/issue/CAP-2554), [CAP-2923](https://linear.app/diagrid/issue/CAP-2923) |
-| Staging `dev run` prints prod console URL | [CAP-2922](https://linear.app/diagrid/issue/CAP-2922) |
+| Problem | Ticket | Cookbook-free retest |
+|---|---|---|
+| Skills steer durable → plain path lands on `App` | [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) → [CAP-2550](https://linear.app/diagrid/issue/CAP-2550) | **Confirmed** v2 (2/3 App so far) |
+| Skills require MCP writes; MCP unusable / org mismatch in non-interactive | [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) | **Confirmed** every cell `tools_mcp=0` |
+| No MCP invoke; Connected ≠ healthy; `/healthz` | [CAP-2878](https://linear.app/diagrid/issue/CAP-2878) → [CAP-2600](https://linear.app/diagrid/issue/CAP-2600) | **Confirmed** |
+| Connect-an-agent still heavy (tokens / tools) | [CAP-2541](https://linear.app/diagrid/issue/CAP-2541) | ~0.4–0.8M in / ~12–19 tools / ~2–5 min |
+| Skills assume `default` project when missing | [CAP-2877](https://linear.app/diagrid/issue/CAP-2877) | (Plus had `default`) |
+| Crash quickstart: Uvicorn ≠ ready | [CAP-2919](https://linear.app/diagrid/issue/CAP-2919) | coverage pass |
+| python-ai Dapr ≥1.18 + venv | [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) | coverage |
+| Framework list / BYOA / Goose docs | [CAP-2787](https://linear.app/diagrid/issue/CAP-2787), [CAP-2554](https://linear.app/diagrid/issue/CAP-2554), [CAP-2923](https://linear.app/diagrid/issue/CAP-2923) | — |
+| Staging `dev run` prints prod console URL | [CAP-2922](https://linear.app/diagrid/issue/CAP-2922) | still seen |
 
 Free-plan **10/10 identity** is an environment ceiling, not evidence the plugin cannot create Agents.  
 (`agent-registry` missing from `component list` is intentional — managed/reserved; [CAP-2924](https://linear.app/diagrid/issue/CAP-2924) canceled.)
