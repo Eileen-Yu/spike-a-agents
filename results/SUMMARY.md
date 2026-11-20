@@ -1,6 +1,6 @@
 # Spike A — results ([CAP-2783](https://linear.app/diagrid/issue/CAP-2783))
 
-_Updated 2026-11-19 20:27 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
+_Updated 2026-11-19 20:31 PST. Regenerated after every cell by `results/build-v3-summary.py` — don't edit by hand._
 
 **Current run = v3:** user-voice prompt ([`spike-prompt.md`](spike-prompt.md)), plugin MCP signed in, staging Plus `eileen-plus-test`/`default`, graded outside the model (git diff, proof path). Plugin 0.10.2, Claude = claude-opus-5-5.
 
@@ -56,7 +56,7 @@ Evidence counts per finding: [`plugin-quality-v3/FINDINGS.md`](plugin-quality-v3
 
 Run before v3 (2026-11-19 15:35–16:32 PT), Claude only, one run each, MCP not signed in (0 MCP calls), graded by the model's own RESULT. They answer "does the README work", not "how good is the plugin".
 
-- **Quickstarts rerun to the v3 standard** (Claude, MCP on, harness-graded): **1/1 ok** — [`coverage/quickstarts-v3/SCORECARD.md`](coverage/quickstarts-v3/SCORECARD.md)
+- **Quickstarts rerun to the v3 standard** (Claude, MCP on, harness-graded): **2/2 ok** — [`coverage/quickstarts-v3/SCORECARD.md`](coverage/quickstarts-v3/SCORECARD.md)
 
 - Official quickstarts `agents/*` (README happy path, staging Plus): **15/15 ok**. Their leftover topics later filled the pub/sub cap ([CAP-2932](https://linear.app/diagrid/issue/CAP-2932))
 - Crash recovery (LangGraph, CrewAI, Mastra): **3/3** crash + resume
