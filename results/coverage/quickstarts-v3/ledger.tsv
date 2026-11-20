@@ -12,3 +12,4 @@ qs-goose	claude	1	ok	Agent	catalyst	untouched	-	release-manager	4	1367795	18	qs-
 qs-microsoft-dotnet	claude	1	ok	Agent	catalyst	untouched	-	event-planner	5	2277942	35	qs-microsoft-dotnet-claude-1.log	2026-11-19T21:14:11-08:00	902	12834	-
 qs-langchaingo	claude	1	ok	App	catalyst	untouched	-	crm-mcp	0	902713	16	qs-langchaingo-claude-1.log	2026-11-19T21:17:20-08:00	184	6526	-
 qs-langgraphjs	claude	1	ok	App	catalyst	untouched	-	identity-agent	2	1016033	18	qs-langgraphjs-claude-1.log	2026-11-19T21:20:26-08:00	180	5808	-
+qs-spring-ai-event-planner	claude	1	ok	Agent	catalyst	untouched	-	spring-ai-event-planner	4	1646614	26	qs-spring-ai-event-planner-claude-1.log	2026-11-19T21:24:41-08:00	248	9710	-
