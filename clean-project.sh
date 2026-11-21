@@ -12,6 +12,7 @@ names() { awk 'NR>1 && NF && $1!~/^-+$/ {print $1}'; }
 echo "== whoami"; diagrid whoami | grep -E 'Organization|API'
 [[ -n "${SPIKE_ORG:-}" ]] && ! diagrid whoami | grep -q "$SPIKE_ORG" && { echo "CLI not on $SPIKE_ORG — stop"; exit 3; }
 
+diagrid agent list -p "$P" 2>&1 | grep -q 'resource not found' && { echo "project $P not found — skip"; exit 0; }
 echo; echo "== Agents in $P";     diagrid agent list -p "$P";     AGENTS=$(diagrid agent list -p "$P" 2>/dev/null | names)
 echo; echo "== Apps in $P";       diagrid app list -p "$P";       APPS=$(diagrid app list -p "$P" 2>/dev/null | names)
 echo; echo "== Components in $P"; diagrid component list -p "$P"; COMPS=$(diagrid component list -p "$P" 2>/dev/null | names | grep -E '^(statestore|.*-statestore|messagepubsub)$' || true)
@@ -25,6 +26,7 @@ done
 # Agent-owned App IDs show up in app list too; delete Agents first, skip those Apps.
 APPS=$(comm -23 <(printf '%s\n' $APPS | sort -u) <(printf '%s\n' $AGENTS | sort -u))
 
+if [[ -z "$(echo $AGENTS $APPS $COMPS)" && ${#TOPICS[@]} -eq 0 ]]; then echo "nothing to delete in $P — skip"; exit 0; fi
 echo
 echo "Will delete in $P:"
 echo "  Agents ($(wc -w <<<"$AGENTS" | tr -d ' ')): $(echo $AGENTS)"
@@ -40,6 +42,6 @@ for a in $APPS;   do printf -- '- app %s: '   "$a"; yes | diagrid app delete "$a
 for bt in ${TOPICS[@]+"${TOPICS[@]}"}; do printf -- '- topic %s: ' "${bt#*|}"; yes | diagrid pubsub topics delete "${bt#*|}" --pubsub "${bt%%|*}" -p "$P" 2>&1 | tail -1; done
 for c in $COMPS;  do printf -- '- component %s: ' "$c"; diagrid component delete "$c" -p "$P" --approve 2>&1 | tail -1; done
 
-echo; echo "Deletes are async; waiting 60s, then the state after:"; sleep 60
+echo; echo "Deletes are async; waiting 30s, then the state after:"; sleep 30
 diagrid agent list -p "$P"; diagrid app list -p "$P"
 for b in $BROKERS; do diagrid pubsub topics list --pubsub "$b" -p "$P"; done

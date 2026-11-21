@@ -27,3 +27,4 @@ obj/
 
 # Per-run working copies live outside this repo (~/spike-runs)
 spike-runs/
+*.log.calls

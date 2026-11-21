@@ -29,7 +29,7 @@ ORDER = list(NAMES)
 FAIL_TICKET = {"dapr-agents": "CAP-2932"}
 TOP_FINDINGS = [
     "1. **Skills have no first-class \"connect an existing agent\" path**: App vs Agent contradicts (landed on App: Claude 8/21, Codex 2/2, Copilot 1/2), skills never say Catalyst doesn't host your code, no documented way to prove a run, name checks mislead — [CAP-2876](https://linear.app/diagrid/issue/CAP-2876) (Urgent)",
-    "2. **Tunnel return path times out at ~10s → HTTP 502** on slow agent turns; Agent kind has no timeout setting — [CAP-2931](https://linear.app/diagrid/issue/CAP-2931)",
+    "2. **Tunnel return path times out at ~10s → HTTP 502** on slow agent turns; Agent kind has no timeout setting. Reproduced on prod: calls >10s fail and the CLI retry runs the agent 2–3× — [CAP-2931](https://linear.app/diagrid/issue/CAP-2931)",
     "3. **Credentials in transcripts**: agent printed `~/.diagrid/creds`; `get_connection` returns tokens into chat — [CAP-2926](https://linear.app/diagrid/issue/CAP-2926)",
     "4. **Invisible quotas**: pub/sub 10-topic cap (Dapr Agents crashed on leftover topics, ok on a clean project) and identity cap — [CAP-2932](https://linear.app/diagrid/issue/CAP-2932)",
     "5. **MCP vs CLI on different env/org**, no CLI fallback, `DIAGRID_MCP_URL` undocumented — [CAP-2921](https://linear.app/diagrid/issue/CAP-2921)",
@@ -343,7 +343,7 @@ def build():
         '| [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) credentials in chat | "Never read `~/.diagrid/*`" rule, optional hook | `get_connection` returns the token inline (MCP server); base64 creds file (CLI) |',
         '| [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) invisible quotas | Check usage first; say what to do at a cap; Dapr Agents hint | Topic cap missing from `get_usage`; unused topics never cleaned up (platform) |',
         '| [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) MCP vs CLI env mismatch | Compare whoami, CLI fallback, document `DIAGRID_MCP_URL` | `invalid_client` error message (auth server) |',
-        '| [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) tunnel ~10s timeout | Troubleshooting note only | **Nearly all**: tunnel proxy timeout, Agent timeout field (platform). Verify on prod first |',
+        '| [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) tunnel ~10s timeout | Troubleshooting note only | **Nearly all**: tunnel proxy timeout, Agent timeout field (platform); `diagrid call invoke` ~10s timeout + retries (CLI). Reproduced on prod |',
         '| [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) MCP/CLI behaviour | Work around only | **Nearly all**: readiness, side effects, filters, dry run, exit code, console URL (MCP / CLI / API) |',
         '| [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) example READMEs | — | **All**: `python-ai`, `rust-ai`, `catalyst-quickstarts` READMEs |',
         '',

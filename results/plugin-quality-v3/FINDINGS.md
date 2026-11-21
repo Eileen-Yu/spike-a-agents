@@ -12,7 +12,7 @@ The "seen in" counts are runs whose own RESULT/friction list mentions the proble
 | | | Readiness: Agent says `ready` while its identity is `processing`; the first call after the tunnel attaches can 502 | 20/27 · 3/27 | |
 | | | Name check misleads (`list_apps` leaves out Agent identities; dry run says `would_replace`; real apply refused) | 7/27 | |
 | | | Skills contradict each other on app-to-app access (deny-by-default vs allowed) | 4/27 | |
-| 2 | [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) | **Tunnel return path times out at ~10s → HTTP 502** on slow agent turns (agent logs 200, caller gets 502 EOF); Agent kind has no timeout setting | Claude Agent SDK (repeated), first-call 502s in CrewAI/HolmesGPT | High |
+| 2 | [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) | **Tunnel return path times out at ~10s → HTTP 502** on slow agent turns (agent logs 200, caller gets 502 EOF); Agent kind has no timeout setting. **Prod (11-20): calls >10s fail, CLI retries run the agent 2–3×** | Claude Agent SDK (repeated), first-call 502s in CrewAI/HolmesGPT | High |
 | 3 | [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) | **Credentials in transcripts**: the agent printed `~/.diagrid/creds` (access + refresh token) while debugging an env mismatch; `get_connection` returns the API token into chat | creds: 1 run (setup) · token-in-chat: 14/27 | High |
 | 4 | [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) | **Invisible quotas.** Managed pub/sub 10-topic cap (Dapr Agents crashed on 10 leftover topics, **ok after cleanup**); identity cap 10/10 on free with no path | Dapr Agents #1 fail → #2 ok; free org 10/10 | High |
 | 5 | [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) | **MCP and CLI on different env/org** (prod MCP + staging CLI → nothing deployed); no CLI fallback; `DIAGRID_MCP_URL` undocumented | 3 setup runs; v1/v2: 0 MCP calls in every run | High |
@@ -27,7 +27,7 @@ The "seen in" counts are runs whose own RESULT/friction list mentions the proble
 | [CAP-2926](https://linear.app/diagrid/issue/CAP-2926) credentials in chat | "Never read `~/.diagrid/*`" rule, optional hook | `get_connection` returns the token inline (MCP server); base64 creds file (CLI) |
 | [CAP-2932](https://linear.app/diagrid/issue/CAP-2932) invisible quotas | Check usage first; say what to do at a cap; Dapr Agents hint | Topic cap missing from `get_usage`; unused topics never cleaned up (platform) |
 | [CAP-2921](https://linear.app/diagrid/issue/CAP-2921) MCP vs CLI env mismatch | Compare whoami, CLI fallback, document `DIAGRID_MCP_URL` | `invalid_client` error message (auth server) |
-| [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) tunnel ~10s timeout | Troubleshooting note only | **Nearly all**: tunnel proxy timeout, Agent timeout field (platform). Verify on prod first |
+| [CAP-2931](https://linear.app/diagrid/issue/CAP-2931) tunnel ~10s timeout | Troubleshooting note only | **Nearly all**: tunnel proxy timeout, Agent timeout field (platform); `diagrid call invoke` ~10s timeout + retries (CLI). Reproduced on prod |
 | [CAP-2929](https://linear.app/diagrid/issue/CAP-2929) MCP/CLI behaviour | Work around only | **Nearly all**: readiness, side effects, filters, dry run, exit code, console URL (MCP / CLI / API) |
 | [CAP-2920](https://linear.app/diagrid/issue/CAP-2920) example READMEs | — | **All**: `python-ai`, `rust-ai`, `catalyst-quickstarts` READMEs |
 
